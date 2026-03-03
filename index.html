@@ -1026,12 +1026,13 @@
     }
     .pc__source-badge {
       position: absolute; bottom: 10px; left: 10px;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(4px);
+      background: #1a1a1a;
       border-radius: 20px; padding: 3px 10px;
       font-size: 10px; font-weight: 700;
-      color: var(--text-secondary);
-      border: 1px solid rgba(0,0,0,0.08);
+      color: #ffffff;
+      border: none;
+      letter-spacing: 0.03em;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.35);
     }
     .pc__new-badge {
       position: absolute; top: 10px; right: 10px;
@@ -2921,7 +2922,7 @@
       filteredResults: [],
       selectedIds: new Set(),
       currentPage: 1,
-      perPage: 24,
+      perPage: 25,
       totalResults: 0,
       locationLabel: '',
       transactionType: 'buy',
@@ -3023,9 +3024,15 @@
       state.allResults = [];
       state.filteredResults = [];
 
-      // Pre-set sidebar must-haves to match what user chose in the search form
+      // Pre-populate sidebar filters from the search form values
       $('prFilterParking').checked = state.searchParams.must_parking || false;
       $('prFilterGarden').checked  = state.searchParams.must_garden  || false;
+      if (state.searchParams.min_price) $('prMinPrice').value = state.searchParams.min_price;
+      if (state.searchParams.max_price) $('prMaxPrice').value = state.searchParams.max_price;
+      if (state.searchParams.min_beds)  $('prMinBeds').value  = state.searchParams.min_beds;
+      if (state.searchParams.property_type && state.searchParams.property_type !== 'any') {
+        $('prTypeFilter').value = state.searchParams.property_type.charAt(0).toUpperCase() + state.searchParams.property_type.slice(1);
+      }
 
       closeSearchModal();
       openResultsPage();
@@ -3095,7 +3102,7 @@
       prEmpty.style.display = 'none';
       prStatsBar.style.display = 'none';
 
-      const params = Object.assign({}, state.searchParams, { index: (page - 1) * 24 });
+      const params = Object.assign({}, state.searchParams, { index: (page - 1) * 25 });
       const qs = new URLSearchParams();
       Object.entries(params).forEach(([k, v]) => { if (v !== '' && v !== null && v !== undefined) qs.set(k, v); });
 
@@ -3224,7 +3231,7 @@
         <div class="pc__checkbox"></div>
         <div class="pc__img-wrap">
           ${imgHtml}
-          <span class="pc__source-badge" style="${prop.source === 'OnTheMarket' ? 'background:rgba(108,61,171,0.12);color:#6c3dab;border-color:rgba(108,61,171,0.25);' : prop.source === 'Rightmove' ? 'background:rgba(0,176,79,0.12);color:#007a37;border-color:rgba(0,176,79,0.25);' : prop.source === 'Zoopla' ? 'background:rgba(224,91,0,0.12);color:#c84e00;border-color:rgba(224,91,0,0.25);' : ''}">${escHtml(prop.source || 'Rightmove')}</span>
+          <span class="pc__source-badge" style="${prop.source === 'OnTheMarket' ? 'background:#6c3dab;' : prop.source === 'Rightmove' ? 'background:#007a37;' : prop.source === 'Zoopla' ? 'background:#e05b00;' : 'background:#1a1a1a;'}">${escHtml(prop.source || 'Rightmove')}</span>
           ${addedBadge}
         </div>
         <div class="pc__body">
@@ -3316,8 +3323,11 @@
 
       results = results.filter(p => {
         const priceNum = extractPriceNum(p.price);
-        if (minP > 0 && priceNum < minP) return false;
-        if (maxP < Infinity && priceNum > maxP) return false;
+        // priceNum === -1 means rental price (pcm/pw) — skip purchase price filters
+        if (priceNum !== -1) {
+          if (minP > 0 && priceNum < minP) return false;
+          if (maxP < Infinity && priceNum > maxP) return false;
+        }
         if (minBeds > 0 && (p.bedrooms || 0) < minBeds) return false;
         if (typeF && p.property_type && !p.property_type.toLowerCase().includes(typeF.toLowerCase())) return false;
         if (wantParking && !hasFeature(p, 'parking')) return false;
@@ -3335,6 +3345,10 @@
 
     function extractPriceNum(priceStr) {
       if (!priceStr) return 0;
+      const s = priceStr.toLowerCase();
+      // Rental prices (pcm/pw/per week/per month) — return special sentinel
+      // so they are never excluded by a purchase price filter
+      if (s.includes('pcm') || s.includes('pw') || s.includes('per week') || s.includes('per month')) return -1;
       const n = priceStr.replace(/[^0-9]/g, '');
       return parseInt(n) || 0;
     }
@@ -3348,7 +3362,7 @@
     /* ── PAGINATION ─────────────────────────────────────────── */
     function renderPagination() {
       const total = state.totalResults || state.filteredResults.length;
-      const pages = Math.ceil(total / state.perPage);
+      const pages = Math.ceil(total / 25);
       if (pages <= 1) { prPagination.style.display = 'none'; return; }
 
       prPagination.style.display = 'flex';

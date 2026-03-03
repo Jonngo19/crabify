@@ -357,10 +357,10 @@ def otm_search(location: str, params: dict) -> tuple:
             qp["max-price"] = str(int(params["max_price"]))
         except Exception:
             pass
-    # Pagination (OTM uses 'page' param, 1-indexed, 30 per page)
+    # Pagination (OTM uses 'page' param, 1-indexed; we use 25-item strides)
     index = int(params.get("index", 0))
     if index > 0:
-        page_num = (index // 30) + 1
+        page_num = (index // 25) + 1
         qp["page"] = str(page_num)
 
     # OTM doesn't have a parking/garden URL filter but we note it
