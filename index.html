@@ -2774,6 +2774,8 @@
             <span class="pr-loading__source scanning">Rightmove</span>
             <span class="pr-loading__source">OnTheMarket</span>
             <span class="pr-loading__source" id="prLoadingZoopla" style="opacity:0.5;">Zoopla</span>
+            <span class="pr-loading__source">Gumtree</span>
+            <span class="pr-loading__source" id="prLoadingSpareRoom">SpareRoom</span>
           </div>
         </div>
 
@@ -3073,6 +3075,8 @@
       'Crabify is crawling property listings…',
       'Scanning Rightmove for matching properties…',
       'Scanning OnTheMarket for listings…',
+      'Scanning Gumtree for private listings…',
+      'Checking SpareRoom for rentals…',
       'Comparing prices across the market…',
       'Gathering agent contact details…',
       'Collating results just for you…',
@@ -3146,6 +3150,14 @@
             zpLoader.style.opacity = '0.3';
             zpLoader.title = 'No Scrapfly key';
           }
+        }
+
+        // Update SpareRoom indicator (rent only)
+        const srLoader = $('prLoadingSpareRoom');
+        if (srLoader) {
+          const isRent = (state.searchParams.type || state.transactionType) === 'rent';
+          srLoader.style.opacity = isRent ? '1' : '0.4';
+          srLoader.title = isRent ? '' : 'Rent searches only';
         }
 
         updateSourceList(data.sources || ['Rightmove']);
@@ -3233,7 +3245,13 @@
         <div class="pc__checkbox"></div>
         <div class="pc__img-wrap">
           ${imgHtml}
-          <span class="pc__source-badge" style="${prop.source === 'OnTheMarket' ? 'background:#6c3dab;' : prop.source === 'Rightmove' ? 'background:#007a37;' : prop.source === 'Zoopla' ? 'background:#e05b00;' : 'background:#1a1a1a;'}">${escHtml(prop.source || 'Rightmove')}</span>
+          <span class="pc__source-badge" style="${
+            prop.source === 'OnTheMarket' ? 'background:#6c3dab;' :
+            prop.source === 'Rightmove'   ? 'background:#007a37;' :
+            prop.source === 'Zoopla'      ? 'background:#e05b00;' :
+            prop.source === 'Gumtree'     ? 'background:#72ac00;' :
+            prop.source === 'SpareRoom'   ? 'background:#e8003d;' :
+            'background:#1a1a1a;'}">${escHtml(prop.source || 'Rightmove')}</span>
           ${addedBadge}
         </div>
         <div class="pc__body">
@@ -3427,6 +3445,8 @@
         { name: 'Rightmove', color: '#00b04f' },
         { name: 'OnTheMarket', color: '#6c3dab' },
         { name: 'Zoopla', color: '#e05b00' },
+        { name: 'Gumtree', color: '#72ac00' },
+        { name: 'SpareRoom', color: '#e8003d' },
       ];
       sourceConfig.forEach(sc => {
         const srcStr = sources.find(s => s.startsWith(sc.name)) || '';

@@ -763,12 +763,305 @@ def zoopla_search(location: str, params: dict) -> tuple:
 
 
 # ─────────────────────────────────────────────
+# GUMTREE SCRAPER  (buy + rent)
+# ─────────────────────────────────────────────
+
+GUMTREE_SORT_MAP = {
+    "price_asc":  "price_asc",
+    "price_desc": "price_desc",
+    "newest":     "date",
+    "beds_desc":  "date",
+}
+
+def gumtree_search(location: str, params: dict) -> tuple:
+    """
+    Scrape Gumtree property listings via HTML.
+    Returns (list_of_properties, total_count).
+    """
+    channel = params.get("transaction_type", "buy")
+    slug = location.strip().lower()
+    slug = re.sub(r"[^a-z0-9]+", "-", slug).strip("-") or "london"
+
+    category = "property-for-sale" if channel == "buy" else "property-to-rent"
+    base_url = f"https://www.gumtree.com/flats-houses/{category}/uk/{slug}"
+
+    qp = {}
+    if params.get("min_beds"):
+        try: qp["min_bedrooms"] = str(int(params["min_beds"]))
+        except: pass
+    if params.get("max_beds"):
+        try: qp["max_bedrooms"] = str(int(params["max_beds"]))
+        except: pass
+    if params.get("min_price"):
+        try: qp["min_price"] = str(int(params["min_price"]))
+        except: pass
+    if params.get("max_price"):
+        try: qp["max_price"] = str(int(params["max_price"]))
+        except: pass
+
+    sort_val = params.get("sort", "newest")
+    qp["sort"] = GUMTREE_SORT_MAP.get(sort_val, "date")
+
+    # Pagination: Gumtree uses page param
+    index = int(params.get("index", 0))
+    if index > 0:
+        qp["page"] = str((index // 25) + 1)
+
+    qs = urllib.parse.urlencode(qp)
+    url = f"{base_url}?{qs}" if qs else base_url
+
+    print(f"  [Gumtree] Fetching: {url}")
+
+    try:
+        req = urllib.request.Request(url, headers=BROWSER_HEADERS)
+        with urllib.request.urlopen(req, timeout=15) as r:
+            html = r.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        print(f"  [Gumtree] HTTP error: {e}")
+        return [], 0
+
+    # Extract listing anchors — each is: data-q="search-result-anchor" href="/p/..."
+    listing_blocks = re.findall(
+        r'(data-q="search-result-anchor"\s+href="(/p/[^"]+)".*?)(?=data-q="search-result-anchor"|</main>|<footer)',
+        html, re.DOTALL
+    )
+
+    # Total count from heading e.g. "1,234 ads"
+    total_m = re.search(r'([\d,]+)\s+(?:ads?|result|listing)', html, re.I)
+    total = 0
+    if total_m:
+        try: total = int(total_m.group(1).replace(",", ""))
+        except: pass
+
+    properties = []
+    for block_text, href in listing_blocks:
+        prop = _parse_gumtree_listing(block_text, href, channel)
+        if prop:
+            properties.append(prop)
+
+    # Fallback total
+    if not total:
+        total = len(properties)
+
+    print(f"  [Gumtree] Got {len(properties)} listings (total: {total})")
+    return properties, total
+
+
+def _parse_gumtree_listing(block: str, href: str, channel: str) -> dict:
+    """Parse a single Gumtree listing block into clean format."""
+    # Price — handles £525,000 or £1,200 pcm
+    price_m = re.search(r'£([\d,]+)\s*(pcm|pw|per\s+month|per\s+week)?', block, re.I)
+    price = ""
+    if price_m:
+        amount = price_m.group(1)
+        freq = price_m.group(2) or ""
+        price = f"£{amount}"
+        if freq:
+            price += f" {freq.lower()}"
+
+    # Listing ID from URL — last numeric segment
+    parts = href.rstrip("/").split("/")
+    listing_id = parts[-1] if parts[-1].isdigit() else re.sub(r"[^0-9]", "", parts[-1]) or parts[-1]
+
+    # Address / title — derive from URL slug (most informative part)
+    # href format: /p/property-for-sale/<descriptive-slug>/<id>
+    # Use the descriptive slug (index -2 if last part is numeric, else -1)
+    slug_idx = -2 if (parts and parts[-1].isdigit()) else -1
+    slug_part = parts[slug_idx] if len(parts) > abs(slug_idx) else ""
+    address = slug_part.replace("-", " ").title()[:80]
+
+    # Bedrooms
+    beds_m = re.search(r'(\d+)\s*(?:bed(?:room)?s?)', block, re.I)
+    if not beds_m:
+        # also try to extract from slug
+        beds_m = re.search(r'(\d+)\s*(?:bed(?:room)?s?)', address, re.I)
+    beds = int(beds_m.group(1)) if beds_m else 0
+
+    # Image
+    img_m = re.search(r'<img[^>]+src="(https://[^"]+(?:jpg|jpeg|png|webp)[^"]*)"', block, re.I)
+    image = img_m.group(1) if img_m else ""
+
+    prop_url = f"https://www.gumtree.com{href}"
+
+    # Description — visible text after stripping tags
+    clean = re.sub(r'<[^>]+>', ' ', block)
+    clean = re.sub(r'&[a-z]+;', ' ', clean)
+    clean = re.sub(r'\s+', ' ', clean).strip()
+    description = clean[:200]
+
+    if not price and not address:
+        return None
+
+    return {
+        "id": f"gumtree_{listing_id}",
+        "address": address,
+        "price": price,
+        "price_qualifier": "",
+        "bedrooms": beds,
+        "bathrooms": 0,
+        "property_type": "",
+        "description": description,
+        "key_features": [],
+        "agent": "Gumtree / Private Seller",
+        "agent_phone": "",
+        "agent_contact_url": prop_url,
+        "source": "Gumtree",
+        "source_url": prop_url,
+        "image": image,
+        "added_or_reduced": "",
+        "transaction_type": channel,
+        "is_featured": False,
+        "latitude": 0,
+        "longitude": 0,
+    }
+
+
+# ─────────────────────────────────────────────
+# SPAREROOM SCRAPER  (rent only — rooms & flats)
+# ─────────────────────────────────────────────
+
+def spareroom_search(location: str, params: dict) -> tuple:
+    """
+    Scrape SpareRoom for room / flat rentals.
+    Only relevant when transaction_type == 'rent'.
+    Returns (list_of_properties, total_count).
+    """
+    channel = params.get("transaction_type", "buy")
+    if channel != "rent":
+        return [], 0   # SpareRoom is rentals only
+
+    slug = location.strip().lower()
+    slug = re.sub(r"[^a-z0-9]+", "-", slug).strip("-") or "london"
+
+    qp = {}
+    if params.get("min_beds"):
+        try: qp["min_rooms"] = str(int(params["min_beds"]))
+        except: pass
+    if params.get("max_price"):
+        try: qp["max_monthly_price"] = str(int(params["max_price"]))
+        except: pass
+    if params.get("min_price"):
+        try: qp["min_monthly_price"] = str(int(params["min_price"]))
+        except: pass
+    qp["per"] = "pcm"
+
+    # Pagination
+    index = int(params.get("index", 0))
+    if index > 0:
+        qp["offset"] = str(index)
+
+    qs = urllib.parse.urlencode(qp)
+    url = f"https://www.spareroom.co.uk/flatshare/{slug}?{qs}"
+    print(f"  [SpareRoom] Fetching: {url}")
+
+    try:
+        req = urllib.request.Request(url, headers=BROWSER_HEADERS)
+        with urllib.request.urlopen(req, timeout=15) as r:
+            html = r.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        print(f"  [SpareRoom] HTTP error: {e}")
+        return [], 0
+
+    # Total results
+    total_m = re.search(r'([\d,]+)\s+(?:rooms?|results?|ads?)\s+found', html, re.I)
+    total = 0
+    if total_m:
+        try: total = int(total_m.group(1).replace(",", ""))
+        except: pass
+
+    # Extract article listings
+    articles = re.findall(
+        r'<article[^>]*class="[^"]*listing[^"]*"[^>]*>(.*?)</article>',
+        html, re.DOTALL
+    )
+
+    properties = []
+    for art in articles:
+        prop = _parse_spareroom_listing(art)
+        if prop:
+            properties.append(prop)
+
+    if not total:
+        total = len(properties)
+
+    print(f"  [SpareRoom] Got {len(properties)} listings (total: {total})")
+    return properties, total
+
+
+def _parse_spareroom_listing(article: str) -> dict:
+    """Parse a single SpareRoom article block."""
+    # Title from h2
+    h2_m = re.search(r'<h2[^>]*>(.*?)</h2>', article, re.DOTALL)
+    title = re.sub(r'<[^>]+>', '', h2_m.group(1)).strip() if h2_m else ""
+
+    # Price — SpareRoom stores as &pound;1,200 pcm or £1,200 pcm
+    price_m = re.search(r'(?:£|&pound;)([\d,]+)\s*(pcm|pw|per\s*month|per\s*week)?', article, re.I)
+    price = ""
+    if price_m:
+        amount = price_m.group(1)
+        freq = (price_m.group(2) or "pcm").lower().strip()
+        price = f"£{amount} {freq}"
+
+    # Beds/rooms
+    rooms_m = re.search(r'(\d+)\s*(?:room|bedroom|bed)', article, re.I)
+    beds = int(rooms_m.group(1)) if rooms_m else 1
+
+    # Location
+    loc_m = re.search(r'<strong[^>]*>([^<]{3,50})</strong>', article)
+    address = re.sub(r'<[^>]+>', '', loc_m.group(1)).strip() if loc_m else title
+
+    # Link
+    link_m = re.search(r'href="(/flatshare/\d+[^"]*)"', article)
+    prop_url = f"https://www.spareroom.co.uk{link_m.group(1)}" if link_m else "https://www.spareroom.co.uk"
+
+    # ID
+    id_m = re.search(r'/flatshare/(\d+)', prop_url)
+    listing_id = id_m.group(1) if id_m else prop_url.split("/")[-1]
+
+    # Image
+    img_m = re.search(r'<img[^>]+src="(https://[^"]+(?:jpg|jpeg|png|webp)[^"]*)"', article, re.I)
+    image = img_m.group(1) if img_m else ""
+
+    # Description
+    clean = re.sub(r'<[^>]+>', ' ', article)
+    clean = re.sub(r'&[a-z]+;', ' ', clean)
+    clean = re.sub(r'\s+', ' ', clean).strip()
+    description = clean[:200]
+
+    if not title and not price:
+        return None
+
+    return {
+        "id": f"spareroom_{listing_id}",
+        "address": address or title,
+        "price": price,
+        "price_qualifier": "pcm",
+        "bedrooms": beds,
+        "bathrooms": 0,
+        "property_type": "Flat / Room",
+        "description": description,
+        "key_features": [],
+        "agent": "SpareRoom",
+        "agent_phone": "",
+        "agent_contact_url": prop_url,
+        "source": "SpareRoom",
+        "source_url": prop_url,
+        "image": image,
+        "added_or_reduced": "",
+        "transaction_type": "rent",
+        "is_featured": False,
+        "latitude": 0,
+        "longitude": 0,
+    }
+
+
+# ─────────────────────────────────────────────
 # COMBINED SEARCH (runs RM + OTM in parallel)
 # ─────────────────────────────────────────────
 
 def combined_search(location: str, params: dict) -> dict:
     """
-    Run Rightmove, OnTheMarket, and Zoopla searches in parallel threads.
+    Run Rightmove, OnTheMarket, Zoopla, Gumtree and SpareRoom searches in parallel threads.
     Returns merged, deduplicated results.
     """
     rm_results = []
@@ -777,9 +1070,15 @@ def combined_search(location: str, params: dict) -> dict:
     otm_total = 0
     zp_results = []
     zp_total = 0
+    gt_results = []
+    gt_total = 0
+    sr_results = []
+    sr_total = 0
     rm_error = None
     otm_error = None
     zp_error = None
+    gt_error = None
+    sr_error = None
 
     # ── Rightmove thread ──────────────────────
     def fetch_rm():
@@ -812,25 +1111,45 @@ def combined_search(location: str, params: dict) -> dict:
             zp_error = str(e)
             print(f"  [Zoopla] Thread error: {e}")
 
-    t_rm = threading.Thread(target=fetch_rm, daemon=True)
-    t_otm = threading.Thread(target=fetch_otm, daemon=True)
-    t_zp = threading.Thread(target=fetch_zoopla, daemon=True)
-    t_rm.start()
-    t_otm.start()
-    t_zp.start()
+    # ── Gumtree thread ────────────────────────
+    def fetch_gumtree():
+        nonlocal gt_results, gt_total, gt_error
+        try:
+            gt_results, gt_total = gumtree_search(location, params)
+        except Exception as e:
+            gt_error = str(e)
+            print(f"  [Gumtree] Thread error: {e}")
+
+    # ── SpareRoom thread ──────────────────────
+    def fetch_spareroom():
+        nonlocal sr_results, sr_total, sr_error
+        try:
+            sr_results, sr_total = spareroom_search(location, params)
+        except Exception as e:
+            sr_error = str(e)
+            print(f"  [SpareRoom] Thread error: {e}")
+
+    t_rm  = threading.Thread(target=fetch_rm,        daemon=True)
+    t_otm = threading.Thread(target=fetch_otm,       daemon=True)
+    t_zp  = threading.Thread(target=fetch_zoopla,    daemon=True)
+    t_gt  = threading.Thread(target=fetch_gumtree,   daemon=True)
+    t_sr  = threading.Thread(target=fetch_spareroom, daemon=True)
+
+    t_rm.start(); t_otm.start(); t_zp.start(); t_gt.start(); t_sr.start()
     t_rm.join(timeout=25)
     t_otm.join(timeout=25)
     t_zp.join(timeout=35)
+    t_gt.join(timeout=20)
+    t_sr.join(timeout=20)
 
     # Merge: combine all results then sort by user preference
-    all_results = rm_results + otm_results + zp_results
+    all_results = rm_results + otm_results + zp_results + gt_results + sr_results
 
     sort_val = params.get("sort", "newest")
 
     def _price_num(p):
         """Extract numeric price from a property dict. Returns 0 if unparseable."""
         price_str = p.get("price", "") or ""
-        # Strip everything except digits
         digits = re.sub(r"[^0-9]", "", price_str)
         return int(digits) if digits else 0
 
@@ -841,18 +1160,20 @@ def combined_search(location: str, params: dict) -> dict:
     elif sort_val == "beds_desc":
         all_results.sort(key=lambda p: -(p.get("bedrooms") or 0))
     else:
-        # "newest" – interleave RM / OTM / Zoopla to show variety
+        # "newest" – interleave all sources to show variety
+        sources_list = [s for s in [rm_results, otm_results, zp_results, gt_results, sr_results] if s]
         interleaved = []
-        max_len = max(len(rm_results), len(otm_results), len(zp_results), 1)
+        max_len = max((len(s) for s in sources_list), default=0)
         for i in range(max_len):
-            if i < len(rm_results):  interleaved.append(rm_results[i])
-            if i < len(otm_results): interleaved.append(otm_results[i])
-            if i < len(zp_results):  interleaved.append(zp_results[i])
+            for s in sources_list:
+                if i < len(s):
+                    interleaved.append(s[i])
         all_results = interleaved
 
     # Build sources list
     sources = []
     source_totals = {}
+
     if rm_results or rm_total:
         sources.append("Rightmove")
         source_totals["Rightmove"] = rm_total
@@ -867,6 +1188,20 @@ def combined_search(location: str, params: dict) -> dict:
         sources.append("OnTheMarket (error)")
         source_totals["OnTheMarket"] = 0
 
+    if gt_results or gt_total:
+        sources.append("Gumtree")
+        source_totals["Gumtree"] = gt_total
+    elif gt_error:
+        sources.append("Gumtree (error)")
+        source_totals["Gumtree"] = 0
+
+    if sr_results or sr_total:
+        sources.append("SpareRoom")
+        source_totals["SpareRoom"] = sr_total
+    elif sr_error:
+        sources.append("SpareRoom (error)")
+        source_totals["SpareRoom"] = 0
+
     # Zoopla status
     if zp_error == "no_key":
         sources.append("Zoopla (no API key)")
@@ -878,7 +1213,7 @@ def combined_search(location: str, params: dict) -> dict:
         sources.append("Zoopla (quota exceeded)")
         source_totals["Zoopla"] = 0
     elif zp_error:
-        sources.append(f"Zoopla (error)")
+        sources.append("Zoopla (error)")
         source_totals["Zoopla"] = 0
     elif zp_results or zp_total:
         sources.append("Zoopla")
@@ -888,7 +1223,7 @@ def combined_search(location: str, params: dict) -> dict:
 
     return {
         "results": all_results,
-        "total": rm_total + otm_total + zp_total,
+        "total": rm_total + otm_total + zp_total + gt_total + sr_total,
         "shown": len(all_results),
         "location": location,
         "sources": sources,
@@ -899,6 +1234,8 @@ def combined_search(location: str, params: dict) -> dict:
                 "Rightmove": rm_error,
                 "OnTheMarket": otm_error,
                 "Zoopla": zp_error,
+                "Gumtree": gt_error,
+                "SpareRoom": sr_error,
             }.items() if v
         }
     }
@@ -1187,7 +1524,7 @@ def run(port=3000):
     zp_key = get_scrapfly_key()
     zp_status = "✅ enabled" if zp_key else "⚠️  no key (add at /api/config)"
     print(f"🦀 Crabify server running on http://0.0.0.0:{port}")
-    print(f"   Sources: Rightmove ✅ | OnTheMarket ✅ | Zoopla {zp_status}")
+    print(f"   Sources: Rightmove ✅ | OnTheMarket ✅ | Zoopla {zp_status} | Gumtree ✅ | SpareRoom ✅ (rent)")
     server.serve_forever()
 
 
