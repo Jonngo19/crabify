@@ -162,10 +162,21 @@ def rm_search_html(location_id: str, params: dict) -> tuple:
     channel = "BUY" if params.get("transaction_type", "buy") == "buy" else "RENT"
     endpoint = "property-for-sale" if channel == "BUY" else "property-to-rent"
 
+    # Map frontend sort value to Rightmove sortType codes:
+    # 2 = most recent, 6 = price asc, 10 = price desc, 1 = most relevant
+    sort_map_rm = {
+        "price_asc":  "6",
+        "price_desc": "10",
+        "newest":     "2",
+        "beds_desc":  "2",   # RM has no beds sort, fall back to newest
+    }
+    sort_val = params.get("sort", "newest")
+    rm_sort = sort_map_rm.get(sort_val, "2")
+
     query_params = {
         "locationIdentifier": location_id,
         "radius": str(params.get("radius", "1.0")),
-        "sortType": "2",
+        "sortType": rm_sort,
         "index": str(params.get("index", 0)),
     }
 
@@ -336,7 +347,16 @@ def otm_search(location: str, params: dict) -> tuple:
     loc_slug = _otm_location_slug(location)
 
     # Build query params
-    qp = {}
+    # Map frontend sort to OTM sort param
+    sort_map_otm = {
+        "price_asc":  "price-asc",
+        "price_desc": "price-desc",
+        "newest":     "most-recent",
+        "beds_desc":  "most-recent",  # OTM has no beds sort
+    }
+    sort_val = params.get("sort", "newest")
+    otm_sort = sort_map_otm.get(sort_val, "most-recent")
+    qp = {"sort": otm_sort}
     if params.get("min_beds"):
         try:
             qp["min-bedrooms"] = str(int(params["min_beds"]))
@@ -802,16 +822,33 @@ def combined_search(location: str, params: dict) -> dict:
     t_otm.join(timeout=25)
     t_zp.join(timeout=35)
 
-    # Merge: interleave RM, OTM, and Zoopla results
-    all_results = []
-    max_len = max(len(rm_results), len(otm_results), len(zp_results))
-    for i in range(max_len):
-        if i < len(rm_results):
-            all_results.append(rm_results[i])
-        if i < len(otm_results):
-            all_results.append(otm_results[i])
-        if i < len(zp_results):
-            all_results.append(zp_results[i])
+    # Merge: combine all results then sort by user preference
+    all_results = rm_results + otm_results + zp_results
+
+    sort_val = params.get("sort", "newest")
+
+    def _price_num(p):
+        """Extract numeric price from a property dict. Returns 0 if unparseable."""
+        price_str = p.get("price", "") or ""
+        # Strip everything except digits
+        digits = re.sub(r"[^0-9]", "", price_str)
+        return int(digits) if digits else 0
+
+    if sort_val == "price_asc":
+        all_results.sort(key=lambda p: (_price_num(p) if _price_num(p) > 0 else 999_999_999))
+    elif sort_val == "price_desc":
+        all_results.sort(key=lambda p: -_price_num(p))
+    elif sort_val == "beds_desc":
+        all_results.sort(key=lambda p: -(p.get("bedrooms") or 0))
+    else:
+        # "newest" – interleave RM / OTM / Zoopla to show variety
+        interleaved = []
+        max_len = max(len(rm_results), len(otm_results), len(zp_results), 1)
+        for i in range(max_len):
+            if i < len(rm_results):  interleaved.append(rm_results[i])
+            if i < len(otm_results): interleaved.append(otm_results[i])
+            if i < len(zp_results):  interleaved.append(zp_results[i])
+        all_results = interleaved
 
     # Build sources list
     sources = []

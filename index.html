@@ -3016,6 +3016,7 @@
         property_type: $('psPropType').value,
         must_parking: $('psParking').checked,
         must_garden: $('psGarden').checked,
+        sort: 'newest',
         index: 0,
       };
       state.locationLabel = loc;
@@ -3033,6 +3034,7 @@
       if (state.searchParams.property_type && state.searchParams.property_type !== 'any') {
         $('prTypeFilter').value = state.searchParams.property_type.charAt(0).toUpperCase() + state.searchParams.property_type.slice(1);
       }
+      $('prSort').value = state.searchParams.sort || 'newest';
 
       closeSearchModal();
       openResultsPage();
@@ -3354,10 +3356,25 @@
     }
 
     $('prApplyFilters').addEventListener('click', () => {
-      applyLocalFilters();
-      renderResults();
+      // Update searchParams with sidebar values so server re-fetches with new filters
+      state.searchParams.min_price = $('prMinPrice').value;
+      state.searchParams.max_price = $('prMaxPrice').value;
+      state.searchParams.min_beds  = $('prMinBeds').value;
+      state.searchParams.must_parking = $('prFilterParking').checked;
+      state.searchParams.must_garden  = $('prFilterGarden').checked;
+      const typeVal = $('prTypeFilter').value;
+      state.searchParams.property_type = typeVal ? typeVal.toLowerCase() : 'any';
+      state.currentPage = 1;
+      doSearch(1);
     });
-    $('prSort').addEventListener('change', () => { applyLocalFilters(); renderResults(); });
+    $('prSort').addEventListener('change', () => {
+      const newSort = $('prSort').value;
+      state.searchParams.sort = newSort;
+      state.currentPage = 1;
+      // For price/beds sorts: re-fetch from server so sort is applied across all pages
+      // For local-only sorts this also ensures consistency
+      doSearch(1);
+    });
 
     /* ── PAGINATION ─────────────────────────────────────────── */
     function renderPagination() {
