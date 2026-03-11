@@ -640,6 +640,22 @@
     .category-card:hover::after { opacity: 0.05; }
     .category-card:hover .category-card__arrow { transform: translate(3px, -3px); opacity: 1; }
 
+    .category-card__coming-soon {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: #111;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 20px;
+      z-index: 2;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
     .category-card__emoji {
       font-size: 32px;
       margin-bottom: 16px;
@@ -2019,6 +2035,7 @@
         </a>
 
         <a href="#" class="category-card" style="--cat-color: #f59e0b;">
+          <span class="category-card__coming-soon">Coming Soon</span>
           <span class="category-card__emoji">✈️</span>
           <div class="category-card__name">Holidays</div>
           <div class="category-card__desc">Flights, hotels, and packages tailored to your dates and budget.</div>
@@ -2028,6 +2045,7 @@
         </a>
 
         <a href="#" class="category-card" style="--cat-color: #8b5cf6;">
+          <span class="category-card__coming-soon">Coming Soon</span>
           <span class="category-card__emoji">🏦</span>
           <div class="category-card__name">Mortgages</div>
           <div class="category-card__desc">Rate comparisons from top lenders, with broker outreach on Concierge.</div>
@@ -2037,6 +2055,7 @@
         </a>
 
         <a href="#" class="category-card" style="--cat-color: #ec4899;">
+          <span class="category-card__coming-soon">Coming Soon</span>
           <span class="category-card__emoji">🛡️</span>
           <div class="category-card__name">Insurance</div>
           <div class="category-card__desc">Home, car, life — full market comparison with policy detail.</div>
