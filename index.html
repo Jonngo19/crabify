@@ -2016,7 +2016,8 @@
           </svg>
         </a>
 
-        <a href="#" class="category-card" style="--cat-color: #3b82f6;">
+        <a href="#" class="category-card" style="--cat-color: #3b82f6;" id="openCarSearch">
+          <span class="category-card__badge" style="background:#3b82f6;">Live</span>
           <span class="category-card__emoji">🚗</span>
           <div class="category-card__name">Cars</div>
           <div class="category-card__desc">Used and new vehicles, aggregated with full spec comparison.</div>
@@ -2025,7 +2026,8 @@
           </svg>
         </a>
 
-        <a href="#" class="category-card" style="--cat-color: #22c55e;">
+        <a href="#" class="category-card" style="--cat-color: #22c55e;" id="openJobSearch">
+          <span class="category-card__badge" style="background:#22c55e;">Live</span>
           <span class="category-card__emoji">💼</span>
           <div class="category-card__name">Jobs</div>
           <div class="category-card__desc">Roles across all major job boards, ranked by your priorities.</div>
@@ -3750,6 +3752,1006 @@
     /* ── LOCATION ENTER KEY ─────────────────────────────────── */
     $('psLocation').addEventListener('keydown', e => {
       if (e.key === 'Enter') psSubmit.click();
+    });
+
+  })();
+  </script>
+
+  <!-- ============================================================
+       CARS SEARCH MODAL
+  ============================================================ -->
+  <div class="ps-overlay" id="carsOverlay" role="dialog" aria-modal="true" aria-label="Car Search">
+    <div class="ps-overlay__backdrop" id="carsBackdrop"></div>
+    <div class="ps-modal">
+      <div class="ps-modal__header">
+        <div class="ps-modal__title">
+          <div class="ps-modal__title-icon">🚗</div>
+          Find a Car
+        </div>
+        <button class="ps-modal__close" id="carsClose" aria-label="Close">✕</button>
+      </div>
+      <div class="ps-form">
+        <!-- Location -->
+        <div class="ps-form__section-label">Location</div>
+        <div class="ps-field-row">
+          <div class="ps-field">
+            <label for="carsLocation">Town, city or postcode</label>
+            <input type="text" id="carsLocation" placeholder="e.g. London, Manchester, SW4…" autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- Make & Model -->
+        <div class="ps-form__section-label">Make &amp; Model</div>
+        <div class="ps-field-row ps-field-row--2">
+          <div class="ps-field">
+            <label for="carsMake">Make</label>
+            <input type="text" id="carsMake" placeholder="e.g. Ford, BMW, Toyota…" autocomplete="off" />
+          </div>
+          <div class="ps-field">
+            <label for="carsModel">Model</label>
+            <input type="text" id="carsModel" placeholder="e.g. Focus, 3 Series…" autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- Price range -->
+        <div class="ps-form__section-label">Price range (£)</div>
+        <div class="ps-field-row ps-field-row--2">
+          <div class="ps-field ps-field--select">
+            <label for="carsMinPrice">Min price</label>
+            <select id="carsMinPrice">
+              <option value="">No min</option>
+              <option value="1000">£1,000</option>
+              <option value="3000">£3,000</option>
+              <option value="5000">£5,000</option>
+              <option value="10000">£10,000</option>
+              <option value="15000">£15,000</option>
+              <option value="20000">£20,000</option>
+              <option value="30000">£30,000</option>
+              <option value="50000">£50,000</option>
+            </select>
+          </div>
+          <div class="ps-field ps-field--select">
+            <label for="carsMaxPrice">Max price</label>
+            <select id="carsMaxPrice">
+              <option value="">No max</option>
+              <option value="3000">£3,000</option>
+              <option value="5000">£5,000</option>
+              <option value="10000">£10,000</option>
+              <option value="15000">£15,000</option>
+              <option value="20000">£20,000</option>
+              <option value="30000">£30,000</option>
+              <option value="50000">£50,000</option>
+              <option value="100000">£100,000</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Year & Mileage -->
+        <div class="ps-form__section-label">Year &amp; Mileage</div>
+        <div class="ps-field-row ps-field-row--2">
+          <div class="ps-field ps-field--select">
+            <label for="carsYearFrom">Year from</label>
+            <select id="carsYearFrom">
+              <option value="">Any year</option>
+              <option value="2020">2020+</option>
+              <option value="2018">2018+</option>
+              <option value="2015">2015+</option>
+              <option value="2012">2012+</option>
+              <option value="2010">2010+</option>
+              <option value="2005">2005+</option>
+            </select>
+          </div>
+          <div class="ps-field ps-field--select">
+            <label for="carsMaxMileage">Max mileage</label>
+            <select id="carsMaxMileage">
+              <option value="">Any mileage</option>
+              <option value="10000">10,000</option>
+              <option value="20000">20,000</option>
+              <option value="40000">40,000</option>
+              <option value="60000">60,000</option>
+              <option value="80000">80,000</option>
+              <option value="100000">100,000</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Fuel & Transmission -->
+        <div class="ps-form__section-label">Fuel &amp; Transmission</div>
+        <div class="ps-field-row ps-field-row--2">
+          <div class="ps-field ps-field--select">
+            <label for="carsFuel">Fuel type</label>
+            <select id="carsFuel">
+              <option value="">Any</option>
+              <option value="petrol">Petrol</option>
+              <option value="diesel">Diesel</option>
+              <option value="electric">Electric</option>
+              <option value="hybrid">Hybrid</option>
+            </select>
+          </div>
+          <div class="ps-field ps-field--select">
+            <label for="carsTransmission">Transmission</label>
+            <select id="carsTransmission">
+              <option value="">Any</option>
+              <option value="manual">Manual</option>
+              <option value="automatic">Automatic</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ps-form__actions">
+          <div class="ps-form__source-note">
+            Searching:
+            <div class="ps-sources">
+              <span class="ps-source-pill">Exchange&amp;Mart</span>
+              <span class="ps-source-pill">Gumtree</span>
+            </div>
+          </div>
+          <button class="btn-accent-lg" id="carsSubmit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            Search Cars
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CARS RESULTS PAGE
+  ============================================================ -->
+  <div class="pr-page" id="carsPage">
+    <div class="pr-topbar">
+      <button class="pr-topbar__back" id="carsBack">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="pr-topbar__info">
+        <div class="pr-topbar__title" id="carsTopTitle">Car Search Results</div>
+        <div class="pr-topbar__sub" id="carsTopSub">Loading results…</div>
+      </div>
+      <div class="pr-topbar__actions">
+        <button class="btn-outline-sm" id="carsDownloadCSV">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download CSV
+        </button>
+        <button class="btn-outline-sm" id="carsModifySearch">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          Modify Search
+        </button>
+      </div>
+    </div>
+
+    <div class="pr-body">
+      <aside class="pr-sidebar">
+        <div class="pr-sidebar__title">Refine Results</div>
+
+        <div class="pr-filter">
+          <label>Sort by</label>
+          <div style="position:relative;">
+            <select id="carsSortFilter">
+              <option value="newest">Newest first</option>
+              <option value="price_asc">Price: low to high</option>
+              <option value="price_desc">Price: high to low</option>
+              <option value="year_desc">Newest year first</option>
+              <option value="mileage_asc">Lowest mileage</option>
+            </select>
+            <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+          </div>
+        </div>
+
+        <div class="pr-filter">
+          <label>Price range</label>
+          <div class="pr-filter-row">
+            <input type="number" id="carsFilterMinPrice" placeholder="Min £" min="0" step="500">
+            <input type="number" id="carsFilterMaxPrice" placeholder="Max £" min="0" step="500">
+          </div>
+        </div>
+
+        <div class="pr-filter">
+          <label>Year from</label>
+          <div style="position:relative;">
+            <select id="carsFilterYear">
+              <option value="">Any year</option>
+              <option value="2022">2022+</option>
+              <option value="2020">2020+</option>
+              <option value="2018">2018+</option>
+              <option value="2015">2015+</option>
+              <option value="2010">2010+</option>
+            </select>
+            <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+          </div>
+        </div>
+
+        <div class="pr-filter">
+          <label>Fuel type</label>
+          <div style="position:relative;">
+            <select id="carsFilterFuel">
+              <option value="">All</option>
+              <option value="petrol">Petrol</option>
+              <option value="diesel">Diesel</option>
+              <option value="electric">Electric</option>
+              <option value="hybrid">Hybrid</option>
+            </select>
+            <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+          </div>
+        </div>
+
+        <button class="btn-accent-sm" style="width:100%;justify-content:center;" id="carsApplyFilters">Apply Filters</button>
+
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+          <div class="pr-sidebar__title">Data sources</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;" id="carsSourceList"></div>
+        </div>
+      </aside>
+
+      <main class="pr-main" id="carsMain">
+        <div class="pr-stats-bar" id="carsStatsBar" style="display:none;">
+          <div class="pr-stats" id="carsStatsText"></div>
+        </div>
+
+        <div class="pr-loading" id="carsLoading">
+          <div class="pr-loading__crab">🚗</div>
+          <div class="pr-loading__text" id="carsLoadingText">Crabify is searching for cars…</div>
+          <div class="pr-loading__bar"><div class="pr-loading__fill"></div></div>
+          <div class="pr-loading__sources" id="carsLoadingSources">
+            <span class="pr-loading__source scanning">Exchange&amp;Mart</span>
+            <span class="pr-loading__source">Gumtree</span>
+          </div>
+        </div>
+
+        <div class="pr-grid" id="carsGrid" style="display:none;"></div>
+
+        <div class="pr-empty" id="carsEmpty" style="display:none;">
+          <div class="pr-empty__icon">🚙</div>
+          <div class="pr-empty__title">No cars found</div>
+          <div class="pr-empty__sub" id="carsEmptyMsg">Try adjusting your search criteria or location.</div>
+        </div>
+
+        <div class="pr-pagination" id="carsPagination" style="display:none;"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       JOBS SEARCH MODAL
+  ============================================================ -->
+  <div class="ps-overlay" id="jobsOverlay" role="dialog" aria-modal="true" aria-label="Job Search">
+    <div class="ps-overlay__backdrop" id="jobsBackdrop"></div>
+    <div class="ps-modal">
+      <div class="ps-modal__header">
+        <div class="ps-modal__title">
+          <div class="ps-modal__title-icon">💼</div>
+          Find a Job
+        </div>
+        <button class="ps-modal__close" id="jobsClose" aria-label="Close">✕</button>
+      </div>
+      <div class="ps-form">
+        <!-- Job title / keywords -->
+        <div class="ps-form__section-label">Job title or keywords</div>
+        <div class="ps-field-row">
+          <div class="ps-field">
+            <label for="jobsQuery">What are you looking for?</label>
+            <input type="text" id="jobsQuery" placeholder="e.g. Software Developer, Nurse, Accountant…" autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- Location & radius -->
+        <div class="ps-form__section-label">Location</div>
+        <div class="ps-field-row ps-field-row--2">
+          <div class="ps-field">
+            <label for="jobsLocation">Town or city</label>
+            <input type="text" id="jobsLocation" placeholder="e.g. London, Manchester, UK" autocomplete="off" />
+          </div>
+          <div class="ps-field ps-field--select">
+            <label for="jobsRadius">Search radius</label>
+            <select id="jobsRadius">
+              <option value="5">Within 5 miles</option>
+              <option value="10">Within 10 miles</option>
+              <option value="20" selected>Within 20 miles</option>
+              <option value="30">Within 30 miles</option>
+              <option value="50">Within 50 miles</option>
+              <option value="100">Within 100 miles</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Salary range -->
+        <div class="ps-form__section-label">Salary range (£/year)</div>
+        <div class="ps-field-row ps-field-row--2">
+          <div class="ps-field ps-field--select">
+            <label for="jobsMinSalary">Min salary</label>
+            <select id="jobsMinSalary">
+              <option value="">No min</option>
+              <option value="15000">£15,000</option>
+              <option value="20000">£20,000</option>
+              <option value="25000">£25,000</option>
+              <option value="30000">£30,000</option>
+              <option value="40000">£40,000</option>
+              <option value="50000">£50,000</option>
+              <option value="60000">£60,000</option>
+              <option value="80000">£80,000</option>
+              <option value="100000">£100,000</option>
+            </select>
+          </div>
+          <div class="ps-field ps-field--select">
+            <label for="jobsMaxSalary">Max salary</label>
+            <select id="jobsMaxSalary">
+              <option value="">No max</option>
+              <option value="25000">£25,000</option>
+              <option value="35000">£35,000</option>
+              <option value="50000">£50,000</option>
+              <option value="60000">£60,000</option>
+              <option value="80000">£80,000</option>
+              <option value="100000">£100,000</option>
+              <option value="150000">£150,000</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Job type -->
+        <div class="ps-form__section-label">Job type</div>
+        <div class="ps-type-tabs" id="jobsTypeTabs">
+          <button class="ps-type-tab active" data-jobtype="any">Any</button>
+          <button class="ps-type-tab" data-jobtype="permanent">Permanent</button>
+          <button class="ps-type-tab" data-jobtype="contract">Contract</button>
+          <button class="ps-type-tab" data-jobtype="part_time">Part-time</button>
+        </div>
+
+        <div class="ps-form__actions">
+          <div class="ps-form__source-note">
+            Searching:
+            <div class="ps-sources">
+              <span class="ps-source-pill" style="background:#e63946;color:#fff;">Reed.co.uk</span>
+            </div>
+          </div>
+          <button class="btn-accent-lg" id="jobsSubmit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            Search Jobs
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       JOBS RESULTS PAGE
+  ============================================================ -->
+  <div class="pr-page" id="jobsPage">
+    <div class="pr-topbar">
+      <button class="pr-topbar__back" id="jobsBack">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="pr-topbar__info">
+        <div class="pr-topbar__title" id="jobsTopTitle">Job Search Results</div>
+        <div class="pr-topbar__sub" id="jobsTopSub">Loading results…</div>
+      </div>
+      <div class="pr-topbar__actions">
+        <button class="btn-outline-sm" id="jobsDownloadCSV">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download CSV
+        </button>
+        <button class="btn-outline-sm" id="jobsModifySearch">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          Modify Search
+        </button>
+      </div>
+    </div>
+
+    <div class="pr-body">
+      <aside class="pr-sidebar">
+        <div class="pr-sidebar__title">Refine Results</div>
+
+        <div class="pr-filter">
+          <label>Sort by</label>
+          <div style="position:relative;">
+            <select id="jobsSortFilter">
+              <option value="newest">Newest first</option>
+              <option value="salary_desc">Salary: high to low</option>
+              <option value="salary_asc">Salary: low to high</option>
+            </select>
+            <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+          </div>
+        </div>
+
+        <div class="pr-filter">
+          <label>Min salary (£)</label>
+          <input type="number" id="jobsFilterMinSalary" placeholder="e.g. 30000" min="0" step="1000" style="width:100%;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 12px;font-size:13px;">
+        </div>
+
+        <div class="pr-filter">
+          <label>Job type</label>
+          <div style="position:relative;">
+            <select id="jobsFilterType">
+              <option value="">All types</option>
+              <option value="Permanent">Permanent</option>
+              <option value="Contract">Contract</option>
+              <option value="Temp">Temp</option>
+              <option value="Part-time">Part-time</option>
+            </select>
+            <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+          </div>
+        </div>
+
+        <div class="pr-filter">
+          <label>Remote working</label>
+          <div style="position:relative;">
+            <select id="jobsFilterRemote">
+              <option value="">Any</option>
+              <option value="Remote">Remote</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="Office">Office</option>
+            </select>
+            <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+          </div>
+        </div>
+
+        <button class="btn-accent-sm" style="width:100%;justify-content:center;" id="jobsApplyFilters">Apply Filters</button>
+
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+          <div class="pr-sidebar__title">Data sources</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;" id="jobsSourceList"></div>
+        </div>
+      </aside>
+
+      <main class="pr-main" id="jobsMain">
+        <div class="pr-stats-bar" id="jobsStatsBar" style="display:none;">
+          <div class="pr-stats" id="jobsStatsText"></div>
+        </div>
+
+        <div class="pr-loading" id="jobsLoading">
+          <div class="pr-loading__crab">💼</div>
+          <div class="pr-loading__text" id="jobsLoadingText">Crabify is searching for jobs…</div>
+          <div class="pr-loading__bar"><div class="pr-loading__fill"></div></div>
+          <div class="pr-loading__sources" id="jobsLoadingSources">
+            <span class="pr-loading__source scanning" style="background:rgba(230,57,70,0.12);color:#e63946;">Reed.co.uk</span>
+          </div>
+        </div>
+
+        <div class="pr-grid" id="jobsGrid" style="display:none; grid-template-columns: 1fr !important;"></div>
+
+        <div class="pr-empty" id="jobsEmpty" style="display:none;">
+          <div class="pr-empty__icon">📋</div>
+          <div class="pr-empty__title">No jobs found</div>
+          <div class="pr-empty__sub" id="jobsEmptyMsg">Try different keywords or a wider location.</div>
+        </div>
+
+        <div class="pr-pagination" id="jobsPagination" style="display:none;"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CARS + JOBS JAVASCRIPT
+  ============================================================ -->
+  <script>
+  /* ── CARS SEARCH ─────────────────────────────────────────── */
+  (function() {
+    'use strict';
+    const $ = id => document.getElementById(id);
+
+    const carsState = {
+      searchParams: {},
+      allResults: [],
+      filteredResults: [],
+      currentPage: 1,
+      perPage: 15,
+      totalResults: 0,
+      locationLabel: '',
+    };
+
+    /* Open / close */
+    function openCarsModal() {
+      $('carsOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => $('carsLocation').focus(), 300);
+    }
+    function closeCarsModal() {
+      $('carsOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Wire category card
+    const carsCard = document.getElementById('openCarSearch');
+    if (carsCard) carsCard.addEventListener('click', e => { e.preventDefault(); openCarsModal(); });
+    $('carsClose').addEventListener('click', closeCarsModal);
+    $('carsBackdrop').addEventListener('click', closeCarsModal);
+    $('carsBack').addEventListener('click', () => { $('carsPage').classList.remove('open'); document.body.style.overflow = ''; openCarsModal(); });
+    $('carsModifySearch').addEventListener('click', () => { $('carsPage').classList.remove('open'); document.body.style.overflow = ''; openCarsModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('carsOverlay').classList.contains('open')) closeCarsModal(); });
+
+    /* Submit */
+    $('carsSubmit').addEventListener('click', () => {
+      const loc = $('carsLocation').value.trim();
+      if (!loc) { $('carsLocation').focus(); $('carsLocation').style.borderColor='var(--accent)'; setTimeout(()=>$('carsLocation').style.borderColor='',2000); return; }
+      carsState.searchParams = {
+        location: loc, make: $('carsMake').value.trim(), model: $('carsModel').value.trim(),
+        min_price: $('carsMinPrice').value, max_price: $('carsMaxPrice').value,
+        year_from: $('carsYearFrom').value, max_mileage: $('carsMaxMileage').value,
+        fuel: $('carsFuel').value, transmission: $('carsTransmission').value,
+        sort: 'newest', index: 0,
+      };
+      carsState.locationLabel = loc;
+      carsState.currentPage = 1;
+      carsState.allResults = [];
+      carsState.filteredResults = [];
+      // Pre-populate sidebar
+      if (carsState.searchParams.min_price) $('carsFilterMinPrice').value = carsState.searchParams.min_price;
+      if (carsState.searchParams.max_price) $('carsFilterMaxPrice').value = carsState.searchParams.max_price;
+      if (carsState.searchParams.year_from) $('carsFilterYear').value = carsState.searchParams.year_from;
+      if (carsState.searchParams.fuel) $('carsFilterFuel').value = carsState.searchParams.fuel;
+      closeCarsModal();
+      openCarsResultsPage();
+      doCarsSearch();
+    });
+    $('carsLocation').addEventListener('keydown', e => { if (e.key === 'Enter') $('carsSubmit').click(); });
+
+    function openCarsResultsPage() {
+      $('carsPage').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      $('carsGrid').style.display = 'none';
+      $('carsEmpty').style.display = 'none';
+      $('carsStatsBar').style.display = 'none';
+      $('carsPagination').style.display = 'none';
+      $('carsLoading').style.display = 'flex';
+      $('carsTopTitle').textContent = `Cars near ${carsState.locationLabel}`;
+      $('carsTopSub').textContent = 'Crabify is searching…';
+    }
+
+    const carsLoadingMsgs = ['Crabify is searching for cars…','Scanning Exchange & Mart…','Scanning Gumtree Cars…','Comparing prices across sources…','Gathering vehicle details…'];
+    let carsLoadingInterval, carsMsgIdx = 0;
+    function startCarsLoading() {
+      carsMsgIdx = 0; $('carsLoadingText').textContent = carsLoadingMsgs[0];
+      carsLoadingInterval = setInterval(() => {
+        carsMsgIdx = (carsMsgIdx + 1) % carsLoadingMsgs.length;
+        $('carsLoadingText').textContent = carsLoadingMsgs[carsMsgIdx];
+        document.querySelectorAll('#carsLoadingSources .pr-loading__source').forEach(s => s.classList.remove('scanning'));
+        const srcs = document.querySelectorAll('#carsLoadingSources .pr-loading__source');
+        if (srcs[carsMsgIdx % srcs.length]) srcs[carsMsgIdx % srcs.length].classList.add('scanning');
+      }, 1400);
+    }
+    function stopCarsLoading() { clearInterval(carsLoadingInterval); }
+
+    async function doCarsSearch(page = 1) {
+      startCarsLoading();
+      $('carsLoading').style.display = 'flex';
+      $('carsGrid').style.display = 'none';
+      $('carsEmpty').style.display = 'none';
+      $('carsStatsBar').style.display = 'none';
+
+      const params = Object.assign({}, carsState.searchParams, { index: (page - 1) * 15 });
+      const qs = new URLSearchParams();
+      Object.entries(params).forEach(([k, v]) => { if (v !== '' && v !== null && v !== undefined && v !== false) qs.set(k, v); });
+
+      try {
+        const resp = await fetch(`/api/cars?${qs.toString()}`);
+        const data = await resp.json();
+        stopCarsLoading();
+        $('carsLoading').style.display = 'none';
+
+        carsState.allResults = data.results || [];
+        carsState.totalResults = data.total || carsState.allResults.length;
+        carsState.currentPage = page;
+        carsState.filteredResults = [...carsState.allResults];
+
+        const sourceTotals = data.source_totals || {};
+        const totalParts = Object.entries(sourceTotals).filter(([,v]) => v > 0).map(([k,v]) => `${k}: ${v.toLocaleString()}`).join(' · ');
+        $('carsTopSub').textContent = `${carsState.totalResults.toLocaleString()} results found${totalParts ? ' (' + totalParts + ')' : ''}`;
+
+        // Update source list
+        const srcList = $('carsSourceList');
+        srcList.innerHTML = '';
+        ['Exchange&Mart','Gumtree'].forEach(src => {
+          const t = sourceTotals[src] || 0;
+          const colors = {'Exchange&Mart':'#2563eb','Gumtree':'#00a86b'};
+          const div = document.createElement('div');
+          div.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);';
+          div.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:${colors[src]||'#888'};flex-shrink:0;"></span><span>${src}</span><span style="margin-left:auto;font-weight:600;color:var(--text-primary);">${t > 0 ? t.toLocaleString() : '—'}</span>`;
+          srcList.appendChild(div);
+        });
+
+        applyCarsFilters();
+        renderCarsResults();
+      } catch(err) {
+        stopCarsLoading();
+        $('carsLoading').style.display = 'none';
+        $('carsEmpty').style.display = 'flex';
+        $('carsEmptyMsg').textContent = 'Could not connect to search. Please try again.';
+        console.error('Cars search error:', err);
+      }
+    }
+
+    function applyCarsFilters() {
+      let results = [...carsState.allResults];
+      const minP = parseFloat($('carsFilterMinPrice').value) || 0;
+      const maxP = parseFloat($('carsFilterMaxPrice').value) || Infinity;
+      const yearF = parseInt($('carsFilterYear').value) || 0;
+      const fuelF = $('carsFilterFuel').value.toLowerCase();
+      const sortBy = $('carsSortFilter').value;
+
+      results = results.filter(c => {
+        const p = c.price_num || 0;
+        if (minP && p < minP) return false;
+        if (maxP < Infinity && p > maxP) return false;
+        if (yearF && parseInt(c.year || 0) < yearF) return false;
+        if (fuelF && c.fuel && !c.fuel.toLowerCase().includes(fuelF)) return false;
+        return true;
+      });
+
+      if (sortBy === 'price_asc') results.sort((a,b) => (a.price_num||0)-(b.price_num||0));
+      else if (sortBy === 'price_desc') results.sort((a,b) => (b.price_num||0)-(a.price_num||0));
+      else if (sortBy === 'year_desc') results.sort((a,b) => parseInt(b.year||0)-parseInt(a.year||0));
+      else if (sortBy === 'mileage_asc') results.sort((a,b) => {
+        const ma = parseInt((a.mileage||'').replace(/[^\d]/g,''))||999999;
+        const mb = parseInt((b.mileage||'').replace(/[^\d]/g,''))||999999;
+        return ma-mb;
+      });
+
+      carsState.filteredResults = results;
+    }
+
+    function renderCarsResults() {
+      const grid = $('carsGrid');
+      grid.innerHTML = '';
+      const results = carsState.filteredResults;
+      if (!results.length) {
+        $('carsEmpty').style.display = 'flex';
+        $('carsStatsBar').style.display = 'none';
+        return;
+      }
+      $('carsEmpty').style.display = 'none';
+      $('carsStatsBar').style.display = 'flex';
+      grid.style.display = 'grid';
+      $('carsStatsText').innerHTML = `Showing <strong>${results.length}</strong> of <strong>${carsState.totalResults}</strong> cars near <strong>${carsState.locationLabel}</strong>`;
+
+      results.forEach((car, idx) => {
+        const card = buildCarCard(car);
+        card.style.animationDelay = `${Math.min(idx*40,400)}ms`;
+        card.style.animation = 'fadeInUp 0.4s ease both';
+        grid.appendChild(card);
+      });
+
+      renderCarsPagination();
+    }
+
+    function buildCarCard(car) {
+      const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      const sourceColors = {'Exchange&Mart':'#2563eb','Gumtree':'#00a86b'};
+      const srcColor = sourceColors[car.source] || '#888';
+      const imgHtml = car.image
+        ? `<img src="${esc(car.image)}" alt="${esc(car.title)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:40px;\\'>🚗</div>'">`
+        : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:40px;">🚗</div>`;
+
+      const div = document.createElement('div');
+      div.className = 'pc__card';
+      div.innerHTML = `
+        <div class="pc__img-wrap" style="height:200px;">${imgHtml}
+          <span class="pc__source-badge" style="background:${srcColor};color:#fff;">${esc(car.source)}</span>
+          ${car.year ? `<span class="pc__new-badge">${esc(car.year)}</span>` : ''}
+        </div>
+        <div class="pc__body">
+          <div class="pc__price">${esc(car.price)}</div>
+          <div class="pc__address" style="font-weight:600;">${esc(car.title)}</div>
+          <div class="pc__tags" style="margin-top:6px;">
+            ${car.mileage ? `<span class="pc__tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>${esc(car.mileage)} miles</span>` : ''}
+            ${car.fuel ? `<span class="pc__tag">⛽ ${esc(car.fuel)}</span>` : ''}
+            ${car.transmission ? `<span class="pc__tag">⚙️ ${esc(car.transmission)}</span>` : ''}
+          </div>
+          ${car.description ? `<div class="pc__description">${esc(car.description.slice(0,120))}…</div>` : ''}
+          <div class="pc__agent-row">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:11px;color:var(--text-muted);">${esc(car.agent || 'Dealer')}</div>
+            </div>
+            ${car.url ? `<a href="${esc(car.url)}" target="_blank" rel="noopener" class="pc__view-btn" onclick="event.stopPropagation()">View →</a>` : ''}
+          </div>
+        </div>`;
+      return div;
+    }
+
+    function renderCarsPagination() {
+      const total = carsState.totalResults;
+      const pages = Math.ceil(total / carsState.perPage);
+      const pag = $('carsPagination');
+      pag.innerHTML = '';
+      if (pages <= 1) { pag.style.display = 'none'; return; }
+      pag.style.display = 'flex';
+      const cur = carsState.currentPage;
+      const prev = document.createElement('button');
+      prev.className = 'pr-page-btn'; prev.textContent = '←';
+      prev.disabled = cur === 1;
+      prev.onclick = () => { doCarsSearch(cur - 1); $('carsMain').scrollTo(0,0); };
+      pag.appendChild(prev);
+      const maxP = Math.min(pages, 10);
+      for (let i = 1; i <= maxP; i++) {
+        const b = document.createElement('button');
+        b.className = 'pr-page-btn' + (i === cur ? ' active' : ''); b.textContent = i;
+        b.onclick = ((p) => () => { doCarsSearch(p); $('carsMain').scrollTo(0,0); })(i);
+        pag.appendChild(b);
+      }
+      const next = document.createElement('button');
+      next.className = 'pr-page-btn'; next.textContent = '→';
+      next.disabled = cur >= pages;
+      next.onclick = () => { doCarsSearch(cur + 1); $('carsMain').scrollTo(0,0); };
+      pag.appendChild(next);
+    }
+
+    $('carsApplyFilters').addEventListener('click', () => {
+      carsState.searchParams.sort = $('carsSortFilter').value;
+      applyCarsFilters(); renderCarsResults();
+    });
+    $('carsSortFilter').addEventListener('change', () => {
+      carsState.searchParams.sort = $('carsSortFilter').value;
+      applyCarsFilters(); renderCarsResults();
+    });
+
+    // Download CSV
+    $('carsDownloadCSV').addEventListener('click', () => {
+      if (!carsState.filteredResults.length) { alert('No results to download.'); return; }
+      const headers = ['Title','Price','Year','Mileage','Fuel','Transmission','Source','URL'];
+      const rows = carsState.filteredResults.map(c => [
+        c.title, c.price, c.year, c.mileage, c.fuel, c.transmission, c.source, c.url
+      ].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(','));
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = `crabify-cars-${carsState.locationLabel}-${Date.now()}.csv`;
+      a.click();
+    });
+
+  })();
+
+  /* ── JOBS SEARCH ─────────────────────────────────────────── */
+  (function() {
+    'use strict';
+    const $ = id => document.getElementById(id);
+
+    const jobsState = {
+      searchParams: {},
+      allResults: [],
+      filteredResults: [],
+      currentPage: 1,
+      perPage: 25,
+      totalResults: 0,
+      queryLabel: '',
+      locationLabel: '',
+      jobType: 'any',
+    };
+
+    function openJobsModal() {
+      $('jobsOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => $('jobsQuery').focus(), 300);
+    }
+    function closeJobsModal() {
+      $('jobsOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Wire category card (green 22c55e)
+    const jobsCard = document.getElementById('openJobSearch');
+    if (jobsCard) jobsCard.addEventListener('click', e => { e.preventDefault(); openJobsModal(); });
+    $('jobsClose').addEventListener('click', closeJobsModal);
+    $('jobsBackdrop').addEventListener('click', closeJobsModal);
+    $('jobsBack').addEventListener('click', () => { $('jobsPage').classList.remove('open'); document.body.style.overflow = ''; openJobsModal(); });
+    $('jobsModifySearch').addEventListener('click', () => { $('jobsPage').classList.remove('open'); document.body.style.overflow = ''; openJobsModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('jobsOverlay').classList.contains('open')) closeJobsModal(); });
+
+    // Job type tabs
+    document.querySelectorAll('#jobsTypeTabs .ps-type-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('#jobsTypeTabs .ps-type-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        jobsState.jobType = tab.dataset.jobtype;
+      });
+    });
+
+    $('jobsSubmit').addEventListener('click', () => {
+      const query = $('jobsQuery').value.trim();
+      const loc = $('jobsLocation').value.trim() || 'UK';
+      if (!query) { $('jobsQuery').focus(); $('jobsQuery').style.borderColor='var(--accent)'; setTimeout(()=>$('jobsQuery').style.borderColor='',2000); return; }
+      jobsState.searchParams = {
+        query, location: loc,
+        min_salary: $('jobsMinSalary').value, max_salary: $('jobsMaxSalary').value,
+        job_type: jobsState.jobType, radius: $('jobsRadius').value,
+        sort: 'newest', index: 0,
+      };
+      jobsState.queryLabel = query;
+      jobsState.locationLabel = loc;
+      jobsState.currentPage = 1;
+      jobsState.allResults = [];
+      jobsState.filteredResults = [];
+      if (jobsState.searchParams.min_salary) $('jobsFilterMinSalary').value = jobsState.searchParams.min_salary;
+      closeJobsModal();
+      openJobsResultsPage();
+      doJobsSearch();
+    });
+    $('jobsQuery').addEventListener('keydown', e => { if (e.key === 'Enter') $('jobsSubmit').click(); });
+
+    function openJobsResultsPage() {
+      $('jobsPage').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      $('jobsGrid').style.display = 'none';
+      $('jobsEmpty').style.display = 'none';
+      $('jobsStatsBar').style.display = 'none';
+      $('jobsPagination').style.display = 'none';
+      $('jobsLoading').style.display = 'flex';
+      $('jobsTopTitle').textContent = `${jobsState.queryLabel} jobs in ${jobsState.locationLabel}`;
+      $('jobsTopSub').textContent = 'Crabify is searching…';
+    }
+
+    const jobsLoadingMsgs = ['Crabify is searching for jobs…','Scanning Reed.co.uk…','Analysing salaries and benefits…','Gathering job descriptions…','Collating results for you…'];
+    let jobsLoadingInterval, jobsMsgIdx = 0;
+    function startJobsLoading() {
+      jobsMsgIdx = 0; $('jobsLoadingText').textContent = jobsLoadingMsgs[0];
+      jobsLoadingInterval = setInterval(() => {
+        jobsMsgIdx = (jobsMsgIdx + 1) % jobsLoadingMsgs.length;
+        $('jobsLoadingText').textContent = jobsLoadingMsgs[jobsMsgIdx];
+      }, 1400);
+    }
+    function stopJobsLoading() { clearInterval(jobsLoadingInterval); }
+
+    async function doJobsSearch(page = 1) {
+      startJobsLoading();
+      $('jobsLoading').style.display = 'flex';
+      $('jobsGrid').style.display = 'none';
+      $('jobsEmpty').style.display = 'none';
+      $('jobsStatsBar').style.display = 'none';
+
+      const params = Object.assign({}, jobsState.searchParams, { index: (page - 1) * 25 });
+      const qs = new URLSearchParams();
+      Object.entries(params).forEach(([k, v]) => { if (v !== '' && v !== null && v !== undefined && v !== false && v !== 'any') qs.set(k, v); });
+
+      try {
+        const resp = await fetch(`/api/jobs?${qs.toString()}`);
+        const data = await resp.json();
+        stopJobsLoading();
+        $('jobsLoading').style.display = 'none';
+
+        jobsState.allResults = data.results || [];
+        jobsState.totalResults = data.total || jobsState.allResults.length;
+        jobsState.currentPage = page;
+        jobsState.filteredResults = [...jobsState.allResults];
+
+        $('jobsTopSub').textContent = `${jobsState.totalResults.toLocaleString()} jobs found · Reed.co.uk`;
+
+        // Update source list
+        const srcList = $('jobsSourceList');
+        srcList.innerHTML = '';
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);';
+        div.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:#e63946;flex-shrink:0;"></span><span>Reed.co.uk</span><span style="margin-left:auto;font-weight:600;color:var(--text-primary);">${jobsState.totalResults.toLocaleString()}</span>`;
+        srcList.appendChild(div);
+
+        applyJobsFilters();
+        renderJobsResults();
+      } catch(err) {
+        stopJobsLoading();
+        $('jobsLoading').style.display = 'none';
+        $('jobsEmpty').style.display = 'flex';
+        $('jobsEmptyMsg').textContent = 'Could not connect to search. Please try again.';
+        console.error('Jobs search error:', err);
+      }
+    }
+
+    function applyJobsFilters() {
+      let results = [...jobsState.allResults];
+      const minSal = parseFloat($('jobsFilterMinSalary').value) || 0;
+      const typeF = $('jobsFilterType').value;
+      const remoteF = $('jobsFilterRemote').value;
+      const sortBy = $('jobsSortFilter').value;
+
+      results = results.filter(j => {
+        if (minSal && (j.salary_num || 0) < minSal) return false;
+        if (typeF && j.job_type !== typeF) return false;
+        if (remoteF && j.remote !== remoteF) return false;
+        return true;
+      });
+
+      if (sortBy === 'salary_desc') results.sort((a,b) => (b.salary_num||0)-(a.salary_num||0));
+      else if (sortBy === 'salary_asc') results.sort((a,b) => (a.salary_num||0)-(b.salary_num||0));
+
+      jobsState.filteredResults = results;
+    }
+
+    function renderJobsResults() {
+      const grid = $('jobsGrid');
+      grid.innerHTML = '';
+      const results = jobsState.filteredResults;
+      if (!results.length) {
+        $('jobsEmpty').style.display = 'flex';
+        $('jobsStatsBar').style.display = 'none';
+        return;
+      }
+      $('jobsEmpty').style.display = 'none';
+      $('jobsStatsBar').style.display = 'flex';
+      grid.style.display = 'grid';
+      $('jobsStatsText').innerHTML = `Showing <strong>${results.length}</strong> of <strong>${jobsState.totalResults}</strong> <strong>${jobsState.queryLabel}</strong> jobs in <strong>${jobsState.locationLabel}</strong>`;
+
+      results.forEach((job, idx) => {
+        const card = buildJobCard(job);
+        card.style.animationDelay = `${Math.min(idx*30,400)}ms`;
+        card.style.animation = 'fadeInUp 0.4s ease both';
+        grid.appendChild(card);
+      });
+
+      renderJobsPagination();
+    }
+
+    function buildJobCard(job) {
+      const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      const logoHtml = job.logo
+        ? `<img src="${esc(job.logo)}" alt="${esc(job.company)}" style="width:44px;height:44px;object-fit:contain;border-radius:8px;border:1px solid var(--border);" loading="lazy" onerror="this.style.display='none'">`
+        : `<div style="width:44px;height:44px;border-radius:8px;background:var(--bg-card2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💼</div>`;
+      const remoteTag = job.remote ? `<span class="pc__tag" style="background:rgba(34,197,94,0.1);color:#16a34a;">🏠 ${esc(job.remote)}</span>` : '';
+      const easyApply = job.easy_apply ? `<span class="pc__tag" style="background:rgba(37,99,235,0.1);color:#2563eb;">⚡ Easy Apply</span>` : '';
+      const div = document.createElement('div');
+      div.className = 'pc__card';
+      div.style.cssText = 'cursor:pointer;';
+      div.innerHTML = `
+        <div class="pc__body" style="padding:16px 18px;">
+          <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;">
+            ${logoHtml}
+            <div style="flex:1;min-width:0;">
+              <div class="pc__price" style="font-size:15px;font-weight:700;margin-bottom:2px;">${esc(job.title)}</div>
+              <div style="font-size:13px;color:var(--text-secondary);font-weight:500;">${esc(job.company)}</div>
+            </div>
+            <span class="pc__source-badge" style="background:#e63946;color:#fff;position:relative;top:0;right:0;bottom:auto;left:auto;flex-shrink:0;">Reed</span>
+          </div>
+          <div class="pc__tags" style="margin-bottom:8px;">
+            <span class="pc__tag">📍 ${esc(job.location)}</span>
+            <span class="pc__tag" style="color:var(--green);font-weight:600;">💷 ${esc(job.salary)}</span>
+            <span class="pc__tag">🕐 ${esc(job.job_type)}</span>
+            ${remoteTag}${easyApply}
+          </div>
+          <div class="pc__description" style="-webkit-line-clamp:3;">${esc(job.description)}</div>
+          <div class="pc__agent-row" style="margin-top:10px;">
+            <div style="font-size:11px;color:var(--text-muted);">Posted: ${esc(job.date_posted)}</div>
+            ${job.url ? `<a href="${esc(job.url)}" target="_blank" rel="noopener" class="pc__view-btn" onclick="event.stopPropagation()">Apply →</a>` : ''}
+          </div>
+        </div>`;
+      if (job.url) div.onclick = () => window.open(job.url, '_blank', 'noopener');
+      return div;
+    }
+
+    function renderJobsPagination() {
+      const total = jobsState.totalResults;
+      const pages = Math.ceil(total / jobsState.perPage);
+      const pag = $('jobsPagination');
+      pag.innerHTML = '';
+      if (pages <= 1) { pag.style.display = 'none'; return; }
+      pag.style.display = 'flex';
+      const cur = jobsState.currentPage;
+      const prev = document.createElement('button');
+      prev.className = 'pr-page-btn'; prev.textContent = '←';
+      prev.disabled = cur === 1;
+      prev.onclick = () => { doJobsSearch(cur - 1); $('jobsMain').scrollTo(0,0); };
+      pag.appendChild(prev);
+      const maxP = Math.min(pages, 10);
+      for (let i = 1; i <= maxP; i++) {
+        const b = document.createElement('button');
+        b.className = 'pr-page-btn' + (i === cur ? ' active' : ''); b.textContent = i;
+        b.onclick = ((p) => () => { doJobsSearch(p); $('jobsMain').scrollTo(0,0); })(i);
+        pag.appendChild(b);
+      }
+      const next = document.createElement('button');
+      next.className = 'pr-page-btn'; next.textContent = '→';
+      next.disabled = cur >= pages;
+      next.onclick = () => { doJobsSearch(cur + 1); $('jobsMain').scrollTo(0,0); };
+      pag.appendChild(next);
+    }
+
+    $('jobsApplyFilters').addEventListener('click', () => { applyJobsFilters(); renderJobsResults(); });
+    $('jobsSortFilter').addEventListener('change', () => { applyJobsFilters(); renderJobsResults(); });
+
+    // Download CSV
+    $('jobsDownloadCSV').addEventListener('click', () => {
+      if (!jobsState.filteredResults.length) { alert('No results to download.'); return; }
+      const headers = ['Title','Company','Location','Salary','Job Type','Remote','Date Posted','Source','URL'];
+      const rows = jobsState.filteredResults.map(j => [
+        j.title, j.company, j.location, j.salary, j.job_type, j.remote, j.date_posted, j.source, j.url
+      ].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(','));
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = `crabify-jobs-${jobsState.queryLabel}-${jobsState.locationLabel}-${Date.now()}.csv`;
+      a.click();
     });
 
   })();

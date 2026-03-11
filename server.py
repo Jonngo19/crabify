@@ -1297,6 +1297,516 @@ def build_viewing_emails(user_info: dict, properties: list) -> dict:
     return results
 
 
+# ═══════════════════════════════════════════════════════════════
+# CARS SCRAPERS
+# ═══════════════════════════════════════════════════════════════
+
+def _parse_price_int(price_str: str) -> int:
+    """Convert '£15,998' to 15998; returns 0 on failure."""
+    try:
+        return int(re.sub(r'[^\d]', '', price_str))
+    except Exception:
+        return 0
+
+
+def exchangeandmart_search(location: str, params: dict) -> tuple:
+    """
+    Scrape Exchange & Mart used-car listings.
+    Returns (list_of_cars, total_count).
+    URL pattern: /used-cars-for-sale?location={loc}&price-to={max}&price-from={min}&year-from={yr}&make={make}&model={model}&page={p}
+    """
+    qp = {"location": location}
+    if params.get("car_min_price"):
+        qp["price-from"] = params["car_min_price"]
+    if params.get("car_max_price"):
+        qp["price-to"] = params["car_max_price"]
+    if params.get("car_year_from"):
+        qp["year-from"] = params["car_year_from"]
+    if params.get("car_make") and params["car_make"].lower() not in ("", "any"):
+        qp["make"] = params["car_make"]
+    if params.get("car_model") and params["car_model"].lower() not in ("", "any"):
+        qp["model"] = params["car_model"]
+    if params.get("car_fuel") and params["car_fuel"].lower() not in ("", "any"):
+        qp["fuel-type"] = params["car_fuel"]
+    if params.get("car_transmission") and params["car_transmission"].lower() not in ("", "any"):
+        qp["transmission"] = params["car_transmission"]
+
+    index = int(params.get("index", 0))
+    page = index // 15 + 1
+    if page > 1:
+        qp["page"] = str(page)
+
+    url = "https://www.exchangeandmart.co.uk/used-cars-for-sale?" + urllib.parse.urlencode(qp)
+    print(f"  [E&M] Fetching: {url}")
+
+    try:
+        req = urllib.request.Request(url, headers=BROWSER_HEADERS)
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            if resp.status not in (200, 301, 302):
+                raise Exception(f"HTTP {resp.status}")
+            html = resp.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as e:
+        print(f"  [E&M] HTTP error: {e.code}")
+        return [], 0
+    except Exception as e:
+        print(f"  [E&M] Error: {e}")
+        return [], 0
+
+    # Parse total count — E&M doesn't show explicit total so count ads on page * estimate
+    total_match = re.search(r'(\d[\d,]*)\s+(?:used\s+)?(?:cars?|vehicles?|results?)\s+found', html, re.IGNORECASE)
+    if not total_match:
+        total_match = re.search(r'<span[^>]*class="[^"]*count[^"]*"[^>]*>([\d,]+)', html, re.IGNORECASE)
+    if total_match:
+        total = int(re.sub(r'[^\d]', '', total_match.group(1)))
+    else:
+        # Count ad IDs as proxy for page size; assume many more pages available
+        ad_count = len(re.findall(r'adid="\d+"', html))
+        total = ad_count * 20  # rough estimate
+
+    # Parse listings — extract each <div class="result-item"...> chunk
+    # Split HTML on result-item divs
+    parts = re.split(r'(?=<div class="result-item")', html)
+    cars = []
+    for item in parts[1:16]:  # Skip preamble, limit to 15
+        try:
+            # Make/model from div attributes
+            make = re.search(r'\bmake="([^"]+)"', item)
+            model = re.search(r'\bmodel="([^"]+)"', item)
+            make = make.group(1).strip() if make else ""
+            model = model.group(1).strip() if model else ""
+
+            # Variant
+            variant_m = re.search(r'class="result-item__variant"[^>]*>([^<]+)<', item)
+            variant = variant_m.group(1).strip() if variant_m else ""
+            title = f"{make} {model} {variant}".strip()
+
+            # Price
+            price_m = re.search(r'class="price price--primary"[^>]*>(£[\d,]+)', item)
+            if not price_m:
+                price_m = re.search(r'class="price[^"]*"[^>]*>(£[\d,]+)', item)
+            price = price_m.group(1).strip() if price_m else ""
+
+            # URL
+            href_m = re.search(r'href="(/ad/\d+)"', item)
+            url_suffix = href_m.group(1) if href_m else ""
+            listing_url = f"https://www.exchangeandmart.co.uk{url_suffix}" if url_suffix else ""
+
+            # Key details (year, transmission, fuel, mileage)
+            kd = re.findall(r'class="key-details__item">([^<]+)<', item)
+            year = next((k.strip() for k in kd if re.match(r'^\s*\d{4}\s*$', k)), "")
+            mileage_raw = next((k for k in kd if "mileage" in k.lower() or "mile" in k.lower()), "")
+            mileage = re.sub(r'(?i)mileage:\s*', '', mileage_raw).strip()
+            fuel = next((k.strip() for k in kd if k.strip().lower() in ("petrol","diesel","electric","hybrid","plug-in hybrid")), "")
+            transmission = next((k.strip() for k in kd if k.strip().lower() in ("manual","automatic","semi-auto","semi-automatic")), "")
+
+            # Image
+            img_m = re.search(r'data-mainimage="(https?://[^"]+)"', item)
+            if not img_m:
+                img_m = re.search(r'<img[^>]+src="(https?://[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"', item, re.IGNORECASE)
+            image = img_m.group(1) if img_m else ""
+
+            # Description
+            desc_m = re.search(r'class="result-item__description[^"]*">([^<]{10,})<', item)
+            desc = desc_m.group(1).strip() if desc_m else ""
+
+            if not title.strip() or not price:
+                continue
+
+            cars.append({
+                "id": f"em_{url_suffix.replace('/ad/','')}",
+                "title": title,
+                "make": make,
+                "model": model,
+                "year": year,
+                "price": price,
+                "price_num": _parse_price_int(price),
+                "mileage": mileage,
+                "fuel": fuel,
+                "transmission": transmission,
+                "image": image,
+                "description": desc,
+                "url": listing_url,
+                "source": "Exchange&Mart",
+                "agent": "",
+                "agent_phone": "",
+            })
+        except Exception as e:
+            print(f"  [E&M] Parse error: {e}")
+
+    print(f"  [E&M] Found {len(cars)} cars (total: {total})")
+    return cars, total
+
+
+def gumtree_car_search(location: str, params: dict) -> tuple:
+    """
+    Scrape Gumtree car listings.
+    Returns (list_of_cars, total_count).
+    """
+    loc_slug = re.sub(r'[^a-z0-9]+', '-', location.strip().lower()).strip('-')
+    qp = {}
+    if params.get("car_min_price"):
+        qp["min_price"] = params["car_min_price"]
+    if params.get("car_max_price"):
+        qp["max_price"] = params["car_max_price"]
+    if params.get("car_year_from"):
+        qp["min_year"] = params["car_year_from"]
+
+    index = int(params.get("index", 0))
+    page = index // 20 + 1
+    if page > 1:
+        qp["page"] = str(page)
+
+    sort_val = params.get("sort", "newest")
+    if sort_val == "price_asc":
+        qp["sort"] = "price_asc"
+    elif sort_val == "price_desc":
+        qp["sort"] = "price_desc"
+
+    qs = urllib.parse.urlencode(qp)
+    url = f"https://www.gumtree.com/cars/uk/{loc_slug}{'?' + qs if qs else ''}"
+    print(f"  [GT Cars] Fetching: {url}")
+
+    try:
+        req = urllib.request.Request(url, headers=BROWSER_HEADERS)
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            if resp.status not in (200, 201):
+                print(f"  [GT Cars] HTTP {resp.status} — skipping")
+                return [], 0
+            html = resp.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        print(f"  [GT Cars] Error: {e}")
+        return [], 0
+
+    if "kramericaindustries" in html or len(html) < 5000:
+        print("  [GT Cars] Bot challenge detected")
+        return [], 0
+
+    # Parse using article pattern (same as property gumtree scraper)
+    article_chunks = re.findall(
+        r'<article[^>]+data-q="[^"]*listing[^"]*"[^>]*>(.*?)(?=<article|</section)',
+        html, re.DOTALL
+    )
+    if not article_chunks:
+        article_chunks = re.findall(r'<li[^>]+class="[^"]*listing-maxi[^"]*"[^>]*>(.*?)(?=<li|$)', html, re.DOTALL)
+
+    cars = []
+    for chunk in article_chunks[:20]:
+        try:
+            title_m = re.search(r'data-q="listing-title"[^>]*>([^<]+)<', chunk)
+            if not title_m:
+                title_m = re.search(r'<h2[^>]*>.*?<a[^>]*>([^<]+)</a>', chunk, re.DOTALL)
+            title = title_m.group(1).strip() if title_m else ""
+
+            price_m = re.search(r'data-q="listing-price"[^>]*>(£[\d,]+)', chunk)
+            if not price_m:
+                price_m = re.search(r'>(£[\d,]+)<', chunk)
+            price = price_m.group(1).strip() if price_m else ""
+
+            href_m = re.search(r'href="(/p/[^"]+)"', chunk)
+            listing_url = f"https://www.gumtree.com{href_m.group(1)}" if href_m else ""
+
+            img_m = re.search(r'src="(https://[^"]+(?:jpg|jpeg|png|webp)[^"]*)"', chunk, re.IGNORECASE)
+            image = img_m.group(1) if img_m else ""
+
+            desc_m = re.search(r'data-q="listing-description"[^>]*>([^<]{10,})<', chunk)
+            desc = desc_m.group(1).strip() if desc_m else ""
+
+            year_m = re.search(r'\b(19[89]\d|20[012]\d)\b', title + " " + desc)
+            year = year_m.group(1) if year_m else ""
+
+            if not title or not price:
+                continue
+
+            cars.append({
+                "id": f"gt_car_{re.sub(r'[^a-z0-9]','_',title.lower())[:30]}",
+                "title": title,
+                "make": title.split()[0] if title else "",
+                "model": title.split()[1] if len(title.split()) > 1 else "",
+                "year": year,
+                "price": price,
+                "price_num": _parse_price_int(price),
+                "mileage": "",
+                "fuel": "",
+                "transmission": "",
+                "image": image,
+                "description": desc,
+                "url": listing_url,
+                "source": "Gumtree",
+                "agent": "Private Seller",
+                "agent_phone": "",
+            })
+        except Exception as e:
+            print(f"  [GT Cars] Parse error: {e}")
+
+    total_m = re.search(r'([\d,]+)\s+(?:cars?|vehicles?|ads?)\s+(?:found|available)', html, re.IGNORECASE)
+    total = int(re.sub(r'[^\d]', '', total_m.group(1))) if total_m else len(cars)
+    print(f"  [GT Cars] Found {len(cars)} cars (total: {total})")
+    return cars, total
+
+
+def combined_car_search(location: str, params: dict) -> dict:
+    """
+    Run Exchange & Mart and Gumtree car searches in parallel.
+    Returns merged results dict.
+    """
+    em_results, em_total = [], 0
+    gt_results, gt_total = [], 0
+    em_error, gt_error = None, None
+
+    def fetch_em():
+        nonlocal em_results, em_total, em_error
+        try:
+            em_results, em_total = exchangeandmart_search(location, params)
+        except Exception as e:
+            em_error = str(e)
+            print(f"  [E&M] Thread error: {e}")
+
+    def fetch_gt():
+        nonlocal gt_results, gt_total, gt_error
+        try:
+            gt_results, gt_total = gumtree_car_search(location, params)
+        except Exception as e:
+            gt_error = str(e)
+            print(f"  [GT Cars] Thread error: {e}")
+
+    t1 = threading.Thread(target=fetch_em, daemon=True)
+    t2 = threading.Thread(target=fetch_gt, daemon=True)
+    t1.start(); t2.start()
+    t1.join(timeout=25); t2.join(timeout=25)
+
+    # Merge and sort
+    all_results = []
+    max_len = max(len(em_results), len(gt_results), 1)
+    for i in range(max_len):
+        if i < len(em_results): all_results.append(em_results[i])
+        if i < len(gt_results): all_results.append(gt_results[i])
+
+    sort_val = params.get("sort", "newest")
+    if sort_val == "price_asc":
+        all_results.sort(key=lambda x: x.get("price_num", 0) or 999999999)
+    elif sort_val == "price_desc":
+        all_results.sort(key=lambda x: x.get("price_num", 0), reverse=True)
+    elif sort_val == "year_desc":
+        all_results.sort(key=lambda x: int(x.get("year", 0) or 0), reverse=True)
+    elif sort_val == "mileage_asc":
+        def miles_key(x):
+            m = re.sub(r'[^\d]', '', x.get("mileage",""))
+            return int(m) if m else 999999999
+        all_results.sort(key=miles_key)
+
+    sources = []
+    source_totals = {}
+    if em_results:
+        sources.append("Exchange&Mart")
+        source_totals["Exchange&Mart"] = em_total
+    else:
+        source_totals["Exchange&Mart"] = 0
+    if gt_results:
+        sources.append("Gumtree")
+        source_totals["Gumtree"] = gt_total
+    else:
+        source_totals["Gumtree"] = 0
+
+    return {
+        "results": all_results,
+        "total": em_total + gt_total,
+        "shown": len(all_results),
+        "location": location,
+        "sources": sources,
+        "source_totals": source_totals,
+        "errors": {"exchange_mart": em_error, "gumtree": gt_error},
+        "category": "cars",
+    }
+
+
+# ═══════════════════════════════════════════════════════════════
+# JOBS SCRAPERS
+# ═══════════════════════════════════════════════════════════════
+
+def _reed_slug(query: str, location: str) -> str:
+    """Build Reed URL path: /jobs/{query-slug}-jobs-in-{location-slug}"""
+    def slugify(s):
+        return re.sub(r'[^a-z0-9]+', '-', s.strip().lower()).strip('-')
+    q = slugify(query) if query else "jobs"
+    loc = slugify(location) if location else "uk"
+    return f"{q}-jobs-in-{loc}"
+
+
+def reed_search(query: str, location: str, params: dict) -> tuple:
+    """
+    Scrape Reed.co.uk job listings via __NEXT_DATA__.
+    Returns (list_of_jobs, total_count).
+    """
+    slug = _reed_slug(query, location)
+    qp = {}
+    if params.get("job_min_salary"):
+        qp["salaryFrom"] = params["job_min_salary"]
+    if params.get("job_max_salary"):
+        qp["salaryTo"] = params["job_max_salary"]
+    if params.get("job_radius"):
+        qp["proximity"] = params["job_radius"]
+    if params.get("job_type") and params["job_type"] != "any":
+        type_map = {"permanent": "permanent", "contract": "contract", "temp": "temp",
+                    "part_time": "part-time", "full_time": "full-time"}
+        t = type_map.get(params["job_type"], "")
+        if t:
+            qp["contract"] = t
+
+    index = int(params.get("index", 0))
+    page = index // 25 + 1
+    if page > 1:
+        qp["pageno"] = str(page)
+
+    sort_val = params.get("sort", "newest")
+    if sort_val == "salary_asc":
+        qp["sortBy"] = "salary"
+    elif sort_val == "salary_desc":
+        qp["sortBy"] = "salary"  # Reed doesn't separate asc/desc — sort locally
+
+    qs = urllib.parse.urlencode(qp)
+    url = f"https://www.reed.co.uk/jobs/{slug}{'?' + qs if qs else ''}"
+    print(f"  [Reed] Fetching: {url}")
+
+    try:
+        req = urllib.request.Request(url, headers=BROWSER_HEADERS)
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            if resp.status not in (200, 301, 302):
+                raise Exception(f"HTTP {resp.status}")
+            html = resp.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as e:
+        print(f"  [Reed] HTTP error: {e.code}")
+        return [], 0
+    except Exception as e:
+        print(f"  [Reed] Error: {e}")
+        return [], 0
+
+    next_data = re.findall(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.DOTALL)
+    if not next_data:
+        print("  [Reed] No __NEXT_DATA__ found")
+        return [], 0
+
+    try:
+        d = json.loads(next_data[0])
+    except Exception as e:
+        print(f"  [Reed] JSON parse error: {e}")
+        return [], 0
+
+    props = d.get("props", {}).get("pageProps", {})
+    sr = props.get("searchResults", {})
+    raw_jobs = sr.get("jobs", []) + sr.get("promotedJobs", [])[:2]
+    total = sr.get("count", 0)
+
+    jobs = []
+    for rj in raw_jobs:
+        try:
+            jd = rj.get("jobDetail", {})
+            job_id = jd.get("jobId", "")
+            title = jd.get("jobTitle", "")
+            company = jd.get("ouName", rj.get("profileName", ""))
+            location_name = jd.get("displayLocationName", location)
+            salary_desc = jd.get("salaryDescription", "")
+            salary_from = jd.get("salaryFrom", 0)
+            salary_to = jd.get("salaryTo", 0)
+            job_type_id = jd.get("jobType", 1)
+            job_type_map = {1: "Permanent", 2: "Contract", 3: "Temp", 4: "Part-time"}
+            job_type_label = job_type_map.get(job_type_id, "Permanent")
+            is_full_time = jd.get("isFullTime", True)
+            remote = jd.get("remoteWorkingOption", 0)
+            remote_labels = {0: "", 1: "Remote", 2: "Hybrid", 3: "Office"}
+            remote_label = remote_labels.get(remote, "")
+            date_posted = jd.get("displayDate", jd.get("dateCreated", ""))
+            description = re.sub(r'<[^>]+>', '', jd.get("jobDescription", ""))[:300].strip()
+            job_url = f"https://www.reed.co.uk{rj.get('url', '')}" if rj.get("url", "").startswith("/") else rj.get("url", "")
+            if not job_url and job_id:
+                job_url = f"https://www.reed.co.uk/jobs/{job_id}"
+            logo = rj.get("logoImage", {})
+            logo_url = logo.get("url", "") if isinstance(logo, dict) else ""
+
+            # Format salary
+            if salary_desc:
+                salary = salary_desc
+            elif salary_from and salary_to:
+                salary = f"£{salary_from:,} – £{salary_to:,}"
+            elif salary_from:
+                salary = f"£{salary_from:,}+"
+            else:
+                salary = "Salary not specified"
+
+            jobs.append({
+                "id": f"reed_{job_id}",
+                "title": title,
+                "company": company,
+                "location": location_name,
+                "salary": salary,
+                "salary_num": salary_from or 0,
+                "job_type": job_type_label,
+                "is_full_time": is_full_time,
+                "remote": remote_label,
+                "date_posted": date_posted,
+                "description": description,
+                "url": job_url,
+                "logo": logo_url,
+                "source": "Reed",
+                "apply_url": job_url,
+                "taxonomy": jd.get("taxonomyLevel1", ""),
+                "easy_apply": jd.get("isEasyApply", False),
+            })
+        except Exception as e:
+            print(f"  [Reed] Parse error: {e}")
+
+    print(f"  [Reed] Found {len(jobs)} jobs (total: {total})")
+    return jobs, total
+
+
+def combined_job_search(query: str, location: str, params: dict) -> dict:
+    """
+    Run Reed job search (expandable to more sources).
+    Returns merged results dict.
+    """
+    reed_results, reed_total = [], 0
+    reed_error = None
+
+    def fetch_reed():
+        nonlocal reed_results, reed_total, reed_error
+        try:
+            reed_results, reed_total = reed_search(query, location, params)
+        except Exception as e:
+            reed_error = str(e)
+            print(f"  [Reed] Thread error: {e}")
+
+    t1 = threading.Thread(target=fetch_reed, daemon=True)
+    t1.start()
+    t1.join(timeout=25)
+
+    all_results = list(reed_results)
+
+    sort_val = params.get("sort", "newest")
+    if sort_val == "salary_asc":
+        all_results.sort(key=lambda x: x.get("salary_num", 0) or 0)
+    elif sort_val == "salary_desc":
+        all_results.sort(key=lambda x: x.get("salary_num", 0), reverse=True)
+
+    sources = []
+    source_totals = {}
+    if reed_results:
+        sources.append("Reed")
+        source_totals["Reed"] = reed_total
+    else:
+        source_totals["Reed"] = 0
+
+    return {
+        "results": all_results,
+        "total": reed_total,
+        "shown": len(all_results),
+        "query": query,
+        "location": location,
+        "sources": sources,
+        "source_totals": source_totals,
+        "errors": {"reed": reed_error},
+        "category": "jobs",
+    }
+
+
 # ─────────────────────────────────────────────
 # HTTP REQUEST HANDLER
 # ─────────────────────────────────────────────
@@ -1413,6 +1923,46 @@ class CrabifyHandler(BaseHTTPRequestHandler):
             has_key = bool(get_scrapfly_key())
             self.send_json({"enabled": has_key, "key_set": has_key})
 
+        elif path == "/api/cars":
+            location = qs.get("location", [""])[0].strip()
+            if not location:
+                self.send_json({"error": "Missing location parameter"}, 400)
+                return
+            car_params = {
+                "car_make":         qs.get("make", [""])[0],
+                "car_model":        qs.get("model", [""])[0],
+                "car_min_price":    qs.get("min_price", [""])[0],
+                "car_max_price":    qs.get("max_price", [""])[0],
+                "car_year_from":    qs.get("year_from", [""])[0],
+                "car_year_to":      qs.get("year_to", [""])[0],
+                "car_fuel":         qs.get("fuel", [""])[0],
+                "car_transmission": qs.get("transmission", [""])[0],
+                "car_max_mileage":  qs.get("max_mileage", [""])[0],
+                "sort":             qs.get("sort", ["newest"])[0],
+                "index":            int(qs.get("index", ["0"])[0]),
+            }
+            print(f"\n🚗 Car Search: '{location}' | {car_params}")
+            result = combined_car_search(location, car_params)
+            self.send_json(result)
+
+        elif path == "/api/jobs":
+            query = qs.get("query", [""])[0].strip()
+            location = qs.get("location", ["uk"])[0].strip() or "uk"
+            job_params = {
+                "job_min_salary":   qs.get("min_salary", [""])[0],
+                "job_max_salary":   qs.get("max_salary", [""])[0],
+                "job_type":         qs.get("job_type", ["any"])[0],
+                "job_radius":       qs.get("radius", ["20"])[0],
+                "sort":             qs.get("sort", ["newest"])[0],
+                "index":            int(qs.get("index", ["0"])[0]),
+            }
+            if not query:
+                self.send_json({"error": "Missing query parameter"}, 400)
+                return
+            print(f"\n💼 Job Search: '{query}' in '{location}' | {job_params}")
+            result = combined_job_search(query, location, job_params)
+            self.send_json(result)
+
         else:
             self.send_response(404)
             self.end_headers()
@@ -1524,7 +2074,9 @@ def run(port=3000):
     zp_key = get_scrapfly_key()
     zp_status = "✅ enabled" if zp_key else "⚠️  no key (add at /api/config)"
     print(f"🦀 Crabify server running on http://0.0.0.0:{port}")
-    print(f"   Sources: Rightmove ✅ | OnTheMarket ✅ | Zoopla {zp_status} | Gumtree ✅ | SpareRoom ✅ (rent)")
+    print(f"   Property: Rightmove ✅ | OnTheMarket ✅ | Zoopla {zp_status} | Gumtree ✅ | SpareRoom ✅ (rent)")
+    print(f"   Cars:     Exchange&Mart ✅ | Gumtree ✅")
+    print(f"   Jobs:     Reed.co.uk ✅")
     server.serve_forever()
 
 
