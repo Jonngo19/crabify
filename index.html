@@ -655,78 +655,77 @@
     .steps {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-top: 64px;
+      gap: 48px;
+      margin-top: 56px;
     }
     .step {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 36px 32px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       transition: var(--transition);
     }
-    .step::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--accent);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-    }
-    .step:hover::before { transform: scaleX(1); }
-    .step:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-card);
-    }
+    .step::before { display: none; }
+    .step:hover { transform: none; box-shadow: none; }
 
     .step__number {
-      font-size: 60px;
+      font-size: 88px;
       font-weight: 900;
       letter-spacing: -0.04em;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(0,0,0,0.09);
+      color: #f0f0f0;
       line-height: 1;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
+      font-family: var(--font);
     }
-    .step:hover .step__number { -webkit-text-stroke-color: rgba(241,77,76,0.3); }
 
+    .step__icon-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
     .step__icon {
-      width: 44px;
-      height: 44px;
-      background: #f7f7f7;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
+      width: 20px;
+      height: 20px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
-      transition: transform var(--transition-spring);
+      flex-shrink: 0;
+      transition: none;
     }
-    .step:hover .step__icon { transform: scale(1.1) rotate(-5deg); }
+    .step:hover .step__icon { transform: none; }
 
-    .step__title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
-    .step__desc { font-size: 14px; line-height: 1.7; color: var(--text-secondary); }
+    .step__title { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary); }
+    .step__desc { font-size: 13px; line-height: 1.7; color: var(--text-muted); }
+
+    /* HOW IT WORKS label with leading line */
+    .hiw-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .hiw-label::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--text-muted);
+    }
 
     /* Connector lines between steps */
     .steps-wrapper { position: relative; }
-    .steps-connector {
-      position: absolute;
-      top: 50%;
-      left: calc(33.333% + 12px);
-      right: calc(33.333% + 12px);
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
-      z-index: 0;
-      pointer-events: none;
-      display: none; /* show on desktop only */
-    }
+    .steps-connector { display: none; }
 
     /* ============================================================
        CATEGORIES
@@ -2489,10 +2488,9 @@
   ============================================================ -->
   <section class="section" id="how-it-works">
     <div class="container">
-      <div class="section-header" data-animate="fade-up">
-        <span class="label">Process</span>
-        <h2 class="h2">Three steps to<br />smarter decisions</h2>
-        <div class="glow-line"></div>
+      <div data-animate="fade-up">
+        <div class="hiw-label">How it works</div>
+        <h2 class="h2" style="font-size:clamp(28px,4vw,42px);font-weight:700;line-height:1.2;max-width:360px;">Three steps to<br /><em style="color:var(--accent);font-style:normal;">smarter decisions</em></h2>
       </div>
 
       <div class="steps-wrapper">
@@ -2501,33 +2499,36 @@
           <!-- Step 01 -->
           <div class="step">
             <div class="step__number">01</div>
-            <div class="step__icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 6h18M3 12h18M3 18h18"/><circle cx="19" cy="6" r="2" fill="#F14D4C" stroke="none"/></svg>
+            <div class="step__icon-row">
+              <div class="step__icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              </div>
+              <h3 class="step__title">Pick a category</h3>
             </div>
-            <h3 class="step__title">Pick a category</h3>
             <p class="step__desc">Choose what you're looking for — property, cars, jobs, holidays, mortgages, or insurance. Each category has a tailored search form built for that market.</p>
           </div>
 
           <!-- Step 02 -->
           <div class="step">
             <div class="step__number">02</div>
-            <div class="step__icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 20H4a2 2 0 01-2-2V6a2 2 0 012-2h16a2 2 0 012 2v6"/><path d="M16 19h6M19 16v6"/></svg>
+            <div class="step__icon-row">
+              <div class="step__icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              </div>
+              <h3 class="step__title">Set your criteria</h3>
             </div>
-            <h3 class="step__title">Set your criteria</h3>
             <p class="step__desc">Fill in the details that matter to you — budget, location, specifications. Be as broad or specific as you like. Crabify adapts.</p>
           </div>
 
           <!-- Step 03 -->
           <div class="step">
             <div class="step__number">03</div>
-            <div class="step__icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+            <div class="step__icon-row">
+              <div class="step__icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <h3 class="step__title">Receive your report</h3>
             </div>
-            <h3 class="step__title">Receive your report</h3>
             <p class="step__desc">Crabify scrapes listing sites, collates results, and delivers a clean summary with prices, photos, and contact details. Export as PDF.</p>
           </div>
 
