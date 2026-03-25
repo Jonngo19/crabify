@@ -409,21 +409,19 @@
       font-size: 13px; font-weight: 600;
       font-family: 'DM Sans', sans-serif;
       cursor: pointer;
-      border: 1.5px solid var(--border);
-      background: #fff;
+      border: none;
+      background: transparent;
       color: var(--text-secondary);
-      transition: color 0.15s, background 0.15s, border-color 0.15s;
+      transition: color 0.15s, background 0.15s;
       white-space: nowrap;
     }
     .hero__tab:hover {
       color: var(--text-primary);
-      border-color: var(--border-hover);
-      background: #fff;
+      background: rgba(0,0,0,0.04);
     }
     .hero__tab.active {
       color: var(--accent);
       background: rgba(241,77,76,0.07);
-      border-color: rgba(241,77,76,0.4);
     }
 
     /* Search input row */
