@@ -4134,8 +4134,10 @@
 
       results = results.filter(p => {
         const priceNum = extractPriceNum(p.price);
-        // priceNum === -1 means rental price (pcm/pw) — skip purchase price filters
-        if (priceNum !== -1) {
+        const isRentalPrice = isRentalPriceStr(p.price);
+        // Only apply purchase-price filters to non-rental listings
+        // (rental prices like £1,200 pcm use a completely different scale)
+        if (!isRentalPrice) {
           if (minP > 0 && priceNum < minP) return false;
           if (maxP < Infinity && priceNum > maxP) return false;
         }
@@ -4146,21 +4148,17 @@
         return true;
       });
 
-      // Sort — unknown/zero prices go to the bottom for asc, top for desc
-      const NO_PRICE_ASC  = 999999999;
-      const NO_PRICE_DESC = -1;
+      // Sort — unknown/zero prices go to the bottom; rental pcm prices sort after purchase prices
+      const ascKey = p => {
+        const n = extractPriceNum(p.price);
+        if (!n) return 999999999;                 // no price → bottom
+        if (isRentalPriceStr(p.price)) return 900000000 + n;  // rentals after purchase prices
+        return n;
+      };
       if (sortBy === 'price_asc') {
-        results.sort((a,b) => {
-          const pa = extractPriceNum(a.price) || NO_PRICE_ASC;
-          const pb = extractPriceNum(b.price) || NO_PRICE_ASC;
-          return pa - pb;
-        });
+        results.sort((a, b) => ascKey(a) - ascKey(b));
       } else if (sortBy === 'price_desc') {
-        results.sort((a,b) => {
-          const pa = extractPriceNum(a.price) || NO_PRICE_DESC;
-          const pb = extractPriceNum(b.price) || NO_PRICE_DESC;
-          return pb - pa;
-        });
+        results.sort((a, b) => (extractPriceNum(b.price) || 0) - (extractPriceNum(a.price) || 0));
       } else if (sortBy === 'beds_desc') results.sort((a,b) => (b.bedrooms||0) - (a.bedrooms||0));
 
       state.filteredResults = results;
@@ -4170,6 +4168,12 @@
       if (!priceStr) return 0;
       const n = priceStr.replace(/[^0-9]/g, '');
       return parseInt(n) || 0;
+    }
+
+    function isRentalPriceStr(priceStr) {
+      if (!priceStr) return false;
+      const s = priceStr.toLowerCase();
+      return s.includes('pcm') || s.includes(' pw') || s.includes('per week') || s.includes('per month');
     }
 
     $('prApplyFilters').addEventListener('click', () => {

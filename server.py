@@ -1177,11 +1177,25 @@ def combined_search(location: str, params: dict) -> dict:
         digits = re.sub(r"[^0-9]", "", price_str)
         return int(digits) if digits else 0
 
+    def _is_rental_price(p):
+        """True if this listing has a pcm/pw rental price (different scale to purchase prices)."""
+        s = (p.get("price", "") or "").lower()
+        return "pcm" in s or " pw" in s or "per week" in s or "per month" in s
+
     if sort_val == "price_asc":
-        # Items with no price (0) sink to the bottom
-        all_results.sort(key=lambda p: _price_num(p) if _price_num(p) > 0 else 999_999_999)
+        # Rental prices (pcm) use a different scale — sort them after purchase prices
+        # Items with no price sink to the bottom
+        def _asc_key(p):
+            n = _price_num(p)
+            if n == 0:
+                return 999_999_999  # no price → bottom
+            if _is_rental_price(p):
+                return 900_000_000 + n  # rentals after all purchase prices
+            return n
+        all_results.sort(key=_asc_key)
     elif sort_val == "price_desc":
-        # Items with no price (0) sink to the bottom
+        # Items with no price sink to the bottom (0 treated as lowest)
+        # Rental prices after purchase prices in descending too (they're incomparable)
         all_results.sort(key=lambda p: _price_num(p), reverse=True)
     elif sort_val == "beds_desc":
         all_results.sort(key=lambda p: -(p.get("bedrooms") or 0))
@@ -1935,6 +1949,7 @@ class CrabifyHandler(BaseHTTPRequestHandler):
                 "index":         int(qs.get("index", ["0"])[0]),
                 "must_parking":  qs.get("must_parking", ["false"])[0].lower() == "true",
                 "must_garden":   qs.get("must_garden", ["false"])[0].lower() == "true",
+                "sort":          qs.get("sort", ["newest"])[0],
             }
 
             print(f"\n🔍 Search: '{location}' | {params}")
@@ -2103,6 +2118,7 @@ class CrabifyHandler(BaseHTTPRequestHandler):
                 "index":         0,
                 "must_parking":  bool(body.get("must_parking", False)),
                 "must_garden":   bool(body.get("must_garden", False)),
+                "sort":          body.get("sort", "newest"),
             }
 
             print(f"\n🔍 POST Search: '{location}' | {params}")
