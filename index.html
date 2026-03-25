@@ -1639,26 +1639,50 @@
       padding: 100px 0;
       border-top: 1px solid var(--border);
     }
-    .cta-inner {
-      background: transparent;
-      border: none;
-      border-radius: 0;
-      padding: 0;
-      text-align: left;
-      position: relative;
-      overflow: visible;
-    }
-    .cta-inner::before { display: none; }
-    .cta-inner::after { display: none; }
-    .cta-inner > * { position: relative; z-index: 1; }
+    .cta-inner { padding: 0; }
     .cta-headline { margin-bottom: 16px; }
     .cta-sub { max-width: 480px; margin: 0 auto 40px; }
     .cta-actions {
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 16px;
       flex-wrap: wrap;
+    }
+
+    /* ============================================================
+       BENEFITS SECTION
+    ============================================================ */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 48px;
+      margin-top: 56px;
+    }
+    .benefit {
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+    }
+    .benefit__icon-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .benefit__icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .benefit__title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .benefit__desc {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-muted);
     }
     .cta-note {
       margin-top: 20px;
@@ -1826,10 +1850,12 @@
       .steps > *:last-child { grid-column: auto; max-width: 100%; }
       .categories-grid { grid-template-columns: 1fr 1fr; }
       .pricing-grid { grid-template-columns: 1fr; }
+      .benefits-grid { grid-template-columns: 1fr; gap: 24px; }
       .pricing-grid > *:last-child { grid-column: auto; max-width: 100%; }
       .testimonials-grid { grid-template-columns: 1fr; }
       .testimonials-grid > *:last-child { grid-column: auto; }
       .cta-inner { padding: 0; }
+      .benefits-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
       .footer__inner { flex-direction: column; align-items: flex-start; }
       .footer__bottom { flex-direction: column; }
     }
@@ -2687,22 +2713,75 @@
   <!-- ============================================================
        CTA
   ============================================================ -->
-  <section class="cta-section" id="cta">
+  <section class="cta-section" id="benefits">
     <div class="container">
-      <div class="cta-inner" data-animate="scale">
-        <span class="label" style="margin-bottom:20px;">Ready to start?</span>
-        <h2 class="h2 cta-headline">Your time is too valuable<br /><em style="color:var(--accent);font-style:normal;">to scroll.</em></h2>
-        <p class="body-lg cta-sub" style="max-width:480px;margin:16px 0 40px;font-size:15px;color:var(--text-muted);">Let Crabify do the heavy lifting. Set up your first search in under two minutes and receive curated results delivered to you.</p>
-        <div class="cta-actions">
-          <a href="#pricing" class="btn btn-primary btn-lg btn-arrow">
-            Start free today
-            <svg class="arrow-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 9h12M9 3l6 6-6 6"/>
-            </svg>
-          </a>
-          <a href="#how-it-works" class="btn btn-ghost btn-lg">Learn more</a>
+      <div data-animate="fade-up">
+        <div class="hiw-label">Why Crabify</div>
+        <h2 class="h2">Built for buyers who<br /><em style="color:var(--accent);font-style:normal;">value their time</em></h2>
+      </div>
+
+      <div class="benefits-grid" data-stagger>
+
+        <div class="benefit">
+          <div class="benefit__icon-row">
+            <div class="benefit__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+            </div>
+            <span class="benefit__title">Saves you hours</span>
+          </div>
+          <p class="benefit__desc">Instead of opening ten browser tabs and comparing listings manually, Crabify does the leg work in seconds — aggregating, ranking, and summarising results for you.</p>
         </div>
-        <p class="cta-note">No credit card required &middot; Free trial search included &middot; Cancel anytime</p>
+
+        <div class="benefit">
+          <div class="benefit__icon-row">
+            <div class="benefit__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            </div>
+            <span class="benefit__title">No more missed listings</span>
+          </div>
+          <p class="benefit__desc">Crabify searches Rightmove, Zoopla, OnTheMarket, AutoTrader, Reed, Indeed, and more simultaneously — so nothing slips through the cracks.</p>
+        </div>
+
+        <div class="benefit">
+          <div class="benefit__icon-row">
+            <div class="benefit__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <span class="benefit__title">Clean, exportable reports</span>
+          </div>
+          <p class="benefit__desc">Every search produces a structured summary with prices, photos, specs, and contact details — ready to share, save, or export as a PDF.</p>
+        </div>
+
+        <div class="benefit">
+          <div class="benefit__icon-row">
+            <div class="benefit__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+            </div>
+            <span class="benefit__title">Tailored to each category</span>
+          </div>
+          <p class="benefit__desc">Property searches filter by bedrooms and radius. Car searches filter by make, mileage, and price. Each category has a purpose-built search form — not a generic one.</p>
+        </div>
+
+        <div class="benefit">
+          <div class="benefit__icon-row">
+            <div class="benefit__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
+            </div>
+            <span class="benefit__title">Always up to date</span>
+          </div>
+          <p class="benefit__desc">Crabify re-runs your searches on a schedule — daily, weekly, or monthly depending on your plan — and flags new listings that match your criteria.</p>
+        </div>
+
+        <div class="benefit">
+          <div class="benefit__icon-row">
+            <div class="benefit__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </div>
+            <span class="benefit__title">Private by design</span>
+          </div>
+          <p class="benefit__desc">Your search criteria and results are yours alone. Crabify does not sell your data or share your preferences with listing sites or third-party advertisers.</p>
+        </div>
+
       </div>
     </div>
   </section>
