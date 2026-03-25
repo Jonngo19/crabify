@@ -849,8 +849,12 @@ def gumtree_search(location: str, params: dict) -> tuple:
 
 def _parse_gumtree_listing(block: str, href: str, channel: str) -> dict:
     """Parse a single Gumtree listing block into clean format."""
+
+    # Strip inline <style> blocks first to clean up parsing
+    clean_block = re.sub(r'<style[^>]*>.*?</style>', '', block, flags=re.DOTALL)
+
     # Price — handles £525,000 or £1,200 pcm
-    price_m = re.search(r'£([\d,]+)\s*(pcm|pw|per\s+month|per\s+week)?', block, re.I)
+    price_m = re.search(r'£([\d,]+)\s*(pcm|pw|per\s+month|per\s+week)?', clean_block, re.I)
     price = ""
     if price_m:
         amount = price_m.group(1)
@@ -863,31 +867,51 @@ def _parse_gumtree_listing(block: str, href: str, channel: str) -> dict:
     parts = href.rstrip("/").split("/")
     listing_id = parts[-1] if parts[-1].isdigit() else re.sub(r"[^0-9]", "", parts[-1]) or parts[-1]
 
-    # Address / title — derive from URL slug (most informative part)
-    # href format: /p/property-for-sale/<descriptive-slug>/<id>
-    # Use the descriptive slug (index -2 if last part is numeric, else -1)
-    slug_idx = -2 if (parts and parts[-1].isdigit()) else -1
-    slug_part = parts[slug_idx] if len(parts) > abs(slug_idx) else ""
-    address = slug_part.replace("-", " ").title()[:80]
+    # Title — from data-q="tile-title" div
+    title_m = re.search(r'data-q="tile-title"[^>]*>(.*?)</div>', clean_block, re.DOTALL)
+    if title_m:
+        address = re.sub(r'<[^>]+>', '', title_m.group(1)).strip()
+        address = re.sub(r'&amp;', '&', address)
+        address = re.sub(r'&[a-z]+;', ' ', address).strip()[:120]
+    else:
+        # Fallback: derive from URL slug
+        slug_idx = -2 if (parts and parts[-1].isdigit()) else -1
+        slug_part = parts[slug_idx] if len(parts) > abs(slug_idx) else ""
+        address = slug_part.replace("-", " ").title()[:80]
 
     # Bedrooms
-    beds_m = re.search(r'(\d+)\s*(?:bed(?:room)?s?)', block, re.I)
-    if not beds_m:
-        # also try to extract from slug
-        beds_m = re.search(r'(\d+)\s*(?:bed(?:room)?s?)', address, re.I)
+    beds_m = re.search(r'(\d+)\s*(?:bed(?:room)?s?)', clean_block, re.I)
     beds = int(beds_m.group(1)) if beds_m else 0
 
-    # Image
-    img_m = re.search(r'<img[^>]+src="(https://[^"]+(?:jpg|jpeg|png|webp)[^"]*)"', block, re.I)
+    # Property type
+    type_m = re.search(r'\b(flat|house|apartment|studio|bungalow|maisonette|terraced|detached|semi-detached)\b', clean_block, re.I)
+    prop_type = type_m.group(1).title() if type_m else ""
+
+    # Image — Gumtree CDN URLs don't have file extensions, match img.gumtree.com
+    img_m = re.search(r'src="(https://img\.gumtree\.com[^"]*)"', clean_block, re.I)
     image = img_m.group(1) if img_m else ""
 
     prop_url = f"https://www.gumtree.com{href}"
 
-    # Description — visible text after stripping tags
-    clean = re.sub(r'<[^>]+>', ' ', block)
-    clean = re.sub(r'&[a-z]+;', ' ', clean)
-    clean = re.sub(r'\s+', ' ', clean).strip()
-    description = clean[:200]
+    # Description — extract meaningful text from tile-description, fallback to all text
+    desc_m = re.search(r'data-q="tile-description"[^>]*>(.*?)(?=data-q="|</div></div>)', clean_block, re.DOTALL)
+    if desc_m:
+        desc_text = re.sub(r'<[^>]+>', ' ', desc_m.group(1))
+    else:
+        desc_text = re.sub(r'<[^>]+>', ' ', clean_block)
+    desc_text = re.sub(r'&amp;', '&', desc_text)
+    desc_text = re.sub(r'&[a-z]+;', ' ', desc_text)
+    desc_text = re.sub(r'\s+', ' ', desc_text).strip()
+    # Build a clean description: type + beds + price info
+    parts_desc = []
+    if prop_type: parts_desc.append(prop_type)
+    if beds: parts_desc.append(f"{beds} bed{'s' if beds > 1 else ''}")
+    if price: parts_desc.append(price)
+    # Also grab any sentence-like content
+    sentences = re.findall(r'[A-Z][^.!?]{20,120}[.!?]', desc_text)
+    if sentences:
+        parts_desc.append(sentences[0])
+    description = " · ".join(parts_desc) if parts_desc else desc_text[:200]
 
     if not price and not address:
         return None
@@ -899,7 +923,7 @@ def _parse_gumtree_listing(block: str, href: str, channel: str) -> dict:
         "price_qualifier": "",
         "bedrooms": beds,
         "bathrooms": 0,
-        "property_type": "",
+        "property_type": prop_type,
         "description": description,
         "key_features": [],
         "agent": "Gumtree / Private Seller",
@@ -1505,11 +1529,19 @@ def gumtree_car_search(location: str, params: dict) -> tuple:
             href_m = re.search(r'href="(/p/[^"]+)"', chunk)
             listing_url = f"https://www.gumtree.com{href_m.group(1)}" if href_m else ""
 
-            img_m = re.search(r'src="(https://[^"]+(?:jpg|jpeg|png|webp)[^"]*)"', chunk, re.IGNORECASE)
+            # Gumtree CDN images don't have file extensions — match img.gumtree.com directly
+            img_m = re.search(r'src="(https://img\.gumtree\.com[^"]*)"', chunk, re.IGNORECASE)
+            if not img_m:
+                img_m = re.search(r'src="(https://[^"]+(?:jpg|jpeg|png|webp)[^"]*)"', chunk, re.IGNORECASE)
             image = img_m.group(1) if img_m else ""
 
-            desc_m = re.search(r'data-q="listing-description"[^>]*>([^<]{10,})<', chunk)
-            desc = desc_m.group(1).strip() if desc_m else ""
+            desc_m = re.search(r'data-q="tile-description"[^>]*>(.*?)(?=data-q="|</div></div>)', chunk, re.DOTALL)
+            if desc_m:
+                desc = re.sub(r'<[^>]+>', ' ', desc_m.group(1))
+                desc = re.sub(r'\s+', ' ', desc).strip()[:200]
+            else:
+                desc_m2 = re.search(r'data-q="listing-description"[^>]*>([^<]{10,})<', chunk)
+                desc = desc_m2.group(1).strip() if desc_m2 else ""
 
             year_m = re.search(r'\b(19[89]\d|20[012]\d)\b', title + " " + desc)
             year = year_m.group(1) if year_m else ""
