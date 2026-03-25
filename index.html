@@ -662,34 +662,40 @@
     /* ============================================================
        HOW IT WORKS
     ============================================================ */
+    .steps-wrapper { position: relative; }
+
+    /* Vertical walkthrough steps */
     .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 48px;
-      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 72px;
     }
+
     .step {
-      background: transparent;
-      border: none;
-      border-radius: 0;
-      padding: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      padding: 72px 0;
+      border-top: 1px solid var(--border);
       position: relative;
-      overflow: visible;
-      transition: var(--transition);
     }
-    .step::before { display: none; }
-    .step:hover { transform: none; box-shadow: none; }
+    .step:last-child { border-bottom: 1px solid var(--border); }
+    /* Alternate: odd steps image on right, even on left */
+    .step:nth-child(even) .step__visual { order: -1; }
+
+    .step__content { display: flex; flex-direction: column; }
 
     .step__number {
-      font-size: 88px;
+      font-size: 72px;
       font-weight: 900;
       letter-spacing: -0.04em;
       color: #f0f0f0;
       line-height: 1;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       font-family: var(--font);
     }
-
     .step__icon-row {
       display: flex;
       align-items: center;
@@ -697,21 +703,76 @@
       margin-bottom: 10px;
     }
     .step__icon {
-      width: 20px;
-      height: 20px;
-      background: transparent;
-      border: none;
-      border-radius: 0;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step__title { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); line-height: 1.3; }
+    .step__desc { font-size: 14px; line-height: 1.75; color: var(--text-muted); margin-bottom: 20px; }
+    .step__bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 0;
+    }
+    .step__bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .step__bullets li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 16px; height: 16px;
+      margin-top: 1px;
+      background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7.5' stroke='%23F14D4C' stroke-opacity='0.3'/%3E%3Cpath d='M5 8l2 2 4-4' stroke='%23F14D4C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+
+    /* Screenshot visual area */
+    .step__visual {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.10);
+      border: 1px solid rgba(0,0,0,0.07);
+      background: #f8f8f8;
+    }
+    .step__visual img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* Browser chrome bar */
+    .step__visual-chrome {
+      background: #f3f3f3;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      padding: 10px 14px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: none;
+      gap: 6px;
     }
-    .step:hover .step__icon { transform: none; }
-
-    .step__title { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary); }
-    .step__desc { font-size: 13px; line-height: 1.7; color: var(--text-muted); }
+    .step__visual-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #e0e0e0;
+    }
+    .step__visual-dot:nth-child(1) { background: #ff5f57; }
+    .step__visual-dot:nth-child(2) { background: #febc2e; }
+    .step__visual-dot:nth-child(3) { background: #28c840; }
+    .step__visual-url {
+      flex: 1;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 4px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
 
     /* HOW IT WORKS label with leading line */
     .hiw-label {
@@ -733,9 +794,12 @@
       background: var(--text-muted);
     }
 
-    /* Connector lines between steps */
-    .steps-wrapper { position: relative; }
-    .steps-connector { display: none; }
+    @media (max-width: 768px) {
+      .step { grid-template-columns: 1fr; gap: 32px; padding: 48px 0; }
+      .step:nth-child(even) .step__visual { order: 0; }
+      .step__number { font-size: 48px; }
+      .step__title { font-size: 18px; }
+    }
 
     /* ============================================================
        CATEGORIES
@@ -2508,42 +2572,93 @@
       </div>
 
       <div class="steps-wrapper">
-        <div class="steps" data-stagger>
+        <div class="steps">
 
           <!-- Step 01 -->
-          <div class="step">
-            <div class="step__number">01</div>
-            <div class="step__icon-row">
-              <div class="step__icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <div class="step" data-animate="fade-up">
+            <div class="step__content">
+              <div class="step__number">01</div>
+              <div class="step__icon-row">
+                <div class="step__icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                </div>
+                <h3 class="step__title">Pick a category &amp; set your criteria</h3>
               </div>
-              <h3 class="step__title">Pick a category</h3>
+              <p class="step__desc">Choose what you're looking for — property, cars, jobs or holidays. Each category opens a purpose-built search form tailored to that market. Set your location, budget, radius, and any must-haves.</p>
+              <ul class="step__bullets">
+                <li>Property: bedrooms, price range, radius, parking &amp; garden</li>
+                <li>Cars: make, model, mileage, fuel type &amp; transmission</li>
+                <li>Jobs: title, location, salary range &amp; remote preference</li>
+                <li>Searches Rightmove, Zoopla, OnTheMarket &amp; more simultaneously</li>
+              </ul>
             </div>
-            <p class="step__desc">Choose what you're looking for — property, cars, jobs, holidays, mortgages, or insurance. Each category has a tailored search form built for that market.</p>
+            <div class="step__visual">
+              <div class="step__visual-chrome">
+                <div class="step__visual-dot"></div>
+                <div class="step__visual-dot"></div>
+                <div class="step__visual-dot"></div>
+                <div class="step__visual-url">crabify.com — Search</div>
+              </div>
+              <img src="https://www.genspark.ai/api/files/s/fPIFmbEA" alt="Property search form showing location, radius, price range and must-haves filters" loading="lazy" />
+            </div>
           </div>
 
           <!-- Step 02 -->
-          <div class="step">
-            <div class="step__number">02</div>
-            <div class="step__icon-row">
-              <div class="step__icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <div class="step" data-animate="fade-up">
+            <div class="step__content">
+              <div class="step__number">02</div>
+              <div class="step__icon-row">
+                <div class="step__icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                </div>
+                <h3 class="step__title">Crabify searches every site for you</h3>
               </div>
-              <h3 class="step__title">Set your criteria</h3>
+              <p class="step__desc">Hit search and Crabify scrapes every relevant listing site at once — pulling real-time results across all sources into a single, unified grid. No more switching between tabs.</p>
+              <ul class="step__bullets">
+                <li>Results from multiple sources in one place</li>
+                <li>Each card shows source badge, price, specs &amp; description</li>
+                <li>Filter, sort and compare side-by-side</li>
+                <li>New listings flagged automatically on repeat searches</li>
+              </ul>
             </div>
-            <p class="step__desc">Fill in the details that matter to you — budget, location, specifications. Be as broad or specific as you like. Crabify adapts.</p>
+            <div class="step__visual">
+              <div class="step__visual-chrome">
+                <div class="step__visual-dot"></div>
+                <div class="step__visual-dot"></div>
+                <div class="step__visual-dot"></div>
+                <div class="step__visual-url">crabify.com — Results</div>
+              </div>
+              <img src="https://www.genspark.ai/api/files/s/yncIZ29c" alt="Property listings grid showing results from Rightmove, OnTheMarket and Gumtree" loading="lazy" />
+            </div>
           </div>
 
           <!-- Step 03 -->
-          <div class="step">
-            <div class="step__number">03</div>
-            <div class="step__icon-row">
-              <div class="step__icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <div class="step" data-animate="fade-up">
+            <div class="step__content">
+              <div class="step__number">03</div>
+              <div class="step__icon-row">
+                <div class="step__icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F14D4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <h3 class="step__title">Download, share or act on your results</h3>
               </div>
-              <h3 class="step__title">Receive your report</h3>
+              <p class="step__desc">Every search produces a structured report with prices, photos, specs and contact details. Export it as a CSV, share it with a link, or contact agents and sellers directly — all without leaving Crabify.</p>
+              <ul class="step__bullets">
+                <li>Download results as CSV for offline analysis</li>
+                <li>Share a results link with a partner or advisor</li>
+                <li>Contact agents directly via phone or viewing request</li>
+                <li>Re-run your search weekly or daily to catch new listings</li>
+              </ul>
             </div>
-            <p class="step__desc">Crabify scrapes listing sites, collates results, and delivers a clean summary with prices, photos, and contact details. Export as PDF.</p>
+            <div class="step__visual">
+              <div class="step__visual-chrome">
+                <div class="step__visual-dot"></div>
+                <div class="step__visual-dot"></div>
+                <div class="step__visual-dot"></div>
+                <div class="step__visual-url">crabify.com — Export</div>
+              </div>
+              <img src="https://www.genspark.ai/api/files/s/VsNpFMhd" alt="Car listings results grid showing results from AutoTrader and Exchange and Mart" loading="lazy" />
+            </div>
           </div>
 
         </div>
