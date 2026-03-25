@@ -2332,12 +2332,11 @@
         </a>
         <ul class="nav__links">
           <li><a href="#how-it-works">How It Works</a></li>
-          <li><a href="#categories">Categories</a></li>
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#testimonials">Reviews</a></li>
         </ul>
         <div class="nav__cta">
-          <a href="#categories" class="btn btn-ghost btn-sm" id="navBrowse">Browse</a>
+          <a href="#pricing" class="btn btn-ghost btn-sm" id="navBrowse">Sign in</a>
           <a href="#pricing" class="btn btn-primary btn-sm" id="navList">List for Free →</a>
         </div>
         <!-- Compact nav search (appears on scroll) -->
@@ -2357,11 +2356,10 @@
   <!-- Mobile Menu -->
   <div class="nav__mobile" id="mobileMenu">
     <a href="#how-it-works" class="mobile-link">How It Works</a>
-    <a href="#categories" class="mobile-link">Categories</a>
     <a href="#pricing" class="mobile-link">Pricing</a>
     <a href="#testimonials" class="mobile-link">Reviews</a>
     <div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-      <a href="#categories" class="btn btn-ghost">Browse</a>
+      <a href="#pricing" class="btn btn-ghost">Sign in</a>
       <a href="#pricing" class="btn btn-primary">List for Free →</a>
     </div>
   </div>
@@ -2591,89 +2589,10 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       CATEGORIES
-  ============================================================ -->
-  <section class="section" id="categories" style="padding-top:0;">
-    <div class="container">
-      <div class="section-header" data-animate="fade-up">
-        <span class="label">Search</span>
-        <h2 class="h2">What are you<br />searching for?</h2>
-        <p class="section-header__sub">Each category comes with a tailored search form designed for that specific market. More categories are added regularly.</p>
-        <div class="glow-line"></div>
-      </div>
-
-      <div class="categories-grid" data-stagger>
-
-        <a href="#" class="category-card category-card--active" style="--cat-color: #F14D4C;" id="openPropertySearch">
-          <span class="category-card__badge">Live</span>
-          <span class="category-card__emoji">🏠</span>
-          <div class="category-card__name">Property</div>
-          <div class="category-card__desc">Residential sales, lettings, and new builds from all major portals.</div>
-          <svg class="category-card__arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9h12M9 3l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="#" class="category-card" style="--cat-color: #3b82f6;" id="openCarSearch">
-          <span class="category-card__badge" style="background:#3b82f6;">Live</span>
-          <span class="category-card__emoji">🚗</span>
-          <div class="category-card__name">Cars</div>
-          <div class="category-card__desc">Used and new vehicles, aggregated with full spec comparison.</div>
-          <svg class="category-card__arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9h12M9 3l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="#" class="category-card" style="--cat-color: #22c55e;" id="openJobSearch">
-          <span class="category-card__badge" style="background:#22c55e;">Live</span>
-          <span class="category-card__emoji">💼</span>
-          <div class="category-card__name">Jobs</div>
-          <div class="category-card__desc">Roles across all major job boards, ranked by your priorities.</div>
-          <svg class="category-card__arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9h12M9 3l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="#" class="category-card" style="--cat-color: #f59e0b;">
-          <span class="category-card__coming-soon">Coming Soon</span>
-          <span class="category-card__emoji">✈️</span>
-          <div class="category-card__name">Holidays</div>
-          <div class="category-card__desc">Flights, hotels, and packages tailored to your dates and budget.</div>
-          <svg class="category-card__arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9h12M9 3l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="#" class="category-card" style="--cat-color: #8b5cf6;">
-          <span class="category-card__coming-soon">Coming Soon</span>
-          <span class="category-card__emoji">🏦</span>
-          <div class="category-card__name">Mortgages</div>
-          <div class="category-card__desc">Rate comparisons from top lenders, with broker outreach on Concierge.</div>
-          <svg class="category-card__arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9h12M9 3l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="#" class="category-card" style="--cat-color: #ec4899;">
-          <span class="category-card__coming-soon">Coming Soon</span>
-          <span class="category-card__emoji">🛡️</span>
-          <div class="category-card__name">Insurance</div>
-          <div class="category-card__desc">Home, car, life — full market comparison with policy detail.</div>
-          <svg class="category-card__arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9h12M9 3l6 6-6 6"/>
-          </svg>
-        </a>
-
-      </div>
-      <p class="categories-note" data-animate="fade-up">
-        <span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-          More categories are added regularly. Have a request? <a href="#" style="color:var(--accent);text-decoration:none;">Let us know.</a>
-        </span>
-      </p>
-    </div>
-  </section>
+  <!-- hidden trigger anchors so hero/strip search buttons still work -->
+  <span id="openPropertySearch" style="display:none;"></span>
+  <span id="openCarSearch" style="display:none;"></span>
+  <span id="openJobSearch" style="display:none;"></span>
 
   <!-- ============================================================
        PRICING
@@ -2894,7 +2813,6 @@
         </a>
         <ul class="footer__links">
           <li><a href="#how-it-works">How It Works</a></li>
-          <li><a href="#categories">Categories</a></li>
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#testimonials">Reviews</a></li>
           <li><a href="#">Blog</a></li>
