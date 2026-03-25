@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crabify — Personal Research Agent</title>
   <meta name="description" content="Crabify autonomously searches, scrapes, and summarises real-world listings for high-consideration decisions — property, cars, jobs, holidays, and more." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 60' fill='none' stroke='%23F14D4C' stroke-linecap='round' stroke-linejoin='round'><ellipse cx='45' cy='32' rx='14' ry='11' stroke-width='2.4'/><line x1='39' y1='22' x2='36' y2='15' stroke-width='2'/><circle cx='36' cy='14' r='2.2' fill='%23F14D4C' stroke='none'/><line x1='51' y1='22' x2='54' y2='15' stroke-width='2'/><circle cx='54' cy='14' r='2.2' fill='%23F14D4C' stroke='none'/><path d='M31 28 Q23 26 18 28' stroke-width='2.8'/><path d='M18 28 Q13 27 11 30 Q9 33 11 36 Q14 39 18 37 Q20 35 18 28' stroke-width='2.4'/><path d='M11 36 Q8 38 5 36 Q3 33 5 30 Q8 27 11 30' stroke-width='1.8'/><path d='M11 30 Q9 26 6 24 Q3 22 4 19 Q6 16 9 18 Q12 20 11 25 Q10 28 11 30' stroke-width='1.8'/><path d='M59 28 Q67 26 72 28' stroke-width='2.8'/><path d='M72 28 Q77 27 79 30 Q81 33 79 36 Q76 39 72 37 Q70 35 72 28' stroke-width='2.4'/><path d='M79 36 Q82 38 85 36 Q87 33 85 30 Q82 27 79 30' stroke-width='1.8'/><path d='M79 30 Q81 26 84 24 Q87 22 86 19 Q84 16 81 18 Q78 20 79 25 Q80 28 79 30' stroke-width='1.8'/><line x1='33' y1='34' x2='21' y2='38' stroke-width='1.8'/><line x1='31' y1='38' x2='19' y2='44' stroke-width='1.8'/><line x1='31' y1='42' x2='21' y2='50' stroke-width='1.8'/><line x1='33' y1='45' x2='25' y2='55' stroke-width='1.8'/><line x1='57' y1='34' x2='69' y2='38' stroke-width='1.8'/><line x1='59' y1='38' x2='71' y2='44' stroke-width='1.8'/><line x1='59' y1='42' x2='69' y2='50' stroke-width='1.8'/><line x1='57' y1='45' x2='65' y2='55' stroke-width='1.8'/></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 60' fill='none' stroke='%23F14D4C' stroke-linecap='round' stroke-linejoin='round'><ellipse cx='45' cy='32' rx='14' ry='11' stroke-width='2.4'/><line x1='39' y1='22' x2='36' y2='15' stroke-width='2'/><circle cx='36' cy='14' r='2.2' fill='%23F14D4C' stroke='none'/><line x1='51' y1='22' x2='54' y2='15' stroke-width='2'/><circle cx='54' cy='14' r='2.2' fill='%23F14D4C' stroke='none'/><path d='M31 28 C25 26 20 25 16 26' stroke-width='3'/><path d='M16 26 C12 24 7 24 5 27 C3 29 5 32 8 32 C9 32 10 31 11 30 C11 28 9 26 10 24 C11 22 14 22 14 25 C14 28 13 31 13 33 C13 35 15 37 17 36 C16 38 13 40 11 39 C9 37 9 34 10 32 C11 31 13 31 13 33' stroke-width='2'/><path d='M59 28 C65 26 70 25 74 26' stroke-width='3'/><path d='M74 26 C78 24 83 24 85 27 C87 29 85 32 82 32 C81 32 80 31 79 30 C79 28 81 26 80 24 C79 22 76 22 76 25 C76 28 77 31 77 33 C77 35 75 37 73 36 C74 38 77 40 79 39 C81 37 81 34 80 32 C79 31 77 31 77 33' stroke-width='2'/><line x1='33' y1='34' x2='21' y2='38' stroke-width='1.8'/><line x1='31' y1='38' x2='19' y2='44' stroke-width='1.8'/><line x1='31' y1='42' x2='21' y2='50' stroke-width='1.8'/><line x1='33' y1='45' x2='25' y2='55' stroke-width='1.8'/><line x1='57' y1='34' x2='69' y2='38' stroke-width='1.8'/><line x1='59' y1='38' x2='71' y2='44' stroke-width='1.8'/><line x1='59' y1='42' x2='69' y2='50' stroke-width='1.8'/><line x1='57' y1='45' x2='65' y2='55' stroke-width='1.8'/></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -1755,23 +1755,41 @@
               <circle cx="36" cy="14" r="2.2" fill="currentColor" stroke="none"/>
               <line x1="51" y1="22" x2="54" y2="15" stroke-width="2"/>
               <circle cx="54" cy="14" r="2.2" fill="currentColor" stroke="none"/>
-              <!-- LEFT CLAW: merus/arm from body to palm base -->
-              <path d="M31 28 Q23 26 18 28" stroke-width="2.8" stroke-linecap="round"/>
-              <!-- LEFT CLAW: palm (propodus) — thick rounded knuckle -->
-              <path d="M18 28 Q13 27 11 30 Q9 33 11 36 Q14 39 18 37 Q20 35 18 28" stroke-width="2.4" stroke-linejoin="round"/>
-              <!-- LEFT CLAW: fixed lower dactyl (finger pointing right/inward) -->
-              <path d="M11 36 Q8 38 5 36 Q3 33 5 30 Q8 27 11 30" stroke-width="1.8" stroke-linejoin="round"/>
-              <!-- LEFT CLAW: movable upper dactyl (finger curving up to close) -->
-              <path d="M11 30 Q9 26 6 24 Q3 22 4 19 Q6 16 9 18 Q12 20 11 25 Q10 28 11 30" stroke-width="1.8" stroke-linejoin="round"/>
-              <!-- RIGHT CLAW: merus/arm from body to palm base -->
-              <path d="M59 28 Q67 26 72 28" stroke-width="2.8" stroke-linecap="round"/>
-              <!-- RIGHT CLAW: palm (propodus) — thick rounded knuckle -->
-              <path d="M72 28 Q77 27 79 30 Q81 33 79 36 Q76 39 72 37 Q70 35 72 28" stroke-width="2.4" stroke-linejoin="round"/>
-              <!-- RIGHT CLAW: fixed lower dactyl -->
-              <path d="M79 36 Q82 38 85 36 Q87 33 85 30 Q82 27 79 30" stroke-width="1.8" stroke-linejoin="round"/>
-              <!-- RIGHT CLAW: movable upper dactyl -->
-              <path d="M79 30 Q81 26 84 24 Q87 22 86 19 Q84 16 81 18 Q78 20 79 25 Q80 28 79 30" stroke-width="1.8" stroke-linejoin="round"/>
-              <!-- Left legs (4) — sweeping downward from body -->
+              <!-- LEFT ARM: shoulder to wrist, thickening toward claw -->
+              <path d="M31 28 C25 26 20 25 16 26" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <!-- LEFT CLAW: single continuous outline — palm + upper finger + lower finger
+                   Starts at wrist top, traces: top of palm → upper finger tip (hooks down)
+                   back along inner gap → lower finger tip (hooks up) → bottom of palm → back to wrist -->
+              <path d="
+                M16 26
+                C12 24 7 24 5 27
+                C3 29 5 32 8 32
+                C9 32 10 31 11 30
+                C11 28 9 26 10 24
+                C11 22 14 22 14 25
+                C14 28 13 31 13 33
+                C13 35 15 37 17 36
+                C16 38 13 40 11 39
+                C9 37 9 34 10 32
+                C11 31 13 31 13 33
+              " stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <!-- RIGHT ARM -->
+              <path d="M59 28 C65 26 70 25 74 26" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <!-- RIGHT CLAW: mirror of left -->
+              <path d="
+                M74 26
+                C78 24 83 24 85 27
+                C87 29 85 32 82 32
+                C81 32 80 31 79 30
+                C79 28 81 26 80 24
+                C79 22 76 22 76 25
+                C76 28 77 31 77 33
+                C77 35 75 37 73 36
+                C74 38 77 40 79 39
+                C81 37 81 34 80 32
+                C79 31 77 31 77 33
+              " stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <!-- Left legs (4) -->
               <line x1="33" y1="34" x2="21" y2="38" stroke-width="1.8"/>
               <line x1="31" y1="38" x2="19" y2="44" stroke-width="1.8"/>
               <line x1="31" y1="42" x2="21" y2="50" stroke-width="1.8"/>
@@ -2275,22 +2293,14 @@
               <circle cx="36" cy="14" r="2.2" fill="currentColor" stroke="none"/>
               <line x1="51" y1="22" x2="54" y2="15" stroke-width="2"/>
               <circle cx="54" cy="14" r="2.2" fill="currentColor" stroke="none"/>
-              <!-- LEFT CLAW: merus/arm -->
-              <path d="M31 28 Q23 26 18 28" stroke-width="2.8" stroke-linecap="round"/>
-              <!-- LEFT CLAW: palm -->
-              <path d="M18 28 Q13 27 11 30 Q9 33 11 36 Q14 39 18 37 Q20 35 18 28" stroke-width="2.4" stroke-linejoin="round"/>
-              <!-- LEFT CLAW: fixed lower dactyl -->
-              <path d="M11 36 Q8 38 5 36 Q3 33 5 30 Q8 27 11 30" stroke-width="1.8" stroke-linejoin="round"/>
-              <!-- LEFT CLAW: movable upper dactyl -->
-              <path d="M11 30 Q9 26 6 24 Q3 22 4 19 Q6 16 9 18 Q12 20 11 25 Q10 28 11 30" stroke-width="1.8" stroke-linejoin="round"/>
-              <!-- RIGHT CLAW: merus/arm -->
-              <path d="M59 28 Q67 26 72 28" stroke-width="2.8" stroke-linecap="round"/>
-              <!-- RIGHT CLAW: palm -->
-              <path d="M72 28 Q77 27 79 30 Q81 33 79 36 Q76 39 72 37 Q70 35 72 28" stroke-width="2.4" stroke-linejoin="round"/>
-              <!-- RIGHT CLAW: fixed lower dactyl -->
-              <path d="M79 36 Q82 38 85 36 Q87 33 85 30 Q82 27 79 30" stroke-width="1.8" stroke-linejoin="round"/>
-              <!-- RIGHT CLAW: movable upper dactyl -->
-              <path d="M79 30 Q81 26 84 24 Q87 22 86 19 Q84 16 81 18 Q78 20 79 25 Q80 28 79 30" stroke-width="1.8" stroke-linejoin="round"/>
+              <!-- LEFT ARM -->
+              <path d="M31 28 C25 26 20 25 16 26" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <!-- LEFT CLAW -->
+              <path d="M16 26 C12 24 7 24 5 27 C3 29 5 32 8 32 C9 32 10 31 11 30 C11 28 9 26 10 24 C11 22 14 22 14 25 C14 28 13 31 13 33 C13 35 15 37 17 36 C16 38 13 40 11 39 C9 37 9 34 10 32 C11 31 13 31 13 33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <!-- RIGHT ARM -->
+              <path d="M59 28 C65 26 70 25 74 26" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <!-- RIGHT CLAW -->
+              <path d="M74 26 C78 24 83 24 85 27 C87 29 85 32 82 32 C81 32 80 31 79 30 C79 28 81 26 80 24 C79 22 76 22 76 25 C76 28 77 31 77 33 C77 35 75 37 73 36 C74 38 77 40 79 39 C81 37 81 34 80 32 C79 31 77 31 77 33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
               <!-- Left legs (4) -->
               <line x1="33" y1="34" x2="21" y2="38" stroke-width="1.8"/>
               <line x1="31" y1="38" x2="19" y2="44" stroke-width="1.8"/>
