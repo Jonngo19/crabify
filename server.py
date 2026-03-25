@@ -1856,6 +1856,19 @@ class CrabifyHandler(BaseHTTPRequestHandler):
             self.send_file("/home/user/webapp/index.html", "text/html; charset=utf-8")
             return
 
+        elif path.startswith("/public/"):
+            # Serve static files from the public directory
+            file_path = "/home/user/webapp" + path
+            ext = os.path.splitext(file_path)[1].lower()
+            mime_types = {
+                ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+                ".gif": "image/gif", ".webp": "image/webp", ".svg": "image/svg+xml",
+                ".css": "text/css", ".js": "application/javascript",
+            }
+            mime = mime_types.get(ext, "application/octet-stream")
+            self.send_file(file_path, mime)
+            return
+
         elif path == "/api/location":
             query = qs.get("q", [""])[0].strip()
             if not query:
