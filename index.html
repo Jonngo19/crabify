@@ -75,33 +75,43 @@
        TYPOGRAPHY
     ============================================================ */
     .label {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      font-family: 'IBM Plex Mono', monospace;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      font-weight: 500;
+      font-family: var(--font);
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--text-muted);
       margin-bottom: 16px;
     }
-    .label::before { content: '— '; }
+    .label::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
 
     h1, h2, h3, h4 { line-height: 1.15; font-weight: 800; }
 
     .display {
-      font-size: clamp(44px, 6vw, 76px);
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      line-height: 1.0;
-      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      font-family: var(--font);
     }
     .display em { font-style: normal; color: var(--accent); }
 
     .h2 {
-      font-size: clamp(36px, 4vw, 52px);
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      font-family: var(--font);
+      line-height: 1.2;
     }
     .h3 { font-size: clamp(24px, 2.5vw, 32px); font-weight: 700; letter-spacing: -0.02em; }
 
@@ -180,16 +190,13 @@
     ============================================================ */
     .card {
       background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 32px;
+      border: none;
+      border-top: 1px solid var(--border);
+      border-radius: 0;
+      padding: 32px 0;
       transition: var(--transition);
     }
-    .card:hover {
-      border-color: var(--border-hover);
-      box-shadow: var(--shadow-card);
-      transform: translateY(-2px);
-    }
+    .card:hover { transform: none; box-shadow: none; }
 
     /* ============================================================
        NAV
@@ -354,24 +361,27 @@
     .hero__tag {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(241,77,76,0.07);
-      border: 1px solid rgba(241,77,76,0.18);
-      border-radius: 8px;
-      padding: 5px 14px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--accent);
-      letter-spacing: 0.06em;
+      gap: 10px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       margin-bottom: 20px;
     }
-    .hero__tag-dot {
-      width: 5px; height: 5px;
-      background: var(--accent);
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
+    .hero__tag::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--text-muted);
+      flex-shrink: 0;
     }
+    .hero__tag-dot { display: none; }
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.5; transform: scale(0.8); }
@@ -597,7 +607,7 @@
        TICKER / TRUST BAR
     ============================================================ */
     .ticker {
-      padding: 18px 0;
+      padding: 16px 0;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       background: #ffffff;
@@ -1474,26 +1484,21 @@
     }
 
     .pricing-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      padding: 40px 36px;
+      background: transparent;
+      border: none;
+      border-top: 1px solid var(--border);
+      border-radius: 0;
+      padding: 40px 0 40px;
       position: relative;
       transition: var(--transition);
     }
-    .pricing-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-4px);
-      box-shadow: 0 24px 64px rgba(0,0,0,0.1);
-    }
+    .pricing-card:hover { transform: none; box-shadow: none; }
     .pricing-card--popular {
-      border-color: var(--accent);
-      background: linear-gradient(135deg, rgba(241,77,76,0.05) 0%, var(--bg-card) 60%);
-      box-shadow: 0 0 0 1px var(--accent), 0 20px 60px rgba(241,77,76,0.1);
+      border-top: 2px solid var(--accent);
+      background: transparent;
+      box-shadow: none;
     }
-    .pricing-card--popular:hover {
-      box-shadow: 0 0 0 1px var(--accent-light), 0 28px 80px rgba(241,77,76,0.14);
-    }
+    .pricing-card--popular:hover { box-shadow: none; }
 
     .pricing-badge {
       display: inline-block;
@@ -1579,28 +1584,17 @@
     }
 
     .testimonial-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 36px 32px;
+      background: transparent;
+      border: none;
+      border-top: 1px solid var(--border);
+      border-radius: 0;
+      padding: 36px 0 0;
       position: relative;
       transition: var(--transition);
     }
-    .testimonial-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-3px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05), 0 16px 48px rgba(0,0,0,0.08);
-    }
+    .testimonial-card:hover { transform: none; box-shadow: none; }
 
-    .testimonial-quote {
-      font-size: 48px;
-      line-height: 1;
-      color: var(--accent);
-      opacity: 0.4;
-      font-family: Georgia, serif;
-      margin-bottom: 16px;
-      display: block;
-    }
+    .testimonial-quote { display: none; }
 
     .testimonial-stars {
       display: flex;
@@ -1610,10 +1604,10 @@
     .testimonial-stars svg { color: #f59e0b; }
 
     .testimonial-text {
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.75;
-      color: var(--text-secondary);
-      margin-bottom: 28px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
     }
 
     .testimonial-author {
@@ -1642,16 +1636,17 @@
        CTA SECTION
     ============================================================ */
     .cta-section {
-      padding: 120px 0;
+      padding: 100px 0;
+      border-top: 1px solid var(--border);
     }
     .cta-inner {
-      background: #f7f7f7;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      padding: 72px 60px;
-      text-align: center;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      text-align: left;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
     }
     .cta-inner::before { display: none; }
     .cta-inner::after { display: none; }
@@ -1736,15 +1731,15 @@
     ============================================================ */
     .section-header { max-width: 640px; }
     .section-header--center {
-      max-width: 600px;
+      max-width: 640px;
       margin: 0 auto;
-      text-align: center;
+      text-align: left;
     }
     .section-header__sub {
-      margin-top: 16px;
-      font-size: 17px;
+      margin-top: 12px;
+      font-size: 15px;
       line-height: 1.7;
-      color: var(--text-secondary);
+      color: var(--text-muted);
     }
 
     /* ============================================================
@@ -1834,7 +1829,7 @@
       .pricing-grid > *:last-child { grid-column: auto; max-width: 100%; }
       .testimonials-grid { grid-template-columns: 1fr; }
       .testimonials-grid > *:last-child { grid-column: auto; }
-      .cta-inner { padding: 48px 32px; }
+      .cta-inner { padding: 0; }
       .footer__inner { flex-direction: column; align-items: flex-start; }
       .footer__bottom { flex-direction: column; }
     }
@@ -1851,14 +1846,7 @@
     /* ============================================================
        GLOW LINE ACCENT
     ============================================================ */
-    .glow-line {
-      width: 80px;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border-radius: 2px;
-      margin-top: 24px;
-    }
-    .section-header--center .glow-line { margin: 24px auto 0; }
+    .glow-line { display: none; }
 
 
     /* ============================================================
@@ -2547,11 +2535,10 @@
   ============================================================ -->
   <section class="section" id="pricing">
     <div class="container">
-      <div class="section-header--center" data-animate="fade-up">
+      <div class="section-header" data-animate="fade-up">
         <span class="label">Pricing</span>
-        <h2 class="h2">Simple, transparent<br />pricing</h2>
+        <h2 class="h2">Simple, transparent<br /><em style="color:var(--accent);font-style:normal;">pricing</em></h2>
         <p class="section-header__sub">Start free with a trial search. Upgrade when you're ready for more power and automation.</p>
-        <div class="glow-line"></div>
       </div>
 
       <div class="pricing-grid" data-stagger>
@@ -2629,10 +2616,9 @@
   ============================================================ -->
   <section class="section" id="testimonials" style="padding-top:0;">
     <div class="container">
-      <div class="section-header--center" data-animate="fade-up">
+      <div class="section-header" data-animate="fade-up">
         <span class="label">Reviews</span>
-        <h2 class="h2">Real results,<br />real buyers</h2>
-        <div class="glow-line"></div>
+        <h2 class="h2">Real results,<br /><em style="color:var(--accent);font-style:normal;">real buyers</em></h2>
       </div>
 
       <div class="testimonials-grid" data-stagger>
@@ -2704,9 +2690,9 @@
   <section class="cta-section" id="cta">
     <div class="container">
       <div class="cta-inner" data-animate="scale">
-        <span class="label" style="display:block;text-align:center;margin-bottom:20px;">Ready to start?</span>
-        <h2 class="h2 cta-headline">Your time is too valuable<br />to scroll.</h2>
-        <p class="body-lg cta-sub">Let Crabify do the heavy lifting. Set up your first search in under two minutes and receive curated results delivered to you.</p>
+        <span class="label" style="margin-bottom:20px;">Ready to start?</span>
+        <h2 class="h2 cta-headline">Your time is too valuable<br /><em style="color:var(--accent);font-style:normal;">to scroll.</em></h2>
+        <p class="body-lg cta-sub" style="max-width:480px;margin:16px 0 40px;font-size:15px;color:var(--text-muted);">Let Crabify do the heavy lifting. Set up your first search in under two minutes and receive curated results delivered to you.</p>
         <div class="cta-actions">
           <a href="#pricing" class="btn btn-primary btn-lg btn-arrow">
             Start free today
