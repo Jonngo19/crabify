@@ -393,12 +393,10 @@
     .hero__tabs {
       display: flex;
       gap: 4px;
-      margin-bottom: 0;
-      background: rgba(255,255,255,0.7);
-      border: 1px solid var(--border);
-      border-bottom: none;
-      border-radius: var(--radius-md) var(--radius-md) 0 0;
-      padding: 6px 6px 0;
+      margin-bottom: 8px;
+      background: transparent;
+      border: none;
+      padding: 0;
       overflow-x: auto;
       scrollbar-width: none;
     }
@@ -418,10 +416,8 @@
     .hero__tab:hover { color: var(--text-primary); background: rgba(0,0,0,0.04); }
     .hero__tab.active {
       color: var(--accent);
-      background: #fff;
-      border: 1px solid var(--border);
-      border-bottom: 2px solid #fff;
-      margin-bottom: -1px;
+      background: rgba(241,77,76,0.07);
+      border: 1px solid rgba(241,77,76,0.18);
     }
 
     /* Search input row */
@@ -430,7 +426,7 @@
       align-items: center;
       background: #fff;
       border: 1.5px solid var(--border);
-      border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
+      border-radius: var(--radius-md);
       box-shadow: 0 8px 40px rgba(0,0,0,0.10);
       padding: 6px 6px 6px 20px;
       gap: 8px;
@@ -2393,8 +2389,10 @@
             <button class="hero__tab active" data-tab="property" data-open="openPropertySearch">🏠 Property</button>
             <button class="hero__tab" data-tab="cars" data-open="openCarSearch">🚗 Cars</button>
             <button class="hero__tab" data-tab="jobs" data-open="openJobSearch">💼 Jobs</button>
-            <button class="hero__tab" data-tab="holidays">✈️ Holidays</button>
-            <button class="hero__tab" data-tab="mortgages">🏦 Mortgages</button>
+            <button class="hero__tab" data-tab="holidays" style="position:relative;">
+              ✈️ Holidays
+              <span style="position:absolute;top:-7px;right:-4px;background:#111;color:#fff;font-size:8px;font-weight:700;letter-spacing:0.05em;padding:2px 5px;border-radius:20px;white-space:nowrap;">Soon</span>
+            </button>
           </div>
           <!-- Search input row -->
           <div class="hero__search-bar" id="heroSearchBar">
