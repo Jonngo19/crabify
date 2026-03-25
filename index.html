@@ -327,54 +327,163 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* No orbs or grid overlays — clean white */
-    .hero__orb { display: none; }
+    /* Hero — gradient bg + centred search layout */
     .hero::before { display: none; }
+    .hero__orb { display: none; }
 
-    .hero__inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
-      position: relative;
-      z-index: 1;
+    /* Gradient background */
+    .hero {
+      background: linear-gradient(135deg, #fff5f5 0%, #fff9f0 40%, #f0f7ff 100%) !important;
+      border-bottom: 1px solid var(--border);
     }
 
+    /* Centred layout */
+    .hero__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0;
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* Small subtitle label above headline */
     .hero__tag {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: transparent;
-      border: 1px solid var(--border);
+      background: rgba(241,77,76,0.07);
+      border: 1px solid rgba(241,77,76,0.18);
       border-radius: 100px;
-      padding: 6px 14px;
+      padding: 5px 14px;
       font-size: 12px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      letter-spacing: 0.04em;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .hero__tag-dot {
-      width: 5px;
-      height: 5px;
+      width: 5px; height: 5px;
       background: var(--accent);
       border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.5; transform: scale(0.8); }
     }
 
-    .hero__headline { margin-bottom: 28px; }
-    .hero__sub { max-width: 520px; margin-bottom: 44px; }
-    .hero__actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .hero__headline { margin-bottom: 16px; }
+    .hero__sub { max-width: 540px; margin: 0 auto 36px; }
+    .hero__actions { display: none; }
+    .hero__visual { display: none; }
 
-    /* Floating listing cards */
-    .hero__visual {
-      position: relative;
-      height: 480px;
+    /* ---- HERO SEARCH BAR ---- */
+    .hero__search-wrap {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
     }
+
+    /* Tab row */
+    .hero__tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 0;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      padding: 6px 6px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .hero__tabs::-webkit-scrollbar { display: none; }
+
+    .hero__tab {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      font-size: 13px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; border: none; background: transparent;
+      color: var(--text-secondary);
+      transition: color 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+    .hero__tab:hover { color: var(--text-primary); background: rgba(0,0,0,0.04); }
+    .hero__tab.active {
+      color: var(--accent);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-bottom: 2px solid #fff;
+      margin-bottom: -1px;
+    }
+
+    /* Search input row */
+    .hero__search-bar {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+      padding: 6px 6px 6px 20px;
+      gap: 8px;
+    }
+    .hero__search-bar:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 8px 40px rgba(241,77,76,0.12);
+    }
+    .hero__search-input {
+      flex: 1; border: none; outline: none; background: transparent;
+      font-size: 16px; font-family: var(--font);
+      color: var(--text-primary);
+    }
+    .hero__search-input::placeholder { color: var(--text-muted); }
+    .hero__search-divider {
+      width: 1px; height: 28px; background: var(--border); flex-shrink: 0;
+    }
+    .hero__search-location {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 12px; font-size: 14px;
+      color: var(--text-secondary); cursor: pointer; white-space: nowrap;
+      border: none; background: none; font-family: var(--font);
+    }
+    .hero__search-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: var(--radius-md);
+      padding: 12px 22px; font-size: 14px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: var(--transition); white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .hero__search-btn:hover { background: var(--accent-light); }
+
+    /* Social proof stats bar */
+    .hero__stats {
+      display: flex; align-items: center; justify-content: center;
+      gap: 28px; margin-top: 24px; flex-wrap: wrap;
+    }
+    .hero__stat {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .hero__stat-num {
+      font-size: 15px; font-weight: 700;
+      color: var(--text-primary);
+    }
+    .hero__stat-dot { width: 3px; height: 3px; background: var(--border-hover); border-radius: 50%; }
+
+    /* Floating listing cards — hide in new layout */
+    .hero__visual { display: none; }
+    .listing-card { display: none; }
+    .hero__glow-circle { display: none; }
 
     .listing-card {
       position: absolute;
@@ -1741,6 +1850,418 @@
     }
     .section-header--center .glow-line { margin: 24px auto 0; }
 
+
+    /* ============================================================
+       CATEGORY STRIP (horizontal scroll below hero)
+    ============================================================ */
+    .cat-strip {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      background: #fff;
+    }
+    .cat-strip__track {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 4px 24px;
+      scroll-padding: 24px;
+    }
+    .cat-strip__track::-webkit-scrollbar { display: none; }
+    .cat-strip__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      padding: 12px 18px;
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: var(--transition);
+      position: relative;
+      min-width: 80px;
+    }
+    .cat-strip__item:hover {
+      border-color: var(--accent);
+      background: rgba(241,77,76,0.04);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .cat-strip__item.active {
+      border-color: var(--accent);
+      background: rgba(241,77,76,0.06);
+    }
+    .cat-strip__emoji { font-size: 24px; line-height: 1; }
+    .cat-strip__label { font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .cat-strip__trending {
+      position: absolute; top: -8px; right: -4px;
+      background: #ff6b00; color: #fff;
+      font-size: 9px; font-weight: 700; padding: 2px 6px;
+      border-radius: 20px; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       RESULT LISTING CARDS (image-first)
+    ============================================================ */
+    .result-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .result-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+    .result-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      border-color: var(--border-hover);
+    }
+    .result-card__img {
+      width: 100%; height: 180px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; color: var(--text-muted);
+      position: relative;
+    }
+    .result-card__img-placeholder {
+      width: 100%; height: 180px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+    }
+    /* Heart/save icon */
+    .result-card__heart {
+      position: absolute; top: 10px; right: 10px;
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: none; cursor: pointer; font-size: 15px;
+      transition: var(--transition);
+      z-index: 2;
+    }
+    .result-card__heart:hover { background: #fff; transform: scale(1.1); }
+    .result-card__heart.saved { color: var(--accent); }
+    /* Verified badge on image */
+    .result-card__verified-img {
+      position: absolute; bottom: 8px; left: 8px;
+      background: rgba(22,163,74,0.9); color: #fff;
+      font-size: 10px; font-weight: 700; padding: 3px 8px;
+      border-radius: 20px; display: flex; align-items: center; gap: 4px;
+    }
+    .result-card__body { padding: 14px 16px 16px; }
+    .result-card__title {
+      font-size: 15px; font-weight: 700;
+      color: var(--text-primary); margin-bottom: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .result-card__price {
+      font-size: 19px; font-weight: 800;
+      color: var(--text-primary); letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .result-card__meta {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    /* Star rating */
+    .result-card__stars {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 12px; color: var(--text-secondary);
+    }
+    .result-card__stars-val { color: #f59e0b; font-weight: 700; font-size: 13px; }
+    /* Seller avatar with verified */
+    .result-card__seller {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .result-card__avatar {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff;
+      flex-shrink: 0; position: relative;
+    }
+    .result-card__avatar-tick {
+      position: absolute; bottom: -2px; right: -2px;
+      width: 11px; height: 11px; background: var(--green);
+      border-radius: 50%; border: 1.5px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 7px; color: #fff; font-weight: 900;
+    }
+    .result-card__seller-name { font-size: 11px; color: var(--text-muted); }
+    .result-card__response { font-size: 10px; color: var(--green); font-weight: 600; }
+    /* Hover overlay CTA */
+    .result-card__cta {
+      display: block; width: 100%; padding: 9px;
+      background: var(--accent); color: #fff;
+      text-align: center; font-size: 13px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      border: none; cursor: pointer;
+      opacity: 0; transform: translateY(6px);
+      transition: opacity 0.2s, transform 0.2s;
+      text-decoration: none;
+    }
+    .result-card:hover .result-card__cta {
+      opacity: 1; transform: translateY(0);
+    }
+
+    /* ============================================================
+       RESULTS LAYOUT — sidebar + grid
+    ============================================================ */
+    .results-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    /* Sidebar filters */
+    .results-sidebar {
+      position: sticky;
+      top: 80px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+    .sidebar__title {
+      font-size: 13px; font-weight: 700; color: var(--text-primary);
+      margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .sidebar__group { margin-bottom: 20px; }
+    .sidebar__group-label {
+      font-size: 12px; font-weight: 600; color: var(--text-secondary);
+      margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    /* Price range slider */
+    .sidebar__range {
+      width: 100%; accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .sidebar__range-vals {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--text-muted); margin-top: 4px;
+    }
+    /* Filter checkboxes */
+    .sidebar__check {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-secondary);
+      margin-bottom: 6px; cursor: pointer;
+    }
+    .sidebar__check input { accent-color: var(--accent); cursor: pointer; }
+    /* Rating filter */
+    .sidebar__rating-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-secondary); cursor: pointer; margin-bottom: 4px;
+    }
+    .sidebar__rating-row input { accent-color: var(--accent); }
+
+    /* Active filter chips above results grid */
+    .filter-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(241,77,76,0.08);
+      border: 1px solid rgba(241,77,76,0.2);
+      color: var(--accent);
+      font-size: 12px; font-weight: 600;
+      padding: 4px 10px; border-radius: 100px;
+      cursor: pointer; transition: var(--transition);
+    }
+    .filter-chip:hover { background: rgba(241,77,76,0.14); }
+    .filter-chip__x { font-size: 14px; line-height: 1; }
+
+    /* Results header: count + sort */
+    .results-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+    }
+    .results-count { font-size: 14px; color: var(--text-secondary); }
+    .results-count strong { color: var(--text-primary); font-weight: 700; }
+    .results-sort {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .results-sort select {
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 6px 10px; font-size: 13px; font-family: var(--font);
+      color: var(--text-primary); background: #fff; cursor: pointer;
+      outline: none; transition: border-color 0.15s;
+    }
+    .results-sort select:focus { border-color: var(--accent); }
+
+    /* ============================================================
+       TRUST SIGNALS — footer badges
+    ============================================================ */
+    .trust-bar {
+      display: flex; align-items: center; justify-content: center;
+      gap: 20px; flex-wrap: wrap;
+      padding: 16px 0; border-top: 1px solid var(--border);
+      margin-top: 24px;
+    }
+    .trust-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--text-muted); font-weight: 500;
+    }
+    .trust-badge-icon { font-size: 15px; }
+    .trust-sep { width: 1px; height: 20px; background: var(--border); }
+
+    /* Verified badge on cards */
+    .verified-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 10px; font-weight: 700; color: var(--green);
+      background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.2);
+      padding: 2px 7px; border-radius: 20px;
+    }
+
+    /* ============================================================
+       MOBILE BOTTOM NAV BAR
+    ============================================================ */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #fff;
+      border-top: 1px solid var(--border);
+      z-index: 800;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    }
+    .mobile-bottom-nav__inner {
+      display: flex; justify-content: space-around; align-items: center;
+    }
+    .mobile-bottom-nav__item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      font-size: 10px; font-weight: 600; color: var(--text-muted);
+      text-decoration: none; padding: 4px 12px;
+      border: none; background: none; cursor: pointer;
+      transition: color 0.15s;
+    }
+    .mobile-bottom-nav__item.active { color: var(--accent); }
+    .mobile-bottom-nav__item svg { opacity: 0.7; }
+    .mobile-bottom-nav__item.active svg { opacity: 1; }
+    .mobile-bottom-nav__search-btn {
+      display: flex; flex-direction: column; align-items: center;
+      background: var(--accent); color: #fff;
+      border-radius: 50%; width: 48px; height: 48px;
+      border: none; cursor: pointer; font-size: 20px;
+      box-shadow: 0 4px 16px rgba(241,77,76,0.35);
+      transition: var(--transition); text-decoration: none;
+      justify-content: center;
+    }
+    .mobile-bottom-nav__search-btn:hover { background: var(--accent-light); }
+
+    /* Horizontal filter chips (mobile search results) */
+    .mobile-filter-chips {
+      display: none;
+      overflow-x: auto; gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      scrollbar-width: none;
+    }
+    .mobile-filter-chips::-webkit-scrollbar { display: none; }
+    .mobile-filter-chips .filter-chip { flex-shrink: 0; }
+
+    /* Skeleton loaders */
+    @keyframes shimmer {
+      0% { background-position: -600px 0; }
+      100% { background-position: 600px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+      background-size: 600px 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+    }
+    .skeleton-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .skeleton-img { height: 180px; width: 100%; border-radius: 0; }
+    .skeleton-body { padding: 14px 16px; }
+    .skeleton-line { height: 12px; margin-bottom: 8px; border-radius: 4px; }
+    .skeleton-line--title { width: 75%; }
+    .skeleton-line--price { width: 45%; height: 18px; }
+    .skeleton-line--meta { width: 60%; }
+
+    /* ============================================================
+       RESPONSIVE — new additions
+    ============================================================ */
+    @media (max-width: 900px) {
+      .results-layout { grid-template-columns: 1fr; }
+      .results-sidebar { display: none; }
+      .mobile-filter-chips { display: flex; }
+      .mobile-bottom-nav { display: block; }
+      body { padding-bottom: 72px; }
+    }
+    @media (max-width: 768px) {
+      .hero { padding: 100px 0 60px; min-height: auto; }
+      .hero__inner { max-width: 100%; }
+      .hero__search-bar { flex-wrap: wrap; border-radius: var(--radius-md); }
+      .hero__search-divider { display: none; }
+      .hero__search-location { padding: 8px 0; }
+      .hero__search-btn { width: 100%; justify-content: center; border-radius: var(--radius-sm); }
+      .hero__tabs { border-radius: var(--radius-md) var(--radius-md) 0 0; }
+      .cat-strip__track { padding: 4px 16px; }
+      .result-cards-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    }
+    @media (max-width: 480px) {
+      .hero__stats { gap: 14px; }
+      .hero__stat-dot { display: none; }
+      .result-cards-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .result-card__img-placeholder { height: 140px; font-size: 28px; }
+      .result-card__img { height: 140px; }
+    }
+
+
+    /* Compact nav search bar (appears after scroll) */
+    .nav__search-compact {
+      display: none;
+      align-items: center;
+      background: #f5f5f5;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px 4px 4px 14px;
+      gap: 6px;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .nav.scrolled .nav__search-compact {
+      display: flex;
+      opacity: 1;
+      transform: scale(1);
+    }
+    .nav__search-input-compact {
+      border: none; outline: none; background: transparent;
+      font-size: 13px; font-family: var(--font);
+      color: var(--text-primary); width: 160px;
+    }
+    .nav__search-input-compact::placeholder { color: var(--text-muted); }
+    .nav__search-compact-btn {
+      width: 28px; height: 28px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition); flex-shrink: 0;
+    }
+    .nav__search-compact-btn:hover { background: var(--accent-light); }
+    @media (max-width: 768px) {
+      .nav__search-compact { display: none !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -1816,8 +2337,15 @@
           <li><a href="#testimonials">Reviews</a></li>
         </ul>
         <div class="nav__cta">
-          <a href="#pricing" class="btn btn-ghost btn-sm">Sign in</a>
-          <a href="#pricing" class="btn btn-primary btn-sm">Get started →</a>
+          <a href="#categories" class="btn btn-ghost btn-sm" id="navBrowse">Browse</a>
+          <a href="#pricing" class="btn btn-primary btn-sm" id="navList">List for Free →</a>
+        </div>
+        <!-- Compact nav search (appears on scroll) -->
+        <div class="nav__search-compact" id="navSearchCompact">
+          <input type="text" class="nav__search-input-compact" placeholder="Search listings…" id="navSearchInput" />
+          <button class="nav__search-compact-btn" id="navSearchBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </button>
         </div>
         <div class="nav__hamburger" id="hamburger" role="button" aria-label="Toggle menu">
           <span></span><span></span><span></span>
@@ -1833,8 +2361,8 @@
     <a href="#pricing" class="mobile-link">Pricing</a>
     <a href="#testimonials" class="mobile-link">Reviews</a>
     <div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-      <a href="#pricing" class="btn btn-ghost">Sign in</a>
-      <a href="#pricing" class="btn btn-primary">Get started →</a>
+      <a href="#categories" class="btn btn-ghost">Browse</a>
+      <a href="#pricing" class="btn btn-primary">List for Free →</a>
     </div>
   </div>
 
@@ -1848,74 +2376,67 @@
 
     <div class="container">
       <div class="hero__inner">
-        <!-- Left: Copy -->
-        <div class="hero__copy">
-          <div class="hero__tag hero-animate hero-animate--1">
-            <span class="hero__tag-dot"></span>
-            Personal Research Agent
+
+        <!-- Subtitle tag above search bar -->
+        <div class="hero__tag hero-animate hero-animate--1">
+          <span class="hero__tag-dot"></span>
+          Personal Research Agent
+        </div>
+
+        <!-- Main headline -->
+        <h1 class="display hero__headline hero-animate hero-animate--2">
+          We do the research.<br /><em>You make the decision.</em>
+        </h1>
+
+        <!-- Large centred search bar with tab filters -->
+        <div class="hero__search-wrap hero-animate hero-animate--3">
+          <!-- Tab filters -->
+          <div class="hero__tabs" id="heroTabs">
+            <button class="hero__tab active" data-tab="property" data-open="openPropertySearch">🏠 Property</button>
+            <button class="hero__tab" data-tab="cars" data-open="openCarSearch">🚗 Cars</button>
+            <button class="hero__tab" data-tab="jobs" data-open="openJobSearch">💼 Jobs</button>
+            <button class="hero__tab" data-tab="holidays">✈️ Holidays</button>
+            <button class="hero__tab" data-tab="mortgages">🏦 Mortgages</button>
           </div>
-          <h1 class="display hero__headline hero-animate hero-animate--2">
-            We do the research.<br />
-            You make<br />
-            <em>the decision.</em>
-          </h1>
-          <p class="body-lg hero__sub hero-animate hero-animate--3">
-            Crabify autonomously searches, scrapes, and summarises real-world listings for high-consideration decisions — property, cars, jobs, holidays, and more. Stop scrolling. Start deciding.
-          </p>
-          <div class="hero__actions hero-animate hero-animate--4">
-            <a href="#categories" class="btn btn-primary btn-lg btn-arrow">
-              Start your search
-              <svg class="arrow-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 9h12M9 3l6 6-6 6"/>
-              </svg>
-            </a>
-            <a href="#how-it-works" class="btn btn-ghost btn-lg">See how it works</a>
+          <!-- Search input row -->
+          <div class="hero__search-bar" id="heroSearchBar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9b9b9b" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" class="hero__search-input" id="heroSearchInput" placeholder="Search property, cars, jobs…" />
+            <div class="hero__search-divider"></div>
+            <button class="hero__search-location" id="heroLocationBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Anywhere in UK
+            </button>
+            <button class="hero__search-btn" id="heroSearchSubmit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              Search
+            </button>
           </div>
         </div>
 
-        <!-- Right: Floating Cards -->
-        <div class="hero__visual hero-animate hero-animate--visual">
-          <div class="hero__glow-circle"></div>
-
-          <!-- Property Card -->
-          <div class="listing-card listing-card--property">
-            <div class="listing-card__type">🏠 Property</div>
-            <div class="listing-card__title">3-bed Victorian, Clapham</div>
-            <div class="listing-card__price">£785,000</div>
-            <div class="listing-card__tags">
-              <span class="listing-card__tag">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                3 bed
-              </span>
-              <span class="listing-card__tag">Garden</span>
-              <span class="listing-card__tag">0.3mi station</span>
-            </div>
+        <!-- Social proof stats below search bar -->
+        <div class="hero__stats hero-animate hero-animate--4">
+          <div class="hero__stat">
+            <span class="hero__stat-num">14,000+</span>
+            <span>listings analysed</span>
           </div>
-
-          <!-- Car Card -->
-          <div class="listing-card listing-card--car">
-            <div class="listing-card__type">🚗 Car</div>
-            <div class="listing-card__title">BMW 3 Series, 2023</div>
-            <div class="listing-card__price">£32,500</div>
-            <div class="listing-card__tags">
-              <span class="listing-card__tag">12k mi</span>
-              <span class="listing-card__tag">Auto</span>
-              <span class="listing-card__tag">Hybrid</span>
-            </div>
+          <div class="hero__stat-dot"></div>
+          <div class="hero__stat">
+            <span class="hero__stat-num">2,400+</span>
+            <span>searches completed</span>
           </div>
-
-          <!-- Job Card -->
-          <div class="listing-card listing-card--job">
-            <div class="listing-card__type">💼 Job</div>
-            <div class="listing-card__title">Senior Product Manager</div>
-            <div class="listing-card__price">£85,000</div>
-            <div class="listing-card__tags">
-              <span class="listing-card__tag">Remote</span>
-              <span class="listing-card__tag">Series B</span>
-              <span class="listing-card__tag">Full-time</span>
-            </div>
+          <div class="hero__stat-dot"></div>
+          <div class="hero__stat">
+            <span class="hero__stat-num">98%</span>
+            <span>satisfaction rate</span>
+          </div>
+          <div class="hero__stat-dot"></div>
+          <div class="hero__stat">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--green)" stroke="none"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            <span>Trusted across the UK</span>
           </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -1965,6 +2486,56 @@
         <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)">TRUSTED BY BUYERS ACROSS THE UK</span>
         <span class="ticker__sep"></span>
       </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CATEGORY STRIP (horizontal scroll)
+  ============================================================ -->
+  <div class="cat-strip" id="catStrip">
+    <div class="cat-strip__track">
+      <a href="#" class="cat-strip__item active" data-open="openPropertySearch">
+        <span class="cat-strip__trending">🔥 Hot</span>
+        <span class="cat-strip__emoji">🏠</span>
+        <span class="cat-strip__label">Property</span>
+      </a>
+      <a href="#" class="cat-strip__item" data-open="openCarSearch">
+        <span class="cat-strip__trending">🔥 Hot</span>
+        <span class="cat-strip__emoji">🚗</span>
+        <span class="cat-strip__label">Cars</span>
+      </a>
+      <a href="#" class="cat-strip__item" data-open="openJobSearch">
+        <span class="cat-strip__emoji">💼</span>
+        <span class="cat-strip__label">Jobs</span>
+      </a>
+      <a href="#" class="cat-strip__item">
+        <span class="cat-strip__emoji">✈️</span>
+        <span class="cat-strip__label">Holidays</span>
+      </a>
+      <a href="#" class="cat-strip__item">
+        <span class="cat-strip__emoji">🏦</span>
+        <span class="cat-strip__label">Mortgages</span>
+      </a>
+      <a href="#" class="cat-strip__item">
+        <span class="cat-strip__emoji">🛡️</span>
+        <span class="cat-strip__label">Insurance</span>
+      </a>
+      <a href="#" class="cat-strip__item">
+        <span class="cat-strip__emoji">🛋️</span>
+        <span class="cat-strip__label">Furniture</span>
+      </a>
+      <a href="#" class="cat-strip__item">
+        <span class="cat-strip__emoji">📱</span>
+        <span class="cat-strip__label">Electronics</span>
+      </a>
+      <a href="#" class="cat-strip__item">
+        <span class="cat-strip__emoji">🐾</span>
+        <span class="cat-strip__label">Pets</span>
+      </a>
+      <a href="#" class="cat-strip__item">
+        <span class="cat-strip__emoji">🎓</span>
+        <span class="cat-strip__label">Education</span>
+      </a>
     </div>
   </div>
 
@@ -2334,6 +2905,28 @@
           <li><a href="#">Contact</a></li>
         </ul>
       </div>
+      <!-- Trust bar with SSL/payment logos -->
+      <div class="trust-bar">
+        <div class="trust-badge">
+          <span class="trust-badge-icon">🔒</span>
+          SSL Secured
+        </div>
+        <div class="trust-sep"></div>
+        <div class="trust-badge">
+          <span class="trust-badge-icon">💳</span>
+          Stripe Payments
+        </div>
+        <div class="trust-sep"></div>
+        <div class="trust-badge">
+          <span class="trust-badge-icon">🛡️</span>
+          GDPR Compliant
+        </div>
+        <div class="trust-sep"></div>
+        <div class="trust-badge">
+          <span class="trust-badge-icon">✅</span>
+          <span class="verified-badge">✓ Verified Listings</span>
+        </div>
+      </div>
       <div class="footer__bottom">
         <p class="footer__copy">© 2025 Crabify. All rights reserved.</p>
         <p class="footer__copy" style="display:flex;align-items:center;gap:6px;">
@@ -2520,6 +3113,77 @@
         card.style.background = '';
       });
     });
+
+    /* ----------------------------------------------------------
+       HERO SEARCH BAR: Tab switching + submit
+    ---------------------------------------------------------- */
+    const heroTabs = document.querySelectorAll('.hero__tab');
+    const heroSearchInput = document.getElementById('heroSearchInput');
+    const heroSearchSubmit = document.getElementById('heroSearchSubmit');
+
+    const tabPlaceholders = {
+      property: 'Search property by location, e.g. Clapham, London…',
+      cars: 'Search cars by make, model or location…',
+      jobs: 'Search jobs by title, company or location…',
+      holidays: 'Holidays — coming soon…',
+      mortgages: 'Mortgages — coming soon…',
+    };
+
+    heroTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        heroTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        if (heroSearchInput) {
+          heroSearchInput.placeholder = tabPlaceholders[tab.dataset.tab] || 'Search listings…';
+        }
+      });
+    });
+
+    if (heroSearchSubmit) {
+      heroSearchSubmit.addEventListener('click', () => {
+        const activeTab = document.querySelector('.hero__tab.active');
+        const openId = activeTab ? activeTab.dataset.open : null;
+        if (openId) {
+          const el = document.getElementById(openId);
+          if (el) el.click();
+        }
+      });
+    }
+
+    /* ----------------------------------------------------------
+       COMPACT NAV SEARCH: wire up to open active search modal
+    ---------------------------------------------------------- */
+    const navSearchBtn = document.getElementById('navSearchBtn');
+    if (navSearchBtn) {
+      navSearchBtn.addEventListener('click', () => {
+        const el = document.getElementById('openPropertySearch');
+        if (el) el.click();
+      });
+    }
+
+    /* ----------------------------------------------------------
+       CATEGORY STRIP: click to open modals
+    ---------------------------------------------------------- */
+    document.querySelectorAll('.cat-strip__item[data-open]').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById(item.dataset.open);
+        if (target) target.click();
+      });
+    });
+
+    /* ----------------------------------------------------------
+       MOBILE BOTTOM NAV: active state on scroll
+    ---------------------------------------------------------- */
+    const mbnItems = document.querySelectorAll('.mobile-bottom-nav__item');
+    window.addEventListener('scroll', () => {
+      const sections = ['hero', 'how-it-works', 'categories', 'pricing', 'testimonials'];
+      let current = '';
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - 120) current = id;
+      });
+    }, { passive: true });
 
     /* ----------------------------------------------------------
        REDUCE MOTION
@@ -2964,6 +3628,31 @@
 
   <!-- Toast -->
   <div class="toast" id="toast"></div>
+
+  <!-- ============================================================
+       MOBILE BOTTOM NAVIGATION BAR
+  ============================================================ -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile navigation">
+    <div class="mobile-bottom-nav__inner">
+      <a href="#" class="mobile-bottom-nav__item active" id="mbnSearch" onclick="document.getElementById('heroSearchSubmit').click();return false;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        Search
+      </a>
+      <a href="#categories" class="mobile-bottom-nav__item" id="mbnBrowse">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Browse
+      </a>
+      <a href="#" class="mobile-bottom-nav__search-btn" id="mbnCentralSearch" onclick="document.getElementById('openPropertySearch').click();return false;">🦀</a>
+      <a href="#" class="mobile-bottom-nav__item" id="mbnSaved">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        Saved
+      </a>
+      <a href="#pricing" class="mobile-bottom-nav__item" id="mbnAccount">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Account
+      </a>
+    </div>
+  </nav>
 
   <!-- ============================================================
        PROPERTY SEARCH JAVASCRIPT
