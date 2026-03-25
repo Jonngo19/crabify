@@ -404,20 +404,26 @@
 
     .hero__tab {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 8px 14px;
-      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      padding: 8px 16px;
+      border-radius: 100px;
       font-size: 13px; font-weight: 600;
       font-family: 'DM Sans', sans-serif;
-      cursor: pointer; border: none; background: transparent;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: #fff;
       color: var(--text-secondary);
-      transition: color 0.15s, background 0.15s;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
       white-space: nowrap;
     }
-    .hero__tab:hover { color: var(--text-primary); background: rgba(0,0,0,0.04); }
+    .hero__tab:hover {
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+      background: #fff;
+    }
     .hero__tab.active {
       color: var(--accent);
       background: rgba(241,77,76,0.07);
-      border: 1px solid rgba(241,77,76,0.18);
+      border-color: rgba(241,77,76,0.4);
     }
 
     /* Search input row */
