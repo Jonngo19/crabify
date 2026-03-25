@@ -4146,20 +4146,28 @@
         return true;
       });
 
-      // Sort
-      if (sortBy === 'price_asc') results.sort((a,b) => extractPriceNum(a.price) - extractPriceNum(b.price));
-      else if (sortBy === 'price_desc') results.sort((a,b) => extractPriceNum(b.price) - extractPriceNum(a.price));
-      else if (sortBy === 'beds_desc') results.sort((a,b) => (b.bedrooms||0) - (a.bedrooms||0));
+      // Sort — unknown/zero prices go to the bottom for asc, top for desc
+      const NO_PRICE_ASC  = 999999999;
+      const NO_PRICE_DESC = -1;
+      if (sortBy === 'price_asc') {
+        results.sort((a,b) => {
+          const pa = extractPriceNum(a.price) || NO_PRICE_ASC;
+          const pb = extractPriceNum(b.price) || NO_PRICE_ASC;
+          return pa - pb;
+        });
+      } else if (sortBy === 'price_desc') {
+        results.sort((a,b) => {
+          const pa = extractPriceNum(a.price) || NO_PRICE_DESC;
+          const pb = extractPriceNum(b.price) || NO_PRICE_DESC;
+          return pb - pa;
+        });
+      } else if (sortBy === 'beds_desc') results.sort((a,b) => (b.bedrooms||0) - (a.bedrooms||0));
 
       state.filteredResults = results;
     }
 
     function extractPriceNum(priceStr) {
       if (!priceStr) return 0;
-      const s = priceStr.toLowerCase();
-      // Rental prices (pcm/pw/per week/per month) — return special sentinel
-      // so they are never excluded by a purchase price filter
-      if (s.includes('pcm') || s.includes('pw') || s.includes('per week') || s.includes('per month')) return -1;
       const n = priceStr.replace(/[^0-9]/g, '');
       return parseInt(n) || 0;
     }
@@ -5145,7 +5153,7 @@
         return true;
       });
 
-      if (sortBy === 'price_asc') results.sort((a,b) => (a.price_num||0)-(b.price_num||0));
+      if (sortBy === 'price_asc') results.sort((a,b) => (a.price_num||999999999)-(b.price_num||999999999));
       else if (sortBy === 'price_desc') results.sort((a,b) => (b.price_num||0)-(a.price_num||0));
       else if (sortBy === 'year_desc') results.sort((a,b) => parseInt(b.year||0)-parseInt(a.year||0));
       else if (sortBy === 'mileage_asc') results.sort((a,b) => {

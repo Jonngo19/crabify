@@ -1178,9 +1178,11 @@ def combined_search(location: str, params: dict) -> dict:
         return int(digits) if digits else 0
 
     if sort_val == "price_asc":
-        all_results.sort(key=lambda p: (_price_num(p) if _price_num(p) > 0 else 999_999_999))
+        # Items with no price (0) sink to the bottom
+        all_results.sort(key=lambda p: _price_num(p) if _price_num(p) > 0 else 999_999_999)
     elif sort_val == "price_desc":
-        all_results.sort(key=lambda p: -_price_num(p))
+        # Items with no price (0) sink to the bottom
+        all_results.sort(key=lambda p: _price_num(p), reverse=True)
     elif sort_val == "beds_desc":
         all_results.sort(key=lambda p: -(p.get("bedrooms") or 0))
     else:
@@ -1615,9 +1617,11 @@ def combined_car_search(location: str, params: dict) -> dict:
 
     sort_val = params.get("sort", "newest")
     if sort_val == "price_asc":
-        all_results.sort(key=lambda x: x.get("price_num", 0) or 999999999)
+        # Items with no price_num (0) sink to the bottom
+        all_results.sort(key=lambda x: x.get("price_num") or 999_999_999)
     elif sort_val == "price_desc":
-        all_results.sort(key=lambda x: x.get("price_num", 0), reverse=True)
+        # Items with no price_num (0) sink to the bottom
+        all_results.sort(key=lambda x: x.get("price_num") or 0, reverse=True)
     elif sort_val == "year_desc":
         all_results.sort(key=lambda x: int(x.get("year", 0) or 0), reverse=True)
     elif sort_val == "mileage_asc":
