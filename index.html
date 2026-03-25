@@ -467,20 +467,31 @@
     }
     .hero__search-btn:hover { background: var(--accent-light); }
 
-    /* Social proof stats bar */
-    .hero__stats {
+    /* Sources strip below search bar */
+    .hero__sources {
       display: flex; align-items: center; justify-content: center;
-      gap: 28px; margin-top: 24px; flex-wrap: wrap;
+      gap: 6px; margin-top: 20px; flex-wrap: wrap;
     }
-    .hero__stat {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13px; color: var(--text-secondary);
+    .hero__sources-label {
+      font-size: 12px; color: var(--text-muted); font-weight: 500;
+      margin-right: 4px; white-space: nowrap;
     }
-    .hero__stat-num {
-      font-size: 15px; font-weight: 700;
+    .hero__source-pill {
+      display: inline-flex; align-items: center;
+      padding: 4px 12px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 12px; font-weight: 600;
+      color: var(--text-secondary);
+      font-family: var(--font);
+      white-space: nowrap;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .hero__source-pill:hover {
+      border-color: var(--border-hover);
       color: var(--text-primary);
     }
-    .hero__stat-dot { width: 3px; height: 3px; background: var(--border-hover); border-radius: 50%; }
 
     /* Floating listing cards — hide in new layout */
     .hero__visual { display: none; }
@@ -2220,8 +2231,8 @@
       .result-cards-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
     }
     @media (max-width: 480px) {
-      .hero__stats { gap: 14px; }
-      .hero__stat-dot { display: none; }
+      .hero__sources { gap: 4px; }
+      .hero__sources-label { width: 100%; text-align: center; margin-right: 0; }
       .result-cards-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
       .result-card__img-placeholder { height: 140px; font-size: 28px; }
       .result-card__img { height: 140px; }
@@ -2409,26 +2420,18 @@
         </div>
 
         <!-- Social proof stats below search bar -->
-        <div class="hero__stats hero-animate hero-animate--4">
-          <div class="hero__stat">
-            <span class="hero__stat-num">14,000+</span>
-            <span>listings analysed</span>
-          </div>
-          <div class="hero__stat-dot"></div>
-          <div class="hero__stat">
-            <span class="hero__stat-num">2,400+</span>
-            <span>searches completed</span>
-          </div>
-          <div class="hero__stat-dot"></div>
-          <div class="hero__stat">
-            <span class="hero__stat-num">98%</span>
-            <span>satisfaction rate</span>
-          </div>
-          <div class="hero__stat-dot"></div>
-          <div class="hero__stat">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--green)" stroke="none"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-            <span>Trusted across the UK</span>
-          </div>
+        <div class="hero__sources hero-animate hero-animate--4">
+          <span class="hero__sources-label">Searches across</span>
+          <span class="hero__source-pill">Rightmove</span>
+          <span class="hero__source-pill">Zoopla</span>
+          <span class="hero__source-pill">OnTheMarket</span>
+          <span class="hero__source-pill">Gumtree</span>
+          <span class="hero__source-pill">SpareRoom</span>
+          <span class="hero__source-pill">AutoTrader</span>
+          <span class="hero__source-pill">Motors.co.uk</span>
+          <span class="hero__source-pill">Reed</span>
+          <span class="hero__source-pill">Indeed</span>
+          <span class="hero__source-pill">Glassdoor</span>
         </div>
 
       </div>
