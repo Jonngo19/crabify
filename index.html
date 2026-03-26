@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crabify — Personal Research Agent</title>
   <meta name="description" content="Crabify autonomously searches, scrapes, and summarises real-world listings for high-consideration decisions — property, cars, jobs, holidays, and more." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 60' fill='none' stroke='%23F14D4C' stroke-linecap='round' stroke-linejoin='round'><ellipse cx='45' cy='32' rx='14' ry='11' stroke-width='2.4'/><line x1='39' y1='22' x2='36' y2='15' stroke-width='2'/><circle cx='36' cy='14' r='2.2' fill='%23F14D4C' stroke='none'/><line x1='51' y1='22' x2='54' y2='15' stroke-width='2'/><circle cx='54' cy='14' r='2.2' fill='%23F14D4C' stroke='none'/><path d='M31 28 C25 26 20 25 16 26' stroke-width='3'/><path d='M16 26 C12 24 7 24 5 27 C3 29 5 32 8 32 C9 32 10 31 11 30 C11 28 9 26 10 24 C11 22 14 22 14 25 C14 28 13 31 13 33 C13 35 15 37 17 36 C16 38 13 40 11 39 C9 37 9 34 10 32 C11 31 13 31 13 33' stroke-width='2'/><path d='M59 28 C65 26 70 25 74 26' stroke-width='3'/><path d='M74 26 C78 24 83 24 85 27 C87 29 85 32 82 32 C81 32 80 31 79 30 C79 28 81 26 80 24 C79 22 76 22 76 25 C76 28 77 31 77 33 C77 35 75 37 73 36 C74 38 77 40 79 39 C81 37 81 34 80 32 C79 31 77 31 77 33' stroke-width='2'/><line x1='33' y1='34' x2='21' y2='38' stroke-width='1.8'/><line x1='31' y1='38' x2='19' y2='44' stroke-width='1.8'/><line x1='31' y1='42' x2='21' y2='50' stroke-width='1.8'/><line x1='33' y1='45' x2='25' y2='55' stroke-width='1.8'/><line x1='57' y1='34' x2='69' y2='38' stroke-width='1.8'/><line x1='59' y1='38' x2='71' y2='44' stroke-width='1.8'/><line x1='59' y1='42' x2='69' y2='50' stroke-width='1.8'/><line x1='57' y1='45' x2='65' y2='55' stroke-width='1.8'/></svg>" />
+  <link rel="icon" href="/public/crab-logo.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/public/crab-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@700;800&family=IBM+Plex+Mono:wght@600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -240,15 +241,15 @@
       align-items: center;
       justify-content: center;
       transition: transform var(--transition-spring);
-      color: var(--accent);
     }
     .nav__logo:hover .nav__logo-icon {
       transform: rotate(-10deg) scale(1.15);
     }
-    .nav__logo-icon svg {
+    .nav__logo-icon img {
       width: 32px;
       height: 32px;
       display: block;
+      object-fit: contain;
     }
     .nav__links {
       display: flex;
@@ -1321,6 +1322,14 @@
     .pr-loading__crab {
       font-size: 48px;
       animation: crawl 1.2s ease-in-out infinite alternate;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pr-loading__crab img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
     }
     @keyframes crawl {
       from { transform: translateX(-12px) rotate(-5deg); }
@@ -1785,9 +1794,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--accent);
     }
-    .footer__logo-icon svg { width: 28px; height: 28px; display: block; }
+    .footer__logo-icon img { width: 28px; height: 28px; display: block; object-fit: contain; }
     .footer__links {
       display: flex;
       flex-wrap: wrap;
@@ -2247,8 +2255,9 @@
       border: none; cursor: pointer; font-size: 20px;
       box-shadow: 0 4px 16px rgba(241,77,76,0.35);
       transition: var(--transition); text-decoration: none;
-      justify-content: center;
+      justify-content: center; overflow: hidden; padding: 6px;
     }
+    .mobile-bottom-nav__search-btn img { width: 100%; height: 100%; object-fit: contain; filter: brightness(0) invert(1); }
     .mobile-bottom-nav__search-btn:hover { background: var(--accent-light); }
 
     /* Horizontal filter chips (mobile search results) */
@@ -2363,59 +2372,7 @@
       <div class="nav__inner">
         <a href="#" class="nav__logo">
           <div class="nav__logo-icon">
-            <svg viewBox="0 0 90 60" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-              <!-- Carapace -->
-              <ellipse cx="45" cy="32" rx="14" ry="11" stroke-width="2.4"/>
-              <!-- Eye stalks + dots -->
-              <line x1="39" y1="22" x2="36" y2="15" stroke-width="2"/>
-              <circle cx="36" cy="14" r="2.2" fill="currentColor" stroke="none"/>
-              <line x1="51" y1="22" x2="54" y2="15" stroke-width="2"/>
-              <circle cx="54" cy="14" r="2.2" fill="currentColor" stroke="none"/>
-              <!-- LEFT ARM: shoulder to wrist, thickening toward claw -->
-              <path d="M31 28 C25 26 20 25 16 26" stroke-width="3" stroke-linecap="round" fill="none"/>
-              <!-- LEFT CLAW: single continuous outline — palm + upper finger + lower finger
-                   Starts at wrist top, traces: top of palm → upper finger tip (hooks down)
-                   back along inner gap → lower finger tip (hooks up) → bottom of palm → back to wrist -->
-              <path d="
-                M16 26
-                C12 24 7 24 5 27
-                C3 29 5 32 8 32
-                C9 32 10 31 11 30
-                C11 28 9 26 10 24
-                C11 22 14 22 14 25
-                C14 28 13 31 13 33
-                C13 35 15 37 17 36
-                C16 38 13 40 11 39
-                C9 37 9 34 10 32
-                C11 31 13 31 13 33
-              " stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              <!-- RIGHT ARM -->
-              <path d="M59 28 C65 26 70 25 74 26" stroke-width="3" stroke-linecap="round" fill="none"/>
-              <!-- RIGHT CLAW: mirror of left -->
-              <path d="
-                M74 26
-                C78 24 83 24 85 27
-                C87 29 85 32 82 32
-                C81 32 80 31 79 30
-                C79 28 81 26 80 24
-                C79 22 76 22 76 25
-                C76 28 77 31 77 33
-                C77 35 75 37 73 36
-                C74 38 77 40 79 39
-                C81 37 81 34 80 32
-                C79 31 77 31 77 33
-              " stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              <!-- Left legs (4) -->
-              <line x1="33" y1="34" x2="21" y2="38" stroke-width="1.8"/>
-              <line x1="31" y1="38" x2="19" y2="44" stroke-width="1.8"/>
-              <line x1="31" y1="42" x2="21" y2="50" stroke-width="1.8"/>
-              <line x1="33" y1="45" x2="25" y2="55" stroke-width="1.8"/>
-              <!-- Right legs (4) -->
-              <line x1="57" y1="34" x2="69" y2="38" stroke-width="1.8"/>
-              <line x1="59" y1="38" x2="71" y2="44" stroke-width="1.8"/>
-              <line x1="59" y1="42" x2="69" y2="50" stroke-width="1.8"/>
-              <line x1="57" y1="45" x2="65" y2="55" stroke-width="1.8"/>
-            </svg>
+            <img src="/public/crab-logo.png" alt="Crabify" width="32" height="32" style="width:32px;height:32px;object-fit:contain;display:block;" />
           </div>
           Crabify
         </a>
@@ -2910,33 +2867,7 @@
       <div class="footer__inner">
         <a href="#" class="footer__logo">
           <div class="footer__logo-icon">
-            <svg viewBox="0 0 90 60" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-              <!-- Carapace -->
-              <ellipse cx="45" cy="32" rx="14" ry="11" stroke-width="2.4"/>
-              <!-- Eye stalks + dots -->
-              <line x1="39" y1="22" x2="36" y2="15" stroke-width="2"/>
-              <circle cx="36" cy="14" r="2.2" fill="currentColor" stroke="none"/>
-              <line x1="51" y1="22" x2="54" y2="15" stroke-width="2"/>
-              <circle cx="54" cy="14" r="2.2" fill="currentColor" stroke="none"/>
-              <!-- LEFT ARM -->
-              <path d="M31 28 C25 26 20 25 16 26" stroke-width="3" stroke-linecap="round" fill="none"/>
-              <!-- LEFT CLAW -->
-              <path d="M16 26 C12 24 7 24 5 27 C3 29 5 32 8 32 C9 32 10 31 11 30 C11 28 9 26 10 24 C11 22 14 22 14 25 C14 28 13 31 13 33 C13 35 15 37 17 36 C16 38 13 40 11 39 C9 37 9 34 10 32 C11 31 13 31 13 33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              <!-- RIGHT ARM -->
-              <path d="M59 28 C65 26 70 25 74 26" stroke-width="3" stroke-linecap="round" fill="none"/>
-              <!-- RIGHT CLAW -->
-              <path d="M74 26 C78 24 83 24 85 27 C87 29 85 32 82 32 C81 32 80 31 79 30 C79 28 81 26 80 24 C79 22 76 22 76 25 C76 28 77 31 77 33 C77 35 75 37 73 36 C74 38 77 40 79 39 C81 37 81 34 80 32 C79 31 77 31 77 33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              <!-- Left legs (4) -->
-              <line x1="33" y1="34" x2="21" y2="38" stroke-width="1.8"/>
-              <line x1="31" y1="38" x2="19" y2="44" stroke-width="1.8"/>
-              <line x1="31" y1="42" x2="21" y2="50" stroke-width="1.8"/>
-              <line x1="33" y1="45" x2="25" y2="55" stroke-width="1.8"/>
-              <!-- Right legs (4) -->
-              <line x1="57" y1="34" x2="69" y2="38" stroke-width="1.8"/>
-              <line x1="59" y1="38" x2="71" y2="44" stroke-width="1.8"/>
-              <line x1="59" y1="42" x2="69" y2="50" stroke-width="1.8"/>
-              <line x1="57" y1="45" x2="65" y2="55" stroke-width="1.8"/>
-            </svg>
+            <img src="/public/crab-logo.png" alt="Crabify" width="28" height="28" style="width:28px;height:28px;object-fit:contain;display:block;" />
           </div>
           Crabify
         </a>
@@ -3460,7 +3391,7 @@
 
         <!-- Loading state -->
         <div class="pr-loading" id="prLoading">
-          <div class="pr-loading__crab">🦀</div>
+          <div class="pr-loading__crab"><img src="/public/crab-logo.png" alt="Crabify" style="width:56px;height:56px;object-fit:contain;" /></div>
           <div class="pr-loading__text" id="prLoadingText">Crabify is crawling property listings…</div>
           <div class="pr-loading__bar"><div class="pr-loading__fill"></div></div>
           <div class="pr-loading__sources" id="prLoadingSources">
@@ -3616,7 +3547,7 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Browse
       </a>
-      <a href="#" class="mobile-bottom-nav__search-btn" id="mbnCentralSearch" onclick="document.getElementById('openPropertySearch').click();return false;">🦀</a>
+      <a href="#" class="mobile-bottom-nav__search-btn" id="mbnCentralSearch" onclick="document.getElementById('openPropertySearch').click();return false;"><img src="/public/crab-logo.png" alt="Crabify" style="width:28px;height:28px;object-fit:contain;" /></a>
       <a href="#" class="mobile-bottom-nav__item" id="mbnSaved">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
         Saved
@@ -4575,7 +4506,7 @@
         </div>
 
         <div class="pr-loading" id="carsLoading">
-          <div class="pr-loading__crab">🚗</div>
+          <div class="pr-loading__crab"><img src="/public/crab-logo.png" alt="Crabify" style="width:56px;height:56px;object-fit:contain;" /></div>
           <div class="pr-loading__text" id="carsLoadingText">Crabify is searching for cars…</div>
           <div class="pr-loading__bar"><div class="pr-loading__fill"></div></div>
           <div class="pr-loading__sources" id="carsLoadingSources">
@@ -4734,7 +4665,7 @@
         </div>
 
         <div class="pr-loading" id="jobsLoading">
-          <div class="pr-loading__crab">💼</div>
+          <div class="pr-loading__crab"><img src="/public/crab-logo.png" alt="Crabify" style="width:56px;height:56px;object-fit:contain;" /></div>
           <div class="pr-loading__text" id="jobsLoadingText">Crabify is searching for jobs…</div>
           <div class="pr-loading__bar"><div class="pr-loading__fill"></div></div>
           <div class="pr-loading__sources" id="jobsLoadingSources">
