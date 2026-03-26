@@ -5047,7 +5047,7 @@
     /* "Search & Apply" — reads sidebar fields and runs a full search */
     function runJobsSearch() {
       const query = $('jobsQuery').value.trim();
-      const loc = $('jobsLocation').value.trim() || 'UK';
+      const loc = $('jobsLocation').value.trim(); // blank = nationwide (server defaults to 'anywhere')
       if (!query) {
         $('jobsQuery').focus();
         $('jobsQuery').style.borderColor = 'var(--accent)';
@@ -5067,7 +5067,7 @@
         index: 0,
       };
       jobsState.queryLabel = query;
-      jobsState.locationLabel = loc;
+      jobsState.locationLabel = loc || 'UK';
       jobsState.currentPage = 1;
       jobsState.allResults = [];
       jobsState.filteredResults = [];
@@ -5156,15 +5156,23 @@
 
     function applyJobsFilters() {
       let results = [...jobsState.allResults];
-      const minSal = parseFloat($('jobsMinSalary').value) || 0;   // fixed: was jobsFilterMinSalary (non-existent)
+      const minSal = parseFloat($('jobsMinSalary').value) || 0;
+      const maxSal = parseFloat($('jobsMaxSalary').value) || 0;
       const typeF = $('jobsFilterType').value;
       const remoteF = $('jobsFilterRemote').value;
       const sortBy = $('jobsSortFilter').value;
 
       results = results.filter(j => {
-        if (minSal && (j.salary_num || 0) < minSal) return false;
+        // salary_num can be hourly (e.g. 20.4) or annual (e.g. 45000).
+        // Normalise to annual for comparison: if < 1000, assume hourly × 2080 (52wks × 40hrs).
+        const rawSal = j.salary_num || 0;
+        const annualSal = rawSal > 0 && rawSal < 1000 ? rawSal * 2080 : rawSal;
+        if (minSal && annualSal < minSal) return false;
+        if (maxSal && annualSal > maxSal) return false;
         if (typeF && j.job_type !== typeF) return false;
-        if (remoteF && j.remote !== remoteF) return false;
+        // remote field from Reed can be '' (office/unspecified), 'Remote', 'Hybrid'
+        if (remoteF === 'Office') { if (j.remote && j.remote !== 'Office') return false; }
+        else if (remoteF && j.remote !== remoteF) return false;
         return true;
       });
 

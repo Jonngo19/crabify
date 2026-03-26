@@ -1678,7 +1678,12 @@ def _reed_slug(query: str, location: str) -> str:
     def slugify(s):
         return re.sub(r'[^a-z0-9]+', '-', s.strip().lower()).strip('-')
     q = slugify(query) if query else "jobs"
-    loc = slugify(location) if location else "uk"
+    # "uk", "UK", or empty → use "anywhere" so Reed returns nationwide results
+    loc_clean = location.strip().lower() if location else ""
+    if not loc_clean or loc_clean in ("uk", "united kingdom", "nationwide", "anywhere"):
+        loc = "anywhere"
+    else:
+        loc = slugify(location)
     return f"{q}-jobs-in-{loc}"
 
 
