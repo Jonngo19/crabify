@@ -3189,11 +3189,31 @@
     if (heroSearchSubmit) {
       heroSearchSubmit.addEventListener('click', () => {
         const activeTab = document.querySelector('.hero__tab.active');
-        const openId = activeTab ? activeTab.dataset.open : null;
-        if (openId) {
-          const el = document.getElementById(openId);
-          if (el) el.click();
+        const tabType = activeTab ? activeTab.dataset.tab : 'property';
+        const query = heroSearchInput ? heroSearchInput.value.trim() : '';
+        if (tabType === 'property') {
+          // Pre-fill sidebar location then trigger property search
+          const locEl = document.getElementById('psLocation');
+          if (locEl && query) locEl.value = query;
+          // Dispatch a custom event that the property JS block listens for
+          document.dispatchEvent(new CustomEvent('crabify:runPropertySearch'));
+        } else if (tabType === 'cars') {
+          const locEl = document.getElementById('carsLocation');
+          if (locEl && query) locEl.value = query;
+          document.dispatchEvent(new CustomEvent('crabify:runCarsSearch'));
+        } else if (tabType === 'jobs') {
+          // For jobs the query goes into jobsQuery; location stays blank (defaults to UK)
+          const qEl = document.getElementById('jobsQuery');
+          if (qEl && query) qEl.value = query;
+          document.dispatchEvent(new CustomEvent('crabify:runJobsSearch'));
         }
+      });
+    }
+
+    /* Allow Enter key in hero input to fire the search button */
+    if (heroSearchInput) {
+      heroSearchInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') heroSearchSubmit && heroSearchSubmit.click();
       });
     }
 
@@ -3244,170 +3264,8 @@
     }
   </script>
 
-  <!-- ============================================================
-       PROPERTY SEARCH MODAL
-  ============================================================ -->
-  <div class="ps-overlay" id="psOverlay" role="dialog" aria-modal="true" aria-label="Property Search">
-    <div class="ps-overlay__backdrop" id="psBackdrop"></div>
-    <div class="ps-modal">
-      <div class="ps-modal__header">
-        <div class="ps-modal__title">
-          <div class="ps-modal__title-icon">🏠</div>
-          Find Property for Sale
-        </div>
-        <button class="ps-modal__close" id="psClose" aria-label="Close">✕</button>
-      </div>
-
-      <div class="ps-form">
-        <!-- Buy / Rent tabs -->
-        <div class="ps-form__section-label">Transaction type</div>
-        <div class="ps-type-tabs">
-          <button class="ps-type-tab active" data-type="buy">For Sale</button>
-          <button class="ps-type-tab" data-type="rent">To Rent</button>
-        </div>
-
-        <!-- Location -->
-        <div class="ps-form__section-label">Location</div>
-        <div class="ps-field-row">
-          <div class="ps-field">
-            <label for="psLocation">Town, city or postcode</label>
-            <input type="text" id="psLocation" placeholder="e.g. Clapham, SW4, London…" autocomplete="off" />
-          </div>
-        </div>
-
-        <!-- Search radius + property type -->
-        <div class="ps-form__section-label">Search criteria</div>
-        <div class="ps-field-row ps-field-row--2">
-          <div class="ps-field ps-field--select">
-            <label for="psRadius">Search radius</label>
-            <select id="psRadius">
-              <option value="0.25">Within ¼ mile</option>
-              <option value="0.5">Within ½ mile</option>
-              <option value="1.0" selected>Within 1 mile</option>
-              <option value="3.0">Within 3 miles</option>
-              <option value="5.0">Within 5 miles</option>
-              <option value="10.0">Within 10 miles</option>
-              <option value="20.0">Within 20 miles</option>
-            </select>
-          </div>
-          <div class="ps-field ps-field--select">
-            <label for="psPropType">Property types</label>
-            <select id="psPropType">
-              <option value="any">Any</option>
-              <option value="detached">Detached</option>
-              <option value="semi">Semi-detached</option>
-              <option value="terraced">Terraced</option>
-              <option value="flat">Flat / Apartment</option>
-              <option value="bungalow">Bungalow</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Price range -->
-        <div class="ps-form__section-label">Price range (£)</div>
-        <div class="ps-field-row ps-field-row--2">
-          <div class="ps-field ps-field--select">
-            <label for="psMinPrice">No. of bedrooms — Min</label>
-            <select id="psMinPrice">
-              <option value="">No min</option>
-              <option value="50000">£50,000</option>
-              <option value="100000">£100,000</option>
-              <option value="150000">£150,000</option>
-              <option value="200000">£200,000</option>
-              <option value="300000">£300,000</option>
-              <option value="400000">£400,000</option>
-              <option value="500000">£500,000</option>
-              <option value="750000">£750,000</option>
-              <option value="1000000">£1,000,000</option>
-            </select>
-          </div>
-          <div class="ps-field ps-field--select">
-            <label for="psMaxPrice">Max price</label>
-            <select id="psMaxPrice">
-              <option value="">No max</option>
-              <option value="100000">£100,000</option>
-              <option value="150000">£150,000</option>
-              <option value="200000">£200,000</option>
-              <option value="300000">£300,000</option>
-              <option value="400000">£400,000</option>
-              <option value="500000">£500,000</option>
-              <option value="750000">£750,000</option>
-              <option value="1000000">£1,000,000</option>
-              <option value="2000000">£2,000,000</option>
-              <option value="5000000">£5,000,000</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Bedrooms -->
-        <div class="ps-form__section-label">No. of bedrooms</div>
-        <div class="ps-field-row ps-field-row--2">
-          <div class="ps-field ps-field--select">
-            <label for="psMinBeds">Min bedrooms</label>
-            <select id="psMinBeds">
-              <option value="">No min</option>
-              <option value="1">1+</option>
-              <option value="2">2+</option>
-              <option value="3">3+</option>
-              <option value="4">4+</option>
-              <option value="5">5+</option>
-            </select>
-          </div>
-          <div class="ps-field ps-field--select">
-            <label for="psMaxBeds">Max bedrooms</label>
-            <select id="psMaxBeds">
-              <option value="">No max</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Must-haves -->
-        <div class="ps-form__section-label">Must-haves</div>
-        <div class="ps-musthaves">
-          <label class="ps-checkbox">
-            <input type="checkbox" id="psParking" value="parking" />
-            <span class="ps-checkbox__box">
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
-            </span>
-            <span class="ps-checkbox__label">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-              Parking
-            </span>
-          </label>
-          <label class="ps-checkbox">
-            <input type="checkbox" id="psGarden" value="garden" />
-            <span class="ps-checkbox__box">
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
-            </span>
-            <span class="ps-checkbox__label">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M5 3l7 9 7-9"/><path d="M3 18c0-3 2-5 9-6 7 1 9 3 9 6H3z"/></svg>
-              Garden
-            </span>
-          </label>
-        </div>
-
-        <div class="ps-form__actions">
-          <div class="ps-form__source-note">
-            Searching:
-            <div class="ps-sources">
-              <span class="ps-source-pill">Rightmove</span>
-              <span class="ps-source-pill">OnTheMarket</span>
-              <span class="ps-source-pill" id="psZooplaPill" style="opacity:0.5;" title="Add Scrapfly key to enable Zoopla">Zoopla ⚙️</span>
-            </div>
-          </div>
-          <button class="btn-accent-lg" id="psSubmit">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            Search Properties
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Zoopla pill (kept outside modal so it still works) -->
+  <span id="psZooplaPill" style="display:none;"></span>
 
   <!-- ============================================================
        PROPERTY RESULTS PAGE
@@ -3444,8 +3302,26 @@
 
       <!-- Sidebar filters -->
       <aside class="pr-sidebar">
-        <div class="pr-sidebar__title">Refine Results</div>
+        <div class="pr-sidebar__title">Search</div>
 
+        <!-- Location -->
+        <div class="pr-filter">
+          <label>Location</label>
+          <input type="text" id="psLocation" placeholder="Town, city or postcode…" autocomplete="off" style="width:100%;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 12px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+        </div>
+
+        <!-- Buy / Rent -->
+        <div class="pr-filter">
+          <label>Transaction type</label>
+          <div style="display:flex;gap:6px;">
+            <button class="ps-type-tab active" data-type="buy" id="prTypeBuy" style="flex:1;padding:8px;font-size:13px;border-radius:8px;border:1.5px solid var(--accent);background:rgba(241,77,76,0.08);color:var(--accent);font-weight:600;cursor:pointer;">For Sale</button>
+            <button class="ps-type-tab" data-type="rent" id="prTypeRent" style="flex:1;padding:8px;font-size:13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);font-weight:500;cursor:pointer;">To Rent</button>
+          </div>
+        </div>
+
+        <div class="pr-sidebar__title" style="margin-top:16px;">Refine Results</div>
+
+        <!-- Sort -->
         <div class="pr-filter">
           <label>Sort by</label>
           <div style="position:relative;">
@@ -3459,44 +3335,95 @@
           </div>
         </div>
 
+        <!-- Radius -->
         <div class="pr-filter">
-          <label>Price range</label>
-          <div class="pr-filter-row">
-            <input type="number" id="prMinPrice" placeholder="Min £" min="0" step="10000">
-            <input type="number" id="prMaxPrice" placeholder="Max £" min="0" step="10000">
+          <label>Search radius</label>
+          <div style="position:relative;">
+            <select id="psRadius">
+              <option value="0.25">Within ¼ mile</option>
+              <option value="0.5">Within ½ mile</option>
+              <option value="1.0" selected>Within 1 mile</option>
+              <option value="3.0">Within 3 miles</option>
+              <option value="5.0">Within 5 miles</option>
+              <option value="10.0">Within 10 miles</option>
+              <option value="20.0">Within 20 miles</option>
+            </select>
+            <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
           </div>
         </div>
 
+        <!-- Price range -->
         <div class="pr-filter">
-          <label>Min bedrooms</label>
-          <div style="position:relative;">
-            <select id="prMinBeds">
-              <option value="">Any</option>
+          <label>Price range</label>
+          <div class="pr-filter-row">
+            <select id="prMinPrice" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              <option value="">No min</option>
+              <option value="50000">£50,000</option>
+              <option value="100000">£100,000</option>
+              <option value="150000">£150,000</option>
+              <option value="200000">£200,000</option>
+              <option value="300000">£300,000</option>
+              <option value="400000">£400,000</option>
+              <option value="500000">£500,000</option>
+              <option value="750000">£750,000</option>
+              <option value="1000000">£1,000,000</option>
+            </select>
+            <select id="prMaxPrice" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              <option value="">No max</option>
+              <option value="100000">£100,000</option>
+              <option value="150000">£150,000</option>
+              <option value="200000">£200,000</option>
+              <option value="300000">£300,000</option>
+              <option value="400000">£400,000</option>
+              <option value="500000">£500,000</option>
+              <option value="750000">£750,000</option>
+              <option value="1000000">£1,000,000</option>
+              <option value="2000000">£2,000,000</option>
+              <option value="5000000">£5,000,000</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Bedrooms -->
+        <div class="pr-filter">
+          <label>Bedrooms</label>
+          <div class="pr-filter-row">
+            <select id="prMinBeds" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              <option value="">Min</option>
               <option value="1">1+</option>
               <option value="2">2+</option>
               <option value="3">3+</option>
               <option value="4">4+</option>
               <option value="5">5+</option>
             </select>
-            <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+            <select id="psMaxBeds" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              <option value="">Max</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
           </div>
         </div>
 
+        <!-- Property type -->
         <div class="pr-filter">
           <label>Property type</label>
           <div style="position:relative;">
             <select id="prTypeFilter">
               <option value="">All types</option>
-              <option value="Detached">Detached</option>
-              <option value="Semi-Detached">Semi-Detached</option>
-              <option value="Terraced">Terraced</option>
-              <option value="Flat">Flat</option>
-              <option value="Bungalow">Bungalow</option>
+              <option value="detached">Detached</option>
+              <option value="semi">Semi-detached</option>
+              <option value="terraced">Terraced</option>
+              <option value="flat">Flat / Apartment</option>
+              <option value="bungalow">Bungalow</option>
             </select>
             <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
           </div>
         </div>
 
+        <!-- Must-haves -->
         <div class="pr-filter">
           <label>Must-haves</label>
           <div style="display:flex;flex-direction:column;gap:8px;margin-top:2px;">
@@ -3513,7 +3440,7 @@
           </div>
         </div>
 
-        <button class="btn-accent-sm" style="width:100%;justify-content:center;" id="prApplyFilters">Apply Filters</button>
+        <button class="btn-accent-sm" style="width:100%;justify-content:center;" id="prApplyFilters">Search &amp; Apply</button>
 
         <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
           <div class="pr-sidebar__title">Data sources</div>
@@ -3724,10 +3651,6 @@
 
     /* ── ELEMENTS ───────────────────────────────────────────── */
     const $ = id => document.getElementById(id);
-    const psOverlay = $('psOverlay');
-    const psClose   = $('psClose');
-    const psBackdrop = $('psBackdrop');
-    const psSubmit  = $('psSubmit');
     const prPage    = $('prPage');
     const prBack    = $('prBack');
     const prGrid    = $('prGrid');
@@ -3746,55 +3669,38 @@
     const emSend    = $('emSend');
     const toast     = $('toast');
 
-    /* ── OPEN / CLOSE PROPERTY SEARCH MODAL ────────────────── */
-    function openSearchModal() {
-      psOverlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => $('psLocation').focus(), 300);
-    }
-    function closeSearchModal() {
-      psOverlay.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    // Wire category card click
-    const catBtn = $('openPropertySearch');
-    if (catBtn) catBtn.addEventListener('click', e => { e.preventDefault(); openSearchModal(); });
-
-    // Also wire hero CTA "Start your search" → open modal if desired
-    document.querySelectorAll('a[href="#categories"]').forEach(a => {
-      a.addEventListener('click', e => {
-        // Just scroll normally – don't override
+    /* ── BUY / RENT TABS in sidebar ─────────────────────────── */
+    document.querySelectorAll('#prTypeBuy, #prTypeRent').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $('prTypeBuy').style.cssText  = 'flex:1;padding:8px;font-size:13px;border-radius:8px;cursor:pointer;font-weight:500;border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);';
+        $('prTypeRent').style.cssText = 'flex:1;padding:8px;font-size:13px;border-radius:8px;cursor:pointer;font-weight:500;border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);';
+        btn.style.cssText = 'flex:1;padding:8px;font-size:13px;border-radius:8px;cursor:pointer;font-weight:600;border:1.5px solid var(--accent);background:rgba(241,77,76,0.08);color:var(--accent);';
+        state.transactionType = btn.dataset.type;
       });
     });
 
-    psClose.addEventListener('click', closeSearchModal);
-    psBackdrop.addEventListener('click', closeSearchModal);
+    // Wire category card click → open results page directly
+    const catBtn = $('openPropertySearch');
+    if (catBtn) catBtn.addEventListener('click', e => { e.preventDefault(); runPropertySearch(); });
+
+    // Hero search bar dispatches this event when Property tab is active
+    document.addEventListener('crabify:runPropertySearch', () => runPropertySearch());
+
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
         if (emOverlay.classList.contains('open')) closeEmailModal();
-        else if (psOverlay.classList.contains('open')) closeSearchModal();
       }
     });
 
-    /* ── BUY / RENT TABS ────────────────────────────────────── */
-    document.querySelectorAll('.ps-type-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.ps-type-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        state.transactionType = tab.dataset.type;
-      });
-    });
-
-    /* ── PHOTO UPLOAD ───────────────────────────────────────── */
-    /* ── SEARCH SUBMIT ──────────────────────────────────────── */
-    psSubmit.addEventListener('click', () => {
+    /* ── SEARCH & APPLY (sidebar button) ────────────────────── */
+    // This is the unified entry point — reads all sidebar fields and searches
+    function runPropertySearch() {
       const loc = $('psLocation').value.trim();
       if (!loc) {
         $('psLocation').focus();
         $('psLocation').style.borderColor = 'var(--accent)';
         setTimeout(() => $('psLocation').style.borderColor = '', 2000);
-        showToast('Please enter a location', 'error');
+        showToast('Please enter a location to search', 'error');
         return;
       }
 
@@ -3802,14 +3708,14 @@
         location: loc,
         type: state.transactionType,
         radius: $('psRadius').value,
-        min_price: $('psMinPrice').value,
-        max_price: $('psMaxPrice').value,
-        min_beds: $('psMinBeds').value,
+        min_price: $('prMinPrice').value,
+        max_price: $('prMaxPrice').value,
+        min_beds: $('prMinBeds').value,
         max_beds: $('psMaxBeds').value,
-        property_type: $('psPropType').value,
-        must_parking: $('psParking').checked,
-        must_garden: $('psGarden').checked,
-        sort: 'newest',
+        property_type: $('prTypeFilter').value || 'any',
+        must_parking: $('prFilterParking').checked,
+        must_garden: $('prFilterGarden').checked,
+        sort: $('prSort').value || 'newest',
         index: 0,
       };
       state.locationLabel = loc;
@@ -3818,21 +3724,9 @@
       state.allResults = [];
       state.filteredResults = [];
 
-      // Pre-populate sidebar filters from the search form values
-      $('prFilterParking').checked = state.searchParams.must_parking || false;
-      $('prFilterGarden').checked  = state.searchParams.must_garden  || false;
-      if (state.searchParams.min_price) $('prMinPrice').value = state.searchParams.min_price;
-      if (state.searchParams.max_price) $('prMaxPrice').value = state.searchParams.max_price;
-      if (state.searchParams.min_beds)  $('prMinBeds').value  = state.searchParams.min_beds;
-      if (state.searchParams.property_type && state.searchParams.property_type !== 'any') {
-        $('prTypeFilter').value = state.searchParams.property_type.charAt(0).toUpperCase() + state.searchParams.property_type.slice(1);
-      }
-      $('prSort').value = state.searchParams.sort || 'newest';
-
-      closeSearchModal();
       openResultsPage();
       doSearch();
-    });
+    }
 
     /* ── RESULTS PAGE ───────────────────────────────────────── */
     function openResultsPage() {
@@ -3852,13 +3746,11 @@
     prBack.addEventListener('click', () => {
       prPage.classList.remove('open');
       document.body.style.overflow = '';
-      openSearchModal();
     });
 
     $('prModifySearch').addEventListener('click', () => {
       prPage.classList.remove('open');
       document.body.style.overflow = '';
-      openSearchModal();
     });
 
     /* ── LOADING MESSAGES ───────────────────────────────────── */
@@ -4176,24 +4068,12 @@
       return s.includes('pcm') || s.includes(' pw') || s.includes('per week') || s.includes('per month');
     }
 
-    $('prApplyFilters').addEventListener('click', () => {
-      // Update searchParams with sidebar values so server re-fetches with new filters
-      state.searchParams.min_price = $('prMinPrice').value;
-      state.searchParams.max_price = $('prMaxPrice').value;
-      state.searchParams.min_beds  = $('prMinBeds').value;
-      state.searchParams.must_parking = $('prFilterParking').checked;
-      state.searchParams.must_garden  = $('prFilterGarden').checked;
-      const typeVal = $('prTypeFilter').value;
-      state.searchParams.property_type = typeVal ? typeVal.toLowerCase() : 'any';
-      state.currentPage = 1;
-      doSearch(1);
-    });
+    // "Search & Apply" button — runs full search from sidebar values
+    $('prApplyFilters').addEventListener('click', () => { runPropertySearch(); });
+
     $('prSort').addEventListener('change', () => {
-      const newSort = $('prSort').value;
-      state.searchParams.sort = newSort;
+      state.searchParams.sort = $('prSort').value;
       state.currentPage = 1;
-      // For price/beds sorts: re-fetch from server so sort is applied across all pages
-      // For local-only sorts this also ensures consistency
       doSearch(1);
     });
 
@@ -4533,149 +4413,11 @@
 
     /* ── LOCATION ENTER KEY ─────────────────────────────────── */
     $('psLocation').addEventListener('keydown', e => {
-      if (e.key === 'Enter') psSubmit.click();
+      if (e.key === 'Enter') runPropertySearch();
     });
 
   })();
   </script>
-
-  <!-- ============================================================
-       CARS SEARCH MODAL
-  ============================================================ -->
-  <div class="ps-overlay" id="carsOverlay" role="dialog" aria-modal="true" aria-label="Car Search">
-    <div class="ps-overlay__backdrop" id="carsBackdrop"></div>
-    <div class="ps-modal">
-      <div class="ps-modal__header">
-        <div class="ps-modal__title">
-          <div class="ps-modal__title-icon">🚗</div>
-          Find a Car
-        </div>
-        <button class="ps-modal__close" id="carsClose" aria-label="Close">✕</button>
-      </div>
-      <div class="ps-form">
-        <!-- Location -->
-        <div class="ps-form__section-label">Location</div>
-        <div class="ps-field-row">
-          <div class="ps-field">
-            <label for="carsLocation">Town, city or postcode</label>
-            <input type="text" id="carsLocation" placeholder="e.g. London, Manchester, SW4…" autocomplete="off" />
-          </div>
-        </div>
-
-        <!-- Make & Model -->
-        <div class="ps-form__section-label">Make &amp; Model</div>
-        <div class="ps-field-row ps-field-row--2">
-          <div class="ps-field">
-            <label for="carsMake">Make</label>
-            <input type="text" id="carsMake" placeholder="e.g. Ford, BMW, Toyota…" autocomplete="off" />
-          </div>
-          <div class="ps-field">
-            <label for="carsModel">Model</label>
-            <input type="text" id="carsModel" placeholder="e.g. Focus, 3 Series…" autocomplete="off" />
-          </div>
-        </div>
-
-        <!-- Price range -->
-        <div class="ps-form__section-label">Price range (£)</div>
-        <div class="ps-field-row ps-field-row--2">
-          <div class="ps-field ps-field--select">
-            <label for="carsMinPrice">Min price</label>
-            <select id="carsMinPrice">
-              <option value="">No min</option>
-              <option value="1000">£1,000</option>
-              <option value="3000">£3,000</option>
-              <option value="5000">£5,000</option>
-              <option value="10000">£10,000</option>
-              <option value="15000">£15,000</option>
-              <option value="20000">£20,000</option>
-              <option value="30000">£30,000</option>
-              <option value="50000">£50,000</option>
-            </select>
-          </div>
-          <div class="ps-field ps-field--select">
-            <label for="carsMaxPrice">Max price</label>
-            <select id="carsMaxPrice">
-              <option value="">No max</option>
-              <option value="3000">£3,000</option>
-              <option value="5000">£5,000</option>
-              <option value="10000">£10,000</option>
-              <option value="15000">£15,000</option>
-              <option value="20000">£20,000</option>
-              <option value="30000">£30,000</option>
-              <option value="50000">£50,000</option>
-              <option value="100000">£100,000</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Year & Mileage -->
-        <div class="ps-form__section-label">Year &amp; Mileage</div>
-        <div class="ps-field-row ps-field-row--2">
-          <div class="ps-field ps-field--select">
-            <label for="carsYearFrom">Year from</label>
-            <select id="carsYearFrom">
-              <option value="">Any year</option>
-              <option value="2020">2020+</option>
-              <option value="2018">2018+</option>
-              <option value="2015">2015+</option>
-              <option value="2012">2012+</option>
-              <option value="2010">2010+</option>
-              <option value="2005">2005+</option>
-            </select>
-          </div>
-          <div class="ps-field ps-field--select">
-            <label for="carsMaxMileage">Max mileage</label>
-            <select id="carsMaxMileage">
-              <option value="">Any mileage</option>
-              <option value="10000">10,000</option>
-              <option value="20000">20,000</option>
-              <option value="40000">40,000</option>
-              <option value="60000">60,000</option>
-              <option value="80000">80,000</option>
-              <option value="100000">100,000</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Fuel & Transmission -->
-        <div class="ps-form__section-label">Fuel &amp; Transmission</div>
-        <div class="ps-field-row ps-field-row--2">
-          <div class="ps-field ps-field--select">
-            <label for="carsFuel">Fuel type</label>
-            <select id="carsFuel">
-              <option value="">Any</option>
-              <option value="petrol">Petrol</option>
-              <option value="diesel">Diesel</option>
-              <option value="electric">Electric</option>
-              <option value="hybrid">Hybrid</option>
-            </select>
-          </div>
-          <div class="ps-field ps-field--select">
-            <label for="carsTransmission">Transmission</label>
-            <select id="carsTransmission">
-              <option value="">Any</option>
-              <option value="manual">Manual</option>
-              <option value="automatic">Automatic</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="ps-form__actions">
-          <div class="ps-form__source-note">
-            Searching:
-            <div class="ps-sources">
-              <span class="ps-source-pill">Exchange&amp;Mart</span>
-              <span class="ps-source-pill">Gumtree</span>
-            </div>
-          </div>
-          <button class="btn-accent-lg" id="carsSubmit">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            Search Cars
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- ============================================================
        CARS RESULTS PAGE
@@ -4703,8 +4445,26 @@
 
     <div class="pr-body">
       <aside class="pr-sidebar">
-        <div class="pr-sidebar__title">Refine Results</div>
+        <div class="pr-sidebar__title">Search</div>
 
+        <!-- Location -->
+        <div class="pr-filter">
+          <label>Location</label>
+          <input type="text" id="carsLocation" placeholder="Town, city or postcode…" autocomplete="off" style="width:100%;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 12px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+        </div>
+
+        <!-- Make & Model -->
+        <div class="pr-filter">
+          <label>Make &amp; Model</label>
+          <div class="pr-filter-row">
+            <input type="text" id="carsMake" placeholder="Make…" autocomplete="off" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 10px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+            <input type="text" id="carsModel" placeholder="Model…" autocomplete="off" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 10px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+          </div>
+        </div>
+
+        <div class="pr-sidebar__title" style="margin-top:16px;">Refine Results</div>
+
+        <!-- Sort -->
         <div class="pr-filter">
           <label>Sort by</label>
           <div style="position:relative;">
@@ -4719,29 +4479,61 @@
           </div>
         </div>
 
+        <!-- Price range -->
         <div class="pr-filter">
           <label>Price range</label>
           <div class="pr-filter-row">
-            <input type="number" id="carsFilterMinPrice" placeholder="Min £" min="0" step="500">
-            <input type="number" id="carsFilterMaxPrice" placeholder="Max £" min="0" step="500">
+            <select id="carsFilterMinPrice" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              <option value="">No min</option>
+              <option value="1000">£1,000</option>
+              <option value="3000">£3,000</option>
+              <option value="5000">£5,000</option>
+              <option value="10000">£10,000</option>
+              <option value="15000">£15,000</option>
+              <option value="20000">£20,000</option>
+              <option value="30000">£30,000</option>
+              <option value="50000">£50,000</option>
+            </select>
+            <select id="carsFilterMaxPrice" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              <option value="">No max</option>
+              <option value="3000">£3,000</option>
+              <option value="5000">£5,000</option>
+              <option value="10000">£10,000</option>
+              <option value="15000">£15,000</option>
+              <option value="20000">£20,000</option>
+              <option value="30000">£30,000</option>
+              <option value="50000">£50,000</option>
+              <option value="100000">£100,000</option>
+            </select>
           </div>
         </div>
 
+        <!-- Year & Mileage -->
         <div class="pr-filter">
-          <label>Year from</label>
-          <div style="position:relative;">
-            <select id="carsFilterYear">
+          <label>Year &amp; Mileage</label>
+          <div class="pr-filter-row">
+            <select id="carsFilterYear" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
               <option value="">Any year</option>
               <option value="2022">2022+</option>
               <option value="2020">2020+</option>
               <option value="2018">2018+</option>
               <option value="2015">2015+</option>
               <option value="2010">2010+</option>
+              <option value="2005">2005+</option>
             </select>
-            <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+            <select id="carsMaxMileage" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              <option value="">Any miles</option>
+              <option value="10000">10,000</option>
+              <option value="20000">20,000</option>
+              <option value="40000">40,000</option>
+              <option value="60000">60,000</option>
+              <option value="80000">80,000</option>
+              <option value="100000">100,000</option>
+            </select>
           </div>
         </div>
 
+        <!-- Fuel type -->
         <div class="pr-filter">
           <label>Fuel type</label>
           <div style="position:relative;">
@@ -4756,7 +4548,20 @@
           </div>
         </div>
 
-        <button class="btn-accent-sm" style="width:100%;justify-content:center;" id="carsApplyFilters">Apply Filters</button>
+        <!-- Transmission -->
+        <div class="pr-filter">
+          <label>Transmission</label>
+          <div style="position:relative;">
+            <select id="carsTransmission">
+              <option value="">Any</option>
+              <option value="manual">Manual</option>
+              <option value="automatic">Automatic</option>
+            </select>
+            <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+          </div>
+        </div>
+
+        <button class="btn-accent-sm" style="width:100%;justify-content:center;" id="carsApplyFilters">Search &amp; Apply</button>
 
         <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
           <div class="pr-sidebar__title">Data sources</div>
@@ -4793,107 +4598,6 @@
   </div>
 
   <!-- ============================================================
-       JOBS SEARCH MODAL
-  ============================================================ -->
-  <div class="ps-overlay" id="jobsOverlay" role="dialog" aria-modal="true" aria-label="Job Search">
-    <div class="ps-overlay__backdrop" id="jobsBackdrop"></div>
-    <div class="ps-modal">
-      <div class="ps-modal__header">
-        <div class="ps-modal__title">
-          <div class="ps-modal__title-icon">💼</div>
-          Find a Job
-        </div>
-        <button class="ps-modal__close" id="jobsClose" aria-label="Close">✕</button>
-      </div>
-      <div class="ps-form">
-        <!-- Job title / keywords -->
-        <div class="ps-form__section-label">Job title or keywords</div>
-        <div class="ps-field-row">
-          <div class="ps-field">
-            <label for="jobsQuery">What are you looking for?</label>
-            <input type="text" id="jobsQuery" placeholder="e.g. Software Developer, Nurse, Accountant…" autocomplete="off" />
-          </div>
-        </div>
-
-        <!-- Location & radius -->
-        <div class="ps-form__section-label">Location</div>
-        <div class="ps-field-row ps-field-row--2">
-          <div class="ps-field">
-            <label for="jobsLocation">Town or city</label>
-            <input type="text" id="jobsLocation" placeholder="e.g. London, Manchester, UK" autocomplete="off" />
-          </div>
-          <div class="ps-field ps-field--select">
-            <label for="jobsRadius">Search radius</label>
-            <select id="jobsRadius">
-              <option value="5">Within 5 miles</option>
-              <option value="10">Within 10 miles</option>
-              <option value="20" selected>Within 20 miles</option>
-              <option value="30">Within 30 miles</option>
-              <option value="50">Within 50 miles</option>
-              <option value="100">Within 100 miles</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Salary range -->
-        <div class="ps-form__section-label">Salary range (£/year)</div>
-        <div class="ps-field-row ps-field-row--2">
-          <div class="ps-field ps-field--select">
-            <label for="jobsMinSalary">Min salary</label>
-            <select id="jobsMinSalary">
-              <option value="">No min</option>
-              <option value="15000">£15,000</option>
-              <option value="20000">£20,000</option>
-              <option value="25000">£25,000</option>
-              <option value="30000">£30,000</option>
-              <option value="40000">£40,000</option>
-              <option value="50000">£50,000</option>
-              <option value="60000">£60,000</option>
-              <option value="80000">£80,000</option>
-              <option value="100000">£100,000</option>
-            </select>
-          </div>
-          <div class="ps-field ps-field--select">
-            <label for="jobsMaxSalary">Max salary</label>
-            <select id="jobsMaxSalary">
-              <option value="">No max</option>
-              <option value="25000">£25,000</option>
-              <option value="35000">£35,000</option>
-              <option value="50000">£50,000</option>
-              <option value="60000">£60,000</option>
-              <option value="80000">£80,000</option>
-              <option value="100000">£100,000</option>
-              <option value="150000">£150,000</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Job type -->
-        <div class="ps-form__section-label">Job type</div>
-        <div class="ps-type-tabs" id="jobsTypeTabs">
-          <button class="ps-type-tab active" data-jobtype="any">Any</button>
-          <button class="ps-type-tab" data-jobtype="permanent">Permanent</button>
-          <button class="ps-type-tab" data-jobtype="contract">Contract</button>
-          <button class="ps-type-tab" data-jobtype="part_time">Part-time</button>
-        </div>
-
-        <div class="ps-form__actions">
-          <div class="ps-form__source-note">
-            Searching:
-            <div class="ps-sources">
-              <span class="ps-source-pill" style="background:#e63946;color:#fff;">Reed.co.uk</span>
-            </div>
-          </div>
-          <button class="btn-accent-lg" id="jobsSubmit">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            Search Jobs
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================
        JOBS RESULTS PAGE
   ============================================================ -->
   <div class="pr-page" id="jobsPage">
@@ -4919,8 +4623,33 @@
 
     <div class="pr-body">
       <aside class="pr-sidebar">
-        <div class="pr-sidebar__title">Refine Results</div>
+        <div class="pr-sidebar__title">Search</div>
 
+        <!-- Job query -->
+        <div class="pr-filter">
+          <label>Job title or keywords</label>
+          <input type="text" id="jobsQuery" placeholder="e.g. Software Developer, Nurse…" autocomplete="off" style="width:100%;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 12px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+        </div>
+
+        <!-- Location -->
+        <div class="pr-filter">
+          <label>Location</label>
+          <div class="pr-filter-row">
+            <input type="text" id="jobsLocation" placeholder="Town, city or UK" autocomplete="off" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 10px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+            <select id="jobsRadius" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              <option value="5">5 miles</option>
+              <option value="10">10 miles</option>
+              <option value="20" selected>20 miles</option>
+              <option value="30">30 miles</option>
+              <option value="50">50 miles</option>
+              <option value="100">100 miles</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pr-sidebar__title" style="margin-top:16px;">Refine Results</div>
+
+        <!-- Sort -->
         <div class="pr-filter">
           <label>Sort by</label>
           <div style="position:relative;">
@@ -4933,11 +4662,36 @@
           </div>
         </div>
 
+        <!-- Salary range -->
         <div class="pr-filter">
-          <label>Min salary (£)</label>
-          <input type="number" id="jobsFilterMinSalary" placeholder="e.g. 30000" min="0" step="1000" style="width:100%;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 12px;font-size:13px;">
+          <label>Salary range (£/year)</label>
+          <div class="pr-filter-row">
+            <select id="jobsMinSalary" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              <option value="">No min</option>
+              <option value="15000">£15,000</option>
+              <option value="20000">£20,000</option>
+              <option value="25000">£25,000</option>
+              <option value="30000">£30,000</option>
+              <option value="40000">£40,000</option>
+              <option value="50000">£50,000</option>
+              <option value="60000">£60,000</option>
+              <option value="80000">£80,000</option>
+              <option value="100000">£100,000</option>
+            </select>
+            <select id="jobsMaxSalary" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              <option value="">No max</option>
+              <option value="25000">£25,000</option>
+              <option value="35000">£35,000</option>
+              <option value="50000">£50,000</option>
+              <option value="60000">£60,000</option>
+              <option value="80000">£80,000</option>
+              <option value="100000">£100,000</option>
+              <option value="150000">£150,000</option>
+            </select>
+          </div>
         </div>
 
+        <!-- Job type -->
         <div class="pr-filter">
           <label>Job type</label>
           <div style="position:relative;">
@@ -4952,6 +4706,7 @@
           </div>
         </div>
 
+        <!-- Remote -->
         <div class="pr-filter">
           <label>Remote working</label>
           <div style="position:relative;">
@@ -4965,7 +4720,7 @@
           </div>
         </div>
 
-        <button class="btn-accent-sm" style="width:100%;justify-content:center;" id="jobsApplyFilters">Apply Filters</button>
+        <button class="btn-accent-sm" style="width:100%;justify-content:center;" id="jobsApplyFilters">Search &amp; Apply</button>
 
         <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
           <div class="pr-sidebar__title">Data sources</div>
@@ -5019,51 +4774,46 @@
       locationLabel: '',
     };
 
-    /* Open / close */
-    function openCarsModal() {
-      $('carsOverlay').classList.add('open');
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => $('carsLocation').focus(), 300);
-    }
-    function closeCarsModal() {
-      $('carsOverlay').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    // Wire category card
+    // Wire category card → open results page directly
     const carsCard = document.getElementById('openCarSearch');
-    if (carsCard) carsCard.addEventListener('click', e => { e.preventDefault(); openCarsModal(); });
-    $('carsClose').addEventListener('click', closeCarsModal);
-    $('carsBackdrop').addEventListener('click', closeCarsModal);
-    $('carsBack').addEventListener('click', () => { $('carsPage').classList.remove('open'); document.body.style.overflow = ''; openCarsModal(); });
-    $('carsModifySearch').addEventListener('click', () => { $('carsPage').classList.remove('open'); document.body.style.overflow = ''; openCarsModal(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('carsOverlay').classList.contains('open')) closeCarsModal(); });
+    if (carsCard) carsCard.addEventListener('click', e => { e.preventDefault(); runCarsSearch(); });
 
-    /* Submit */
-    $('carsSubmit').addEventListener('click', () => {
+    // Hero search bar dispatches this when Cars tab is active
+    document.addEventListener('crabify:runCarsSearch', () => runCarsSearch());
+
+    $('carsBack').addEventListener('click', () => { $('carsPage').classList.remove('open'); document.body.style.overflow = ''; });
+    $('carsModifySearch').addEventListener('click', () => { $('carsPage').classList.remove('open'); document.body.style.overflow = ''; });
+
+    /* "Search & Apply" reads all sidebar fields */
+    function runCarsSearch() {
       const loc = $('carsLocation').value.trim();
-      if (!loc) { $('carsLocation').focus(); $('carsLocation').style.borderColor='var(--accent)'; setTimeout(()=>$('carsLocation').style.borderColor='',2000); return; }
+      if (!loc) {
+        $('carsLocation').focus();
+        $('carsLocation').style.borderColor = 'var(--accent)';
+        setTimeout(() => $('carsLocation').style.borderColor = '', 2000);
+        return;
+      }
       carsState.searchParams = {
-        location: loc, make: $('carsMake').value.trim(), model: $('carsModel').value.trim(),
-        min_price: $('carsMinPrice').value, max_price: $('carsMaxPrice').value,
-        year_from: $('carsYearFrom').value, max_mileage: $('carsMaxMileage').value,
-        fuel: $('carsFuel').value, transmission: $('carsTransmission').value,
-        sort: 'newest', index: 0,
+        location: loc,
+        make: $('carsMake').value.trim(),
+        model: $('carsModel').value.trim(),
+        min_price: $('carsFilterMinPrice').value,
+        max_price: $('carsFilterMaxPrice').value,
+        year_from: $('carsFilterYear').value,
+        max_mileage: $('carsMaxMileage').value,
+        fuel: $('carsFilterFuel').value,
+        transmission: $('carsTransmission').value,
+        sort: $('carsSortFilter').value || 'newest',
+        index: 0,
       };
       carsState.locationLabel = loc;
       carsState.currentPage = 1;
       carsState.allResults = [];
       carsState.filteredResults = [];
-      // Pre-populate sidebar
-      if (carsState.searchParams.min_price) $('carsFilterMinPrice').value = carsState.searchParams.min_price;
-      if (carsState.searchParams.max_price) $('carsFilterMaxPrice').value = carsState.searchParams.max_price;
-      if (carsState.searchParams.year_from) $('carsFilterYear').value = carsState.searchParams.year_from;
-      if (carsState.searchParams.fuel) $('carsFilterFuel').value = carsState.searchParams.fuel;
-      closeCarsModal();
       openCarsResultsPage();
       doCarsSearch();
-    });
-    $('carsLocation').addEventListener('keydown', e => { if (e.key === 'Enter') $('carsSubmit').click(); });
+    }
+    $('carsLocation').addEventListener('keydown', e => { if (e.key === 'Enter') runCarsSearch(); });
 
     function openCarsResultsPage() {
       $('carsPage').classList.add('open');
@@ -5254,10 +5004,9 @@
       pag.appendChild(next);
     }
 
-    $('carsApplyFilters').addEventListener('click', () => {
-      carsState.searchParams.sort = $('carsSortFilter').value;
-      applyCarsFilters(); renderCarsResults();
-    });
+    // "Search & Apply" runs a brand-new search from sidebar values
+    $('carsApplyFilters').addEventListener('click', () => runCarsSearch());
+    // Sort change re-applies sort on already-fetched results (fast, no new network call)
     $('carsSortFilter').addEventListener('change', () => {
       carsState.searchParams.sort = $('carsSortFilter').value;
       applyCarsFilters(); renderCarsResults();
@@ -5293,58 +5042,51 @@
       totalResults: 0,
       queryLabel: '',
       locationLabel: '',
-      jobType: 'any',
     };
 
-    function openJobsModal() {
-      $('jobsOverlay').classList.add('open');
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => $('jobsQuery').focus(), 300);
-    }
-    function closeJobsModal() {
-      $('jobsOverlay').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    // Wire category card (green 22c55e)
-    const jobsCard = document.getElementById('openJobSearch');
-    if (jobsCard) jobsCard.addEventListener('click', e => { e.preventDefault(); openJobsModal(); });
-    $('jobsClose').addEventListener('click', closeJobsModal);
-    $('jobsBackdrop').addEventListener('click', closeJobsModal);
-    $('jobsBack').addEventListener('click', () => { $('jobsPage').classList.remove('open'); document.body.style.overflow = ''; openJobsModal(); });
-    $('jobsModifySearch').addEventListener('click', () => { $('jobsPage').classList.remove('open'); document.body.style.overflow = ''; openJobsModal(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('jobsOverlay').classList.contains('open')) closeJobsModal(); });
-
-    // Job type tabs
-    document.querySelectorAll('#jobsTypeTabs .ps-type-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('#jobsTypeTabs .ps-type-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        jobsState.jobType = tab.dataset.jobtype;
-      });
-    });
-
-    $('jobsSubmit').addEventListener('click', () => {
+    /* "Search & Apply" — reads sidebar fields and runs a full search */
+    function runJobsSearch() {
       const query = $('jobsQuery').value.trim();
       const loc = $('jobsLocation').value.trim() || 'UK';
-      if (!query) { $('jobsQuery').focus(); $('jobsQuery').style.borderColor='var(--accent)'; setTimeout(()=>$('jobsQuery').style.borderColor='',2000); return; }
+      if (!query) {
+        $('jobsQuery').focus();
+        $('jobsQuery').style.borderColor = 'var(--accent)';
+        setTimeout(() => $('jobsQuery').style.borderColor = '', 2000);
+        return;
+      }
+      const sortVal = $('jobsSortFilter') ? $('jobsSortFilter').value : 'newest';
+      const jobTypeVal = $('jobsFilterType') ? $('jobsFilterType').value : '';
       jobsState.searchParams = {
-        query, location: loc,
-        min_salary: $('jobsMinSalary').value, max_salary: $('jobsMaxSalary').value,
-        job_type: jobsState.jobType, radius: $('jobsRadius').value,
-        sort: 'newest', index: 0,
+        query,
+        location: loc,
+        min_salary: $('jobsMinSalary').value,
+        max_salary: $('jobsMaxSalary').value,
+        job_type: jobTypeVal || 'any',
+        radius: $('jobsRadius').value,
+        sort: sortVal || 'newest',
+        index: 0,
       };
       jobsState.queryLabel = query;
       jobsState.locationLabel = loc;
       jobsState.currentPage = 1;
       jobsState.allResults = [];
       jobsState.filteredResults = [];
-      if (jobsState.searchParams.min_salary) $('jobsFilterMinSalary').value = jobsState.searchParams.min_salary;
-      closeJobsModal();
       openJobsResultsPage();
       doJobsSearch();
-    });
-    $('jobsQuery').addEventListener('keydown', e => { if (e.key === 'Enter') $('jobsSubmit').click(); });
+    }
+
+    // Wire category card → open results page directly
+    const jobsCard = document.getElementById('openJobSearch');
+    if (jobsCard) jobsCard.addEventListener('click', e => { e.preventDefault(); runJobsSearch(); });
+
+    // Hero bar dispatches this event when Jobs tab is active
+    document.addEventListener('crabify:runJobsSearch', () => runJobsSearch());
+
+    $('jobsBack').addEventListener('click', () => { $('jobsPage').classList.remove('open'); document.body.style.overflow = ''; });
+    $('jobsModifySearch').addEventListener('click', () => { $('jobsPage').classList.remove('open'); document.body.style.overflow = ''; });
+
+    // Enter key in query/location fields triggers search
+    $('jobsQuery').addEventListener('keydown', e => { if (e.key === 'Enter') runJobsSearch(); });
 
     function openJobsResultsPage() {
       $('jobsPage').classList.add('open');
@@ -5414,7 +5156,7 @@
 
     function applyJobsFilters() {
       let results = [...jobsState.allResults];
-      const minSal = parseFloat($('jobsFilterMinSalary').value) || 0;
+      const minSal = parseFloat($('jobsMinSalary').value) || 0;   // fixed: was jobsFilterMinSalary (non-existent)
       const typeF = $('jobsFilterType').value;
       const remoteF = $('jobsFilterRemote').value;
       const sortBy = $('jobsSortFilter').value;
@@ -5519,7 +5261,9 @@
       pag.appendChild(next);
     }
 
-    $('jobsApplyFilters').addEventListener('click', () => { applyJobsFilters(); renderJobsResults(); });
+    // "Search & Apply" runs a brand-new search from sidebar values
+    $('jobsApplyFilters').addEventListener('click', () => runJobsSearch());
+    // Changing sort re-applies local sort on already-fetched results (fast, no new network call)
     $('jobsSortFilter').addEventListener('change', () => { applyJobsFilters(); renderJobsResults(); });
 
     // Download CSV
