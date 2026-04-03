@@ -2671,129 +2671,54 @@
     .ib-sources-wrap { padding: 0 16px 16px; }
 
     /* ── SOURCE FILTER PILLS BAR ── */
-    /* ── ACTION BAR (Shortlist / Print / Share) ── */
-    .ib-action-bar {
+    .ib-source-bar {
+      padding: 16px 0 4px;
+    }
+    .ib-source-pills {
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
       align-items: center;
-      padding: 14px 0 6px;
-      flex-wrap: wrap;
     }
-    .ib-action-btn {
+    /* Default (inactive): gray border, gray text, white bg */
+    .ib-source-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 16px;
-      border-radius: 8px;
-      border: 1.5px solid #e0e0e0;
+      padding: 7px 14px;
+      border-radius: 9999px;
+      border: 1.5px solid #d9d9d9;
       background: #fff;
       font-size: 13px;
-      font-weight: 600;
-      color: #444;
+      font-weight: 500;
+      color: #666;
       cursor: pointer;
-      font-family: var(--font);
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      transition: border-color 0.15s, color 0.15s;
       white-space: nowrap;
+      font-family: var(--font);
       line-height: 1;
     }
-    .ib-action-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .ib-action-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(241,77,76,0.05); }
-    .ib-action-btn__badge {
-      background: var(--accent);
-      color: #fff;
-      border-radius: 10px;
-      padding: 1px 6px;
-      font-size: 10px;
-      font-weight: 700;
+    .ib-source-pill:hover {
+      border-color: #aaa;
+      color: var(--text-primary);
     }
-    /* Shortlist slide-in panel */
-    .ib-sl-panel {
-      position: fixed;
-      top: 0; right: -420px;
-      width: 400px; max-width: 100vw;
-      height: 100vh;
+    /* Active: red border, red text, white bg (no fill) */
+    .ib-source-pill.active {
+      border-color: var(--accent);
+      color: var(--accent);
       background: #fff;
-      border-left: 1px solid var(--border);
-      box-shadow: -4px 0 24px rgba(0,0,0,0.12);
-      z-index: 1200;
-      display: flex; flex-direction: column;
-      transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+      font-weight: 600;
     }
-    .ib-sl-panel.open { right: 0; }
-    .ib-sl-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.25);
-      z-index: 1199; display: none;
+    /* Count badge */
+    .ib-source-pill__count {
+      font-size: 11px;
+      font-weight: 500;
+      color: #aaa;
+      margin-left: 1px;
     }
-    .ib-sl-overlay.open { display: block; }
-    .ib-sl-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    .ib-source-pill.active .ib-source-pill__count {
+      color: rgba(241,77,76,0.7);
     }
-    .ib-sl-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
-    .ib-sl-close {
-      width: 32px; height: 32px; border: none; background: none;
-      font-size: 18px; cursor: pointer; color: var(--text-muted);
-      border-radius: 6px; display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s;
-    }
-    .ib-sl-close:hover { background: #f0f0f0; color: #111; }
-    .ib-sl-body {
-      flex: 1; overflow-y: auto; padding: 16px;
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .ib-sl-empty {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      color: var(--text-muted); font-size: 14px; gap: 10px; text-align: center; padding: 40px 0;
-    }
-    .ib-sl-item {
-      display: flex; gap: 12px; align-items: flex-start;
-      background: #f9f9f9; border-radius: 10px; padding: 12px;
-      border: 1px solid var(--border); position: relative; cursor: pointer;
-    }
-    .ib-sl-item:hover { border-color: #ccc; }
-    .ib-sl-item__img {
-      width: 72px; height: 56px; object-fit: cover;
-      border-radius: 6px; flex-shrink: 0; background: #eee;
-    }
-    .ib-sl-item__info { flex: 1; min-width: 0; }
-    .ib-sl-item__price { font-size: 15px; font-weight: 800; color: var(--text-primary); }
-    .ib-sl-item__title { font-size: 12px; color: var(--text-secondary); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .ib-sl-item__src { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-    .ib-sl-item__remove {
-      position: absolute; top: 8px; right: 8px;
-      width: 22px; height: 22px; border: none; background: none;
-      color: #ccc; font-size: 14px; cursor: pointer; border-radius: 4px;
-      display: flex; align-items: center; justify-content: center;
-      transition: color 0.15s, background 0.15s;
-    }
-    .ib-sl-item__remove:hover { color: var(--accent); background: rgba(241,77,76,0.08); }
-    .ib-sl-footer {
-      padding: 14px 16px; border-top: 1px solid var(--border);
-      display: flex; gap: 8px; flex-shrink: 0;
-    }
-    /* Heart button on cards */
-    .ib-heart-btn {
-      position: absolute; top: 8px; right: 8px;
-      width: 30px; height: 30px; border: none; border-radius: 50%;
-      background: rgba(255,255,255,0.92); color: #bbb;
-      font-size: 16px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-      transition: color 0.15s, transform 0.1s;
-      z-index: 5;
-    }
-    .ib-heart-btn:hover { color: var(--accent); transform: scale(1.12); }
-    .ib-heart-btn.saved { color: var(--accent); }
-    /* Share toast */
-    .ib-toast {
-      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: #111; color: #fff; padding: 10px 20px; border-radius: 8px;
-      font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none;
-      transition: opacity 0.2s, transform 0.2s; z-index: 2000; white-space: nowrap;
-    }
-    .ib-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     /* ── LOADING STATE for inline ── */
     #ibLoading {
@@ -2950,8 +2875,8 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
           Filters
         </button>
-
-
+        <div class="ib-results-meta" id="ibResultsMeta"></div>
+        <button class="ib-filter-hide-btn" id="ibHideFiltersBtn" style="display:none;">Hide filters</button>
       </div>
 
       <div class="ib-body">
@@ -3121,20 +3046,9 @@
         <!-- ── RESULTS AREA ── -->
         <main class="ib-main" id="ibMain">
 
-          <!-- Action buttons: Shortlist / Print / Share -->
-          <div class="ib-action-bar" id="ibActionBar" style="display:none;">
-            <button class="ib-action-btn" id="ibShortlistBtn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-              Shortlist <span class="ib-action-btn__badge" id="ibShortlistCount" style="display:none;">0</span>
-            </button>
-            <button class="ib-action-btn" id="ibPrintBtn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-              Print
-            </button>
-            <button class="ib-action-btn" id="ibShareBtn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-              Share
-            </button>
+          <!-- Source filter pills -->
+          <div class="ib-source-bar" id="ibSourceBar" style="display:none;">
+            <div class="ib-source-pills" id="ibSourcePills"></div>
           </div>
 
           <!-- Stats bar -->
@@ -6210,7 +6124,7 @@
       ibEmpty.style.display = 'none';
       ibStatsBar.style.display = 'none';
       ibPagination.style.display = 'none';
-      hideActionBar();
+      if (ibSourceBar) ibSourceBar.style.display = 'none';
 
       const cat = ibState.activeCat;
       const loc = ibState.location;
@@ -6319,8 +6233,8 @@
           });
         }
 
-        if (ibResultsMeta) ibResultsMeta.textContent = `${ibState.totalResults.toLocaleString()} results`;
-        showActionBar(); // show Shortlist / Print / Share buttons
+        ibResultsMeta.textContent = `${ibState.totalResults.toLocaleString()} results`;
+        renderIbSourcePills(); // render pills BEFORE filtering
         applyIbFilters();
         renderIbResults();
         // Keep hero pills in sync with active source state after each fetch
@@ -6448,210 +6362,43 @@
       AutoTrader:'#e05b00','Exchange&Mart':'#2563eb', Motors:'#0d47a1',
       Reed:'#e63946', Indeed:'#2557a7', TotalJobs:'#0067b1',
     };
-    /* ═══════════════════════════════════════════════════════════
-       ACTION BAR — Shortlist / Print / Share
-    ═══════════════════════════════════════════════════════════ */
-    const ibActionBar     = $('ibActionBar');
-    const ibShortlistBtn  = $('ibShortlistBtn');
-    const ibShortlistCount= $('ibShortlistCount');
-    const ibPrintBtn      = $('ibPrintBtn');
-    const ibShareBtn      = $('ibShareBtn');
+    const ibSourceBar   = $('ibSourceBar');
+    const ibSourcePills = $('ibSourcePills');
 
-    // Show action bar when results arrive (replaces old source bar show/hide)
     function renderIbSourcePills() {
-      // Kept as a no-op stub so existing call-sites don't error
-    }
-    function showActionBar() {
-      if (ibActionBar) ibActionBar.style.display = 'flex';
-    }
-    function hideActionBar() {
-      if (ibActionBar) ibActionBar.style.display = 'none';
-    }
+      if (!ibSourcePills) return;
+      ibSourcePills.innerHTML = '';
+      const totals = ibState.sourceTotals;
+      const entries = Object.entries(totals).filter(([,n]) => n > 0);
+      if (!entries.length) { if (ibSourceBar) ibSourceBar.style.display = 'none'; return; }
+      if (ibSourceBar) ibSourceBar.style.display = 'block';
 
-    /* ── SHORTLIST ── */
-    const SL_KEY = 'crabify_shortlist';
-    let slItems = [];
-    function slLoad()  { try { slItems = JSON.parse(localStorage.getItem(SL_KEY) || '[]'); } catch(e) { slItems = []; } }
-    function slSave()  { localStorage.setItem(SL_KEY, JSON.stringify(slItems)); }
-    function slIdx(url){ return slItems.findIndex(i => i.url === url); }
-    slLoad();
-
-    function updateSlBadge() {
-      const n = slItems.length;
-      if (ibShortlistCount) {
-        ibShortlistCount.textContent = n;
-        ibShortlistCount.style.display = n > 0 ? 'inline' : 'none';
-      }
-      if (ibShortlistBtn) ibShortlistBtn.classList.toggle('active', n > 0);
-    }
-    updateSlBadge();
-
-    // Shortlist panel DOM
-    const slOverlay = document.getElementById('ibSlOverlay');
-    const slPanel   = document.getElementById('ibSlPanel');
-    const slClose   = document.getElementById('ibSlClose');
-    const slBody    = document.getElementById('ibSlBody');
-    const slFooter  = document.getElementById('ibSlFooter');
-    const slEmpty   = document.getElementById('ibSlEmpty');
-
-    function openSlPanel() {
-      slLoad(); renderSlPanel();
-      if (slPanel)   slPanel.classList.add('open');
-      if (slOverlay) slOverlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeSlPanel() {
-      if (slPanel)   slPanel.classList.remove('open');
-      if (slOverlay) slOverlay.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    function renderSlPanel() {
-      if (!slBody) return;
-      slLoad(); updateSlBadge();
-      Array.from(slBody.querySelectorAll('.ib-sl-item')).forEach(el => el.remove());
-      if (slItems.length === 0) {
-        if (slEmpty)  slEmpty.style.display  = 'flex';
-        if (slFooter) slFooter.style.display = 'none';
-        return;
-      }
-      if (slEmpty)  slEmpty.style.display  = 'none';
-      if (slFooter) slFooter.style.display = 'flex';
-      slItems.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'ib-sl-item';
-        div.innerHTML = `
-          <img class="ib-sl-item__img" src="${esc(item.image||'')}" alt="" onerror="this.style.display='none'">
-          <div class="ib-sl-item__info">
-            <div class="ib-sl-item__price">${esc(item.price||'POA')}</div>
-            <div class="ib-sl-item__title">${esc(item.title||'')}</div>
-            <div class="ib-sl-item__src">via ${esc(item.source||'')}</div>
-          </div>
-          <button class="ib-sl-item__remove" title="Remove">✕</button>`;
-        div.querySelector('.ib-sl-item__remove').addEventListener('click', e => {
-          e.stopPropagation();
-          slItems = slItems.filter(i => i.url !== item.url);
-          slSave(); renderSlPanel(); updateSlBadge();
-          refreshHeart(item.url, false);
-        });
-        div.addEventListener('click', () => window.open(item.url, '_blank', 'noopener'));
-        slBody.appendChild(div);
-      });
-    }
-
-    if (ibShortlistBtn) ibShortlistBtn.addEventListener('click', openSlPanel);
-    if (slClose)   slClose.addEventListener('click', closeSlPanel);
-    if (slOverlay) slOverlay.addEventListener('click', closeSlPanel);
-
-    // Heart buttons injected on each card
-    function addHeartButtons(container) {
-      container.querySelectorAll('.pc').forEach(card => {
-        if (card.querySelector('.ib-heart-btn')) return;
-        const linkEl  = card.querySelector('a.pc__btn');
-        const url     = linkEl ? linkEl.href : '';
-        if (!url) return;
-        const priceEl = card.querySelector('.pc__price');
-        const addrEl  = card.querySelector('.pc__address');
-        const srcEl   = card.querySelector('.pc__source-badge');
-        const imgEl   = card.querySelector('img');
-        const saved   = slIdx(url) !== -1;
-        const btn = document.createElement('button');
-        btn.className = 'ib-heart-btn' + (saved ? ' saved' : '');
-        btn.title = saved ? 'Remove from shortlist' : 'Save to shortlist';
-        btn.innerHTML = '♥';
-        btn.addEventListener('click', e => {
-          e.stopPropagation();
-          if (slIdx(url) !== -1) {
-            slItems = slItems.filter(i => i.url !== url);
-            slSave(); btn.classList.remove('saved'); btn.title = 'Save to shortlist';
+      // Per-source pills only (no "All" pill — matching design)
+      // All sources active by default (activeSources empty = show all)
+      entries.forEach(([name, count]) => {
+        // A pill is "active" (red) when either:
+        //  - No sources selected (all shown), OR
+        //  - This source is explicitly selected
+        const noneSelected = ibState.activeSources.size === 0;
+        const isActive = noneSelected || ibState.activeSources.has(name);
+        const pill = document.createElement('button');
+        pill.className = 'ib-source-pill' + (isActive ? ' active' : '');
+        pill.innerHTML = `${esc(name)}<span class="ib-source-pill__count">${Number(count).toLocaleString()}</span>`;
+        pill.addEventListener('click', () => {
+          if (ibState.activeSources.size === 0) {
+            // Currently "all selected" — clicking one selects ONLY that source
+            ibState.activeSources = new Set([name]);
+          } else if (ibState.activeSources.has(name)) {
+            ibState.activeSources.delete(name);
+            // If none left, reset to "all"
+            if (ibState.activeSources.size === 0) ibState.activeSources = new Set();
           } else {
-            slItems.push({ url, price: priceEl?.textContent.trim()||'', title: addrEl?.textContent.trim()||'', source: srcEl?.textContent.trim()||'', image: imgEl?.src||'' });
-            slSave(); btn.classList.add('saved'); btn.title = 'Remove from shortlist';
-            showToast('❤ Added to shortlist!');
+            ibState.activeSources.add(name);
           }
-          updateSlBadge();
+          applyIbFilters(); renderIbResults(); renderIbSourcePills();
         });
-        const imgWrap = card.querySelector('.pc__img-wrap');
-        if (imgWrap) imgWrap.appendChild(btn);
+        ibSourcePills.appendChild(pill);
       });
-    }
-    function refreshHeart(url, saved) {
-      const grid = $('ibGrid');
-      if (!grid) return;
-      grid.querySelectorAll('.ib-heart-btn').forEach(btn => {
-        const link = btn.closest('.pc')?.querySelector('a.pc__btn');
-        if (link && link.href === url) { btn.classList.toggle('saved', saved); }
-      });
-    }
-    const ibGrid2 = $('ibGrid');
-    if (ibGrid2) {
-      new MutationObserver(() => addHeartButtons(ibGrid2)).observe(ibGrid2, { childList: true });
-      addHeartButtons(ibGrid2);
-    }
-
-    // Shortlist panel footer buttons
-    const slPrintBtn = document.getElementById('ibSlPrintBtn');
-    const slShareBtn = document.getElementById('ibSlShareBtn');
-    const slClearBtn = document.getElementById('ibSlClearBtn');
-    if (slPrintBtn) slPrintBtn.addEventListener('click', () => {
-      if (!slItems.length) { showToast('Nothing on your shortlist yet!'); return; }
-      const win = window.open('', '_blank');
-      const rows = slItems.map(i => `<tr><td>${esc(i.price)}</td><td>${esc(i.title)}</td><td>${esc(i.source)}</td><td><a href="${esc(i.url)}">View</a></td></tr>`).join('');
-      win.document.write(`<!DOCTYPE html><html><head><title>My Crabify Shortlist</title><style>body{font-family:sans-serif;padding:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px;font-size:13px;text-align:left}th{background:#f5f5f5}h2{margin-bottom:16px}</style></head><body><h2>My Crabify Shortlist (${slItems.length})</h2><table><thead><tr><th>Price</th><th>Address/Title</th><th>Source</th><th>Link</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
-      win.document.close(); win.print();
-    });
-    if (slShareBtn) slShareBtn.addEventListener('click', () => {
-      const text = `My Crabify shortlist:\n\n${slItems.map((i,n)=>`${n+1}. ${i.price} — ${i.title} (${i.source}): ${i.url}`).join('\n')}\n\n${location.origin}`;
-      navigator.share ? navigator.share({title:'My Shortlist',text}).catch(()=>copyText(text)) : (copyText(text), showToast('🔗 Shortlist copied!'));
-    });
-    if (slClearBtn) slClearBtn.addEventListener('click', () => {
-      if (!confirm('Clear all shortlisted items?')) return;
-      slItems = []; slSave(); renderSlPanel(); updateSlBadge();
-      $('ibGrid')?.querySelectorAll('.ib-heart-btn.saved').forEach(b => b.classList.remove('saved'));
-    });
-
-    /* ── PRINT results ── */
-    if (ibPrintBtn) ibPrintBtn.addEventListener('click', () => {
-      const items = ibState.filteredResults || [];
-      if (!items.length) { showToast('No results to print.'); return; }
-      const cat = ibState.activeCat;
-      const win = window.open('', '_blank');
-      let rows = items.map(item => {
-        if (cat === 'property') return `<tr><td>${esc(item.price||'')}</td><td>${esc(item.address||'')}</td><td>${esc(item.bedrooms||'')} bed</td><td>${esc(item.source||'')}</td><td><a href="${esc(item.source_url||'')}">View</a></td></tr>`;
-        if (cat === 'cars')     return `<tr><td>${esc(item.price||'')}</td><td>${esc(item.title||'')}</td><td>${esc(item.year||'')} · ${Number(item.mileage||0).toLocaleString()} mi</td><td>${esc(item.source||'')}</td><td><a href="${esc(item.url||'')}">View</a></td></tr>`;
-        return `<tr><td>${esc(item.title||'')}</td><td>${esc(item.company||'')}</td><td>${esc(item.salary||'')}</td><td>${esc(item.source||'')}</td><td><a href="${esc(item.url||'')}">Apply</a></td></tr>`;
-      }).join('');
-      const hdrs = cat==='jobs' ? '<th>Title</th><th>Company</th><th>Salary</th><th>Source</th><th>Link</th>' : '<th>Price</th><th>Address/Title</th><th>Details</th><th>Source</th><th>Link</th>';
-      win.document.write(`<!DOCTYPE html><html><head><title>Crabify Results</title><style>body{font-family:sans-serif;padding:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:7px;font-size:12px;text-align:left}th{background:#f5f5f5}h2{margin-bottom:8px}p{font-size:12px;color:#666;margin-bottom:12px}</style></head><body><h2>Crabify ${cat.charAt(0).toUpperCase()+cat.slice(1)} Results</h2><p>${esc(ibState.location||'UK')} · ${items.length} results · ${new Date().toLocaleDateString()}</p><table><thead><tr>${hdrs}</tr></thead><tbody>${rows}</tbody></table></body></html>`);
-      win.document.close(); win.print();
-    });
-
-    /* ── SHARE search ── */
-    if (ibShareBtn) ibShareBtn.addEventListener('click', () => {
-      const url = new URL(location.href);
-      url.searchParams.set('cat', ibState.activeCat);
-      if (ibState.location) url.searchParams.set('loc', ibState.location);
-      const shareUrl = url.toString();
-      if (navigator.share) {
-        navigator.share({ title: 'Crabify Search', url: shareUrl }).catch(() => { copyText(shareUrl); showToast('🔗 Link copied!'); });
-      } else {
-        copyText(shareUrl); showToast('🔗 Link copied!');
-      }
-    });
-
-    /* ── helpers ── */
-    function copyText(text) {
-      navigator.clipboard?.writeText(text).catch(() => {
-        const ta = Object.assign(document.createElement('textarea'), { value: text, style: 'position:fixed;opacity:0' });
-        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-      });
-    }
-    const toastEl = document.getElementById('ibToast');
-    let toastTimer;
-    function showToast(msg) {
-      if (!toastEl) return;
-      toastEl.textContent = msg; toastEl.classList.add('show');
-      clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
     }
 
     function extractPriceNum(priceStr) {
@@ -6844,35 +6591,5 @@
 
   })();
   </script>
-
-  <!-- Shortlist overlay + panel -->
-  <div class="ib-sl-overlay" id="ibSlOverlay"></div>
-  <div class="ib-sl-panel" id="ibSlPanel">
-    <div class="ib-sl-header">
-      <span class="ib-sl-title">❤ Shortlist</span>
-      <button class="ib-sl-close" id="ibSlClose">✕</button>
-    </div>
-    <div class="ib-sl-body" id="ibSlBody">
-      <div class="ib-sl-empty" id="ibSlEmpty">
-        <span style="font-size:36px;">💔</span>
-        <span>No saved listings yet.<br>Click ♥ on any card to save it.</span>
-      </div>
-    </div>
-    <div class="ib-sl-footer" id="ibSlFooter" style="display:none;">
-      <button class="ib-action-btn" id="ibSlPrintBtn" style="flex:1;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Print
-      </button>
-      <button class="ib-action-btn" id="ibSlShareBtn" style="flex:1;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        Share
-      </button>
-      <button class="ib-action-btn" id="ibSlClearBtn" style="color:#dc2626;border-color:#fca5a5;">Clear all</button>
-    </div>
-  </div>
-
-  <!-- Toast notification -->
-  <div class="ib-toast" id="ibToast"></div>
-
 </body>
 </html>

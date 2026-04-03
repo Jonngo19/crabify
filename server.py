@@ -206,7 +206,7 @@ def rm_search_html(location_id: str, params: dict) -> tuple:
 
     try:
         req = urllib.request.Request(url, headers=BROWSER_HEADERS)
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=20) as resp:
             html = resp.read().decode("utf-8", errors="replace")
     except Exception as e:
         print(f"  [RM] HTTP error: {e}")
@@ -393,7 +393,7 @@ def otm_search(location: str, params: dict) -> tuple:
 
     try:
         req = urllib.request.Request(url, headers=BROWSER_HEADERS)
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=20) as resp:
             html = resp.read().decode("utf-8", errors="replace")
     except Exception as e:
         print(f"  [OTM] HTTP error: {e}")
@@ -706,7 +706,7 @@ def zoopla_search(location: str, params: dict) -> tuple:
     try:
         req = urllib.request.Request(scrapfly_url)
         req.add_header("Accept", "application/json")
-        with urllib.request.urlopen(req, timeout=12) as r:
+        with urllib.request.urlopen(req, timeout=30) as r:
             resp = json.loads(r.read())
     except urllib.error.HTTPError as e:
         if e.code == 401:
@@ -814,7 +814,7 @@ def gumtree_search(location: str, params: dict) -> tuple:
 
     try:
         req = urllib.request.Request(url, headers=BROWSER_HEADERS)
-        with urllib.request.urlopen(req, timeout=10) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             html = r.read().decode("utf-8", errors="replace")
     except Exception as e:
         print(f"  [Gumtree] HTTP error: {e}")
@@ -980,7 +980,7 @@ def spareroom_search(location: str, params: dict) -> tuple:
 
     try:
         req = urllib.request.Request(url, headers=BROWSER_HEADERS)
-        with urllib.request.urlopen(req, timeout=10) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             html = r.read().decode("utf-8", errors="replace")
     except Exception as e:
         print(f"  [SpareRoom] HTTP error: {e}")
@@ -1160,16 +1160,11 @@ def combined_search(location: str, params: dict) -> dict:
     t_sr  = threading.Thread(target=fetch_spareroom, daemon=True)
 
     t_rm.start(); t_otm.start(); t_zp.start(); t_gt.start(); t_sr.start()
-
-    # Join all threads against a single wall-clock deadline (15s).
-    # This means the response always returns within ~15s even if one
-    # source hangs — whatever has finished by then is returned.
-    import time as _time
-    deadline = _time.monotonic() + 15
-    for t in (t_rm, t_otm, t_zp, t_gt, t_sr):
-        remaining = deadline - _time.monotonic()
-        if remaining > 0:
-            t.join(timeout=remaining)
+    t_rm.join(timeout=25)
+    t_otm.join(timeout=25)
+    t_zp.join(timeout=35)
+    t_gt.join(timeout=20)
+    t_sr.join(timeout=20)
 
     # Merge: combine all results then sort by user preference
     all_results = rm_results + otm_results + zp_results + gt_results + sr_results
@@ -1625,11 +1620,7 @@ def combined_car_search(location: str, params: dict) -> dict:
     t1 = threading.Thread(target=fetch_em, daemon=True)
     t2 = threading.Thread(target=fetch_gt, daemon=True)
     t1.start(); t2.start()
-    import time as _time
-    _deadline = _time.monotonic() + 12
-    for _t in (t1, t2):
-        _r = _deadline - _time.monotonic()
-        if _r > 0: _t.join(timeout=_r)
+    t1.join(timeout=25); t2.join(timeout=25)
 
     # Merge and sort
     all_results = []
