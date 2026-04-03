@@ -2475,6 +2475,48 @@
     .ib-btn:hover { background: var(--accent-light); }
     .ib-btn:active { transform: scale(0.97); }
 
+    /* ── HERO SOURCE PILLS (below search bar) ── */
+    .ib-hero-sources {
+      width: 100%;
+      max-width: 960px;
+      margin: 12px auto 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .ib-hero-sources__label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .ib-hero-source-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .ib-hero-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1.5px solid #d9d9d9;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      color: #555;
+      font-family: var(--font);
+      white-space: nowrap;
+      line-height: 1;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .ib-hero-pill:hover  { border-color: var(--accent); color: var(--accent); }
+    .ib-hero-pill.active { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+
     /* Geo status — left-aligned, small */
     .ib-geo-status {
       font-size: 12px;
@@ -2824,6 +2866,12 @@
             <input type="text" id="ibLocation" class="ib-input" placeholder="Town, city or postcode..." autocomplete="off" />
           </div>
           <button class="ib-btn" id="ibSearchBtn">Search</button>
+        </div>
+
+        <!-- Row 3: Website source pills — shown below search bar per active category -->
+        <div class="ib-hero-sources" id="ibHeroSources">
+          <span class="ib-hero-sources__label">Searching:</span>
+          <div class="ib-hero-source-pills" id="ibHeroSourcePills"></div>
         </div>
 
         <!-- Geo status -->
@@ -5874,9 +5922,65 @@
     }
     setActiveTab(ibState.activeCat);
 
+    /* ─── HERO SOURCE PILLS ───────────────────────────────────
+       Show the website names below the search bar for the
+       active category. Pills are interactive: clicking one
+       filters results to that source (same logic as the
+       in-results source bar).
+    ─────────────────────────────────────────────────────────── */
+    const HERO_SOURCES = {
+      property: ['Rightmove','Zoopla','OnTheMarket','Gumtree','SpareRoom'],
+      cars:     ['AutoTrader','Exchange&Mart','Motors'],
+      jobs:     ['Reed','Indeed','TotalJobs'],
+    };
+
+    const ibHeroSources     = $('ibHeroSources');
+    const ibHeroSourcePills = $('ibHeroSourcePills');
+
+    function renderHeroPills(cat) {
+      if (!ibHeroSourcePills) return;
+      ibHeroSourcePills.innerHTML = '';
+      const names = HERO_SOURCES[cat] || [];
+      names.forEach(name => {
+        const btn = document.createElement('button');
+        btn.className = 'ib-hero-pill';
+        btn.textContent = name;
+        // Reflect active filter state
+        function syncActive() {
+          const noneSelected = !ibState.activeSources || ibState.activeSources.size === 0;
+          btn.classList.toggle('active', noneSelected || ibState.activeSources.has(name));
+        }
+        syncActive();
+        btn.addEventListener('click', () => {
+          if (!ibState.activeSources) ibState.activeSources = new Set();
+          if (ibState.activeSources.size === 0) {
+            ibState.activeSources = new Set([name]);
+          } else if (ibState.activeSources.has(name)) {
+            ibState.activeSources.delete(name);
+            if (ibState.activeSources.size === 0) ibState.activeSources = new Set();
+          } else {
+            ibState.activeSources.add(name);
+          }
+          // Re-filter & re-render results if they are visible
+          if (typeof applyIbFilters === 'function') applyIbFilters();
+          if (typeof renderIbResults  === 'function') renderIbResults();
+          if (typeof renderIbSourcePills === 'function') renderIbSourcePills();
+          // Sync all hero pill active states
+          renderHeroPills(ibState.activeCat);
+        });
+        ibHeroSourcePills.appendChild(btn);
+      });
+    }
+
+    // Initial render
+    renderHeroPills(ibState.activeCat);
+
     ibTabs.forEach(tab => {
       tab.addEventListener('click', () => {
         setActiveTab(tab.dataset.cat);
+        // Reset source filter and re-render hero pills for new category
+        ibState.activeSources = new Set();
+        renderHeroPills(tab.dataset.cat);
         // If results are already showing, re-run with new category
         if (ibResultsSection.style.display !== 'none') {
           runIbSearch(false);
@@ -6146,6 +6250,8 @@
         renderIbSourcePills(); // render pills BEFORE filtering
         applyIbFilters();
         renderIbResults();
+        // Keep hero pills in sync with active source state after each fetch
+        if (typeof renderHeroPills === 'function') renderHeroPills(ibState.activeCat);
 
       } catch(err) {
         stopIbLoading();
