@@ -2817,7 +2817,7 @@
   <!-- ============================================================
        INLINE RESULTS SECTION
   ============================================================ -->
-  <section id="ibResultsSection" style="display:none; background:#f5f5f5; min-height:60vh;">
+  <section id="ibResultsSection" style="display:block; background:#f5f5f5; min-height:60vh;">
     <div class="ib-results-wrap">
 
       <!-- FILTER TOGGLE (mobile only) -->
@@ -3012,7 +3012,7 @@
           </div>
 
           <!-- Loading -->
-          <div class="pr-loading" id="ibLoading" style="display:none;">
+          <div class="pr-loading" id="ibLoading" style="display:flex;">
             <div class="pr-loading__crab"><img src="/public/crab-logo.png" alt="Crabify" style="width:56px;height:56px;object-fit:contain;" /></div>
             <div class="pr-loading__text" id="ibLoadingText">Searching…</div>
             <div class="pr-loading__bar"><div class="pr-loading__fill"></div></div>
@@ -5868,48 +5868,53 @@
     /* ─── GEOLOCATION ─────────────────────────────────────── */
     function requestGeolocation() {
       if (!navigator.geolocation) return;
-      ibGeoStatus.textContent = '📍 Detecting your location…';
+      // Silently try to get location in background — don't show "detecting" text
+      // since results are already showing UK-wide
       navigator.geolocation.getCurrentPosition(
         async pos => {
           try {
             const { latitude: lat, longitude: lon } = pos.coords;
-            // Reverse geocode using open nominatim
-            const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`, {
-              headers: { 'Accept-Language': 'en' }
-            });
+            const resp = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`,
+              { headers: { 'Accept-Language': 'en' } }
+            );
             const data = await resp.json();
             const addr = data.address || {};
             const city = addr.city || addr.town || addr.village || addr.county || '';
             if (city) {
               ibLocation.value = city;
               ibState.location = city;
-              ibGeoStatus.textContent = `📍 Location set to ${city}`;
-              setTimeout(() => ibGeoStatus.textContent = '', 3000);
-              // Auto-run search with detected location
+              ibGeoStatus.textContent = `📍 Showing results near ${city}`;
+              setTimeout(() => ibGeoStatus.textContent = '', 4000);
+              // Re-run search with the user's actual location
               runIbSearch(true);
-            } else {
-              ibGeoStatus.textContent = '';
             }
-          } catch(e) {
-            ibGeoStatus.textContent = '';
-          }
+          } catch(e) { /* silent fail — UK results already showing */ }
         },
-        () => {
-          ibGeoStatus.textContent = '';
-          // Location denied — run nationwide search anyway
-          runIbSearch(true);
-        },
-        { timeout: 5000 }
+        () => { /* denied — UK results already showing, nothing to do */ },
+        { timeout: 8000 }
       );
     }
 
-    // Kick off geolocation on page load
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(requestGeolocation, 800);
-    });
-    // Also trigger if page is already loaded
-    if (document.readyState !== 'loading') {
-      setTimeout(requestGeolocation, 800);
+    /* ─── PAGE LOAD: show results immediately ─────────────── */
+    function runDefaultSearch() {
+      // Show results section right away
+      ibResultsSection.style.display = 'block';
+      // Run UK-wide property search instantly (no location needed)
+      ibState.location = '';
+      ibLocation.value = '';
+      ibState.currentPage = 1;
+      ibState.allResults = [];
+      ibState.filteredResults = [];
+      doIbFetch();
+      // Then silently try to upgrade to local results via geolocation
+      setTimeout(requestGeolocation, 1000);
+    }
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', runDefaultSearch);
+    } else {
+      runDefaultSearch();
     }
 
     /* ─── SHOW / HIDE FILTERS ─────────────────────────────── */
@@ -5971,19 +5976,12 @@
         return;
       }
 
-      // Show results section
+      // Ensure results section is visible
       ibResultsSection.style.display = 'block';
 
-      // Show filters on first explicit search; on auto-run keep hidden
+      // Show filters sidebar on explicit (non-auto) searches
       if (!autoRun && !ibState.filtersVisible) {
         showFilters();
-      }
-
-      // Scroll to results section smoothly
-      if (!autoRun) {
-        setTimeout(() => {
-          ibResultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
       }
 
       doIbFetch();
