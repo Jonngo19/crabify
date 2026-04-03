@@ -326,36 +326,31 @@
        HERO
     ============================================================ */
     .hero {
-      padding: 140px 0 80px;
+      padding: 90px 0 40px;
       position: relative;
       overflow: hidden;
-      min-height: 90vh;
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-    }
-
-    /* Hero — gradient bg + centred search layout */
-    .hero::before { display: none; }
-    .hero__orb { display: none; }
-
-    /* White background */
-    .hero {
+      min-height: auto;
+      display: block;
       background: #ffffff !important;
       border-bottom: 1px solid var(--border);
     }
 
-    /* Centred layout */
+    /* Hero — no decorative elements */
+    .hero::before { display: none; }
+    .hero__orb { display: none; }
+
+    /* Inline layout — full width, no centering constraint */
     .hero__inner {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
+      align-items: stretch;
+      text-align: left;
       gap: 0;
       position: relative;
       z-index: 1;
-      max-width: 760px;
+      max-width: 100%;
       margin: 0 auto;
+      padding-bottom: 0;
     }
 
     /* Small subtitle label above headline */
@@ -388,7 +383,7 @@
       50% { opacity: 0.5; transform: scale(0.8); }
     }
 
-    .hero__headline { margin-bottom: 0; }
+    .hero__headline { margin-bottom: 0; white-space: nowrap; }
     .hero__sub { max-width: 540px; margin: 0 auto 36px; }
     .hero__actions { display: none; }
     .hero__visual { display: none; }
@@ -1892,7 +1887,7 @@
        RESPONSIVE
     ============================================================ */
     @media (max-width: 1024px) {
-      .hero__inner { gap: 48px; }
+      .hero__inner { gap: 0; }
       .steps { grid-template-columns: 1fr 1fr; }
       .steps > *:last-child { grid-column: 1 / -1; max-width: 400px; margin: 0 auto; }
       .categories-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1904,9 +1899,9 @@
 
     @media (max-width: 768px) {
       .section { padding: 80px 0; }
-      .hero { padding: 120px 0 60px; min-height: auto; }
-      .hero__inner { grid-template-columns: 1fr; gap: 60px; }
-      .hero__visual { height: 360px; }
+      .hero { padding: 80px 0 28px; min-height: auto; }
+      .hero__inner { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+      .hero__visual { display: none; }
       .hero__sub { max-width: 100%; }
       .nav__links, .nav__cta { display: none; }
       .nav__hamburger { display: flex; }
@@ -2296,7 +2291,7 @@
       body { padding-bottom: 72px; }
     }
     @media (max-width: 768px) {
-      .hero { padding: 100px 0 60px; min-height: auto; }
+      .hero { padding: 80px 0 32px; min-height: auto; }
       .hero__inner { max-width: 100%; }
       .hero__search-bar { flex-wrap: wrap; border-radius: var(--radius-md); }
       .hero__search-divider { display: none; }
@@ -2362,8 +2357,8 @@
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      flex-wrap: wrap;
-      max-width: 860px;
+      flex-wrap: nowrap;
+      max-width: 900px;
       margin: 0 auto;
     }
     .ib-tabs {
@@ -2396,8 +2391,8 @@
     /* Search input row */
     .ib-search {
       width: 100%;
-      max-width: 860px;
-      margin: 20px auto 0;
+      max-width: 900px;
+      margin: 16px auto 0;
       display: flex;
       align-items: center;
       background: #fff;
@@ -2691,13 +2686,13 @@
   <!-- ============================================================
        HERO
   ============================================================ -->
-  <section class="hero" id="hero" style="padding-top:80px;padding-bottom:48px;">
+  <section class="hero" id="hero">
     <div class="hero__orb hero__orb--1"></div>
     <div class="hero__orb hero__orb--2"></div>
     <div class="hero__orb hero__orb--3"></div>
 
     <div class="container">
-      <div class="hero__inner" style="padding-bottom:0;">
+      <div class="hero__inner">
 
         <!-- Top row: headline left, tabs right -->
         <div class="ib-top hero-animate hero-animate--1">
