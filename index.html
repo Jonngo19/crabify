@@ -388,7 +388,7 @@
       50% { opacity: 0.5; transform: scale(0.8); }
     }
 
-    .hero__headline { margin-bottom: 72px; }
+    .hero__headline { margin-bottom: 0; }
     .hero__sub { max-width: 540px; margin: 0 auto 36px; }
     .hero__actions { display: none; }
     .hero__visual { display: none; }
@@ -2351,6 +2351,307 @@
       .nav__search-compact { display: none !important; }
     }
 
+    /* ============================================================
+       INLINE HERO SEARCH (ib-*)
+    ============================================================ */
+
+    /* Top row: headline + tabs */
+    .ib-top {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .ib-tabs {
+      display: flex;
+      gap: 4px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      padding: 3px;
+      flex-shrink: 0;
+    }
+    .ib-tab {
+      padding: 7px 16px;
+      border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-secondary);
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+    .ib-tab:hover { color: var(--text-primary); }
+    .ib-tab.active {
+      background: #fff;
+      color: var(--text-primary);
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Search input row */
+    .ib-search {
+      width: 100%;
+      max-width: 860px;
+      margin: 20px auto 0;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.05);
+      padding: 6px 6px 6px 18px;
+      gap: 8px;
+      border: 1.5px solid var(--border);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .ib-search:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 0 0 3px rgba(241,77,76,0.1);
+    }
+    .ib-input-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ib-input {
+      flex: 1;
+      border: none; outline: none;
+      background: transparent;
+      font-size: 15px;
+      font-family: var(--font);
+      color: var(--text-primary);
+      padding: 6px 0;
+    }
+    .ib-input::placeholder { color: #c4c4c4; }
+    .ib-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 9px;
+      padding: 12px 22px;
+      font-size: 14px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: background 0.15s, transform 0.1s;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .ib-btn:hover { background: var(--accent-light); }
+    .ib-btn:active { transform: scale(0.97); }
+
+    /* Geo status */
+    .ib-geo-status {
+      font-size: 12px; color: var(--text-muted);
+      margin-top: 8px; text-align: center;
+      min-height: 16px;
+    }
+
+    /* ── RESULTS SECTION ── */
+    #ibResultsSection {
+      background: #f5f5f5;
+      min-height: 60vh;
+      border-top: 1px solid var(--border);
+    }
+    .ib-results-wrap {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+
+    /* Filter toggle bar (mobile "Filters" button + results meta) */
+    .ib-filter-toggle-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 0 8px;
+      flex-wrap: wrap;
+    }
+    .ib-filter-toggle-btn {
+      display: none; /* hidden on desktop; shown on mobile */
+      align-items: center; gap: 6px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px; font-weight: 600;
+      font-family: var(--font); cursor: pointer;
+      color: var(--text-secondary);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .ib-filter-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .ib-results-meta {
+      flex: 1;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .ib-filter-hide-btn {
+      font-size: 12px; color: var(--text-muted);
+      background: none; border: none; cursor: pointer;
+      text-decoration: underline;
+      font-family: var(--font);
+    }
+    .ib-filter-hide-btn:hover { color: var(--text-secondary); }
+
+    /* Body: sidebar + main */
+    .ib-body {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR ── */
+    .ib-sidebar {
+      position: sticky;
+      top: 80px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: none; /* hidden until search is clicked */
+    }
+    .ib-sidebar.visible { display: block; }
+
+    .ib-sidebar-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ib-sidebar-title {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .ib-sidebar-close {
+      width: 28px; height: 28px; border: none; background: none;
+      cursor: pointer; font-size: 14px; color: var(--text-muted);
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .ib-sidebar-close:hover { background: #f0f0f0; color: var(--text-primary); }
+
+    .ib-filter-group {
+      padding: 14px 16px 16px;
+    }
+    .ib-filter-group .pr-filter { margin-bottom: 14px; }
+    .ib-filter-group .pr-filter label {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--text-muted); display: block; margin-bottom: 6px;
+    }
+    .ib-filter-group .pr-filter select,
+    .ib-filter-group .pr-filter input {
+      width: 100%; height: 38px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 0 10px;
+      font-family: var(--font); font-size: 13px;
+      color: var(--text-primary); background: #fff;
+      outline: none; transition: border-color 0.15s;
+      appearance: none; -webkit-appearance: none;
+    }
+    .ib-filter-group .pr-filter select:focus,
+    .ib-filter-group .pr-filter input:focus { border-color: var(--accent); }
+
+    /* ── MAIN RESULTS AREA ── */
+    .ib-main {
+      min-width: 0;
+    }
+
+    /* Stats bar */
+    .ib-stats-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0 10px;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .ib-stats-text {
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .ib-stats-text strong { color: var(--text-primary); }
+
+    /* "Show filters" btn in stats bar (desktop, when sidebar is closed) */
+    .ib-show-filters-btn {
+      display: none; align-items: center; gap: 6px;
+      border: 1.5px solid var(--border); background: #fff;
+      border-radius: 8px; padding: 7px 12px;
+      font-size: 12px; font-weight: 600;
+      font-family: var(--font); cursor: pointer;
+      color: var(--text-secondary); transition: border-color 0.15s;
+    }
+    .ib-show-filters-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .ib-show-filters-btn.visible { display: inline-flex; }
+
+    /* ── RESULTS GRID ── */
+    .ib-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    /* When sidebar is hidden, expand to 4 cols with slightly wider min */
+    .ib-body.no-sidebar .ib-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    /* Compact card images in multi-col grid */
+    .ib-grid .pc__img-wrap { height: 160px; }
+    .ib-grid .pc__body { padding: 12px; }
+    .ib-grid .pc__price { font-size: 16px; }
+    .ib-grid .pc__address { font-size: 12px; }
+    .ib-grid .pc__description { -webkit-line-clamp: 2; }
+
+    /* ── SOURCES IN SIDEBAR ── */
+    .ib-sources-wrap { padding: 0 16px 16px; }
+
+    /* ── LOADING STATE for inline ── */
+    #ibLoading {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    /* ──────────────────────────────────────────────────────────
+       RESPONSIVE — inline results
+    ────────────────────────────────────────────────────────── */
+
+    /* Tablet: 3 cols */
+    @media (max-width: 1100px) {
+      .ib-grid { grid-template-columns: repeat(3, 1fr); }
+      .ib-body { grid-template-columns: 240px 1fr; }
+    }
+
+    /* Tablet/mobile breakpoint (< 860px): filters move to top */
+    @media (max-width: 860px) {
+      .ib-body {
+        grid-template-columns: 1fr;
+      }
+      .ib-sidebar {
+        position: static;
+        width: 100%;
+        /* Mobile top panel */
+        display: none;
+      }
+      .ib-sidebar.visible { display: block; }
+      .ib-filter-toggle-btn { display: inline-flex; }
+      .ib-sidebar-close { display: flex; }
+      /* 2 cols on tablet/mobile */
+      .ib-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    }
+
+    /* Phone: 2 cols */
+    @media (max-width: 560px) {
+      .ib-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .ib-results-wrap { padding: 0 12px 60px; }
+      .ib-top { flex-direction: column; align-items: flex-start; }
+      .ib-search { margin-top: 12px; }
+    }
+
+    /* Hero top-row responsive */
+    @media (max-width: 640px) {
+      .ib-top {
+        flex-direction: column;
+        align-items: center;
+      }
+      .ib-top h1 { text-align: center; font-size: clamp(20px, 6vw, 32px) !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -2390,60 +2691,259 @@
   <!-- ============================================================
        HERO
   ============================================================ -->
-  <section class="hero" id="hero">
+  <section class="hero" id="hero" style="padding-top:80px;padding-bottom:48px;">
     <div class="hero__orb hero__orb--1"></div>
     <div class="hero__orb hero__orb--2"></div>
     <div class="hero__orb hero__orb--3"></div>
 
     <div class="container">
-      <div class="hero__inner">
+      <div class="hero__inner" style="padding-bottom:0;">
 
-        <!-- Subtitle tag above search bar -->
-        <div class="hero__tag hero-animate hero-animate--1">
-          <span class="hero__tag-dot"></span>
-          Property &middot; Cars &middot; Jobs &mdash; all in one search
+        <!-- Top row: headline left, tabs right -->
+        <div class="ib-top hero-animate hero-animate--1">
+          <h1 class="display hero__headline" style="font-size:clamp(22px,3.2vw,42px);white-space:nowrap;margin-bottom:0;">
+            Multiple Websites. All in <em>ONE <span style="color:var(--text-primary);">Search.</span></em>
+          </h1>
+          <div class="ib-tabs" id="ibTabs">
+            <button class="ib-tab active" data-cat="property">🏠 Property</button>
+            <button class="ib-tab" data-cat="cars">🚗 Cars</button>
+            <button class="ib-tab" data-cat="jobs">💼 Jobs</button>
+          </div>
         </div>
 
-        <!-- Main headline -->
-        <h1 class="display hero__headline hero-animate hero-animate--2" style="font-size:clamp(26px,3.8vw,48px);white-space:nowrap;">
-          Multiple Websites. All in <em>ONE <span style="color:var(--text-primary);">Search.</span></em>
-        </h1>
+        <!-- Search bar row -->
+        <div class="ib-search hero-animate hero-animate--2">
+          <div class="ib-input-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <input type="text" id="ibLocation" class="ib-input" placeholder="Enter your town or city…" autocomplete="off" />
+          </div>
+          <button class="ib-btn" id="ibSearchBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            Search
+          </button>
+        </div>
 
-        <!-- Large centred search bar with tab filters -->
-        <div class="hero__search-wrap hero-animate hero-animate--3">
-          <!-- Tab filters -->
-          <div class="hero__tabs" id="heroTabs">
-            <button class="hero__tab active" data-tab="property" data-open="openPropertySearch">🏠 Property</button>
-            <button class="hero__tab" data-tab="cars" data-open="openCarSearch">🚗 Cars</button>
-            <button class="hero__tab" data-tab="jobs" data-open="openJobSearch">💼 Jobs</button>
-            <button class="hero__tab" data-tab="holidays" style="position:relative;">
-              ✈️ Holidays
-              <span style="position:absolute;top:-8px;right:-4px;background:#111;color:#fff;font-size:8px;font-weight:700;letter-spacing:0.05em;padding:2px 5px;border-radius:20px;white-space:nowrap;z-index:10;">Coming Soon</span>
+        <!-- Location status -->
+        <div class="ib-geo-status" id="ibGeoStatus"></div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       INLINE RESULTS SECTION
+  ============================================================ -->
+  <section id="ibResultsSection" style="display:none; background:#f5f5f5; min-height:60vh;">
+    <div class="ib-results-wrap">
+
+      <!-- FILTER TOGGLE (mobile only) -->
+      <div class="ib-filter-toggle-bar" id="ibFilterToggleBar">
+        <button class="ib-filter-toggle-btn" id="ibFilterToggleBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          Filters
+        </button>
+        <div class="ib-results-meta" id="ibResultsMeta"></div>
+        <button class="ib-filter-hide-btn" id="ibHideFiltersBtn" style="display:none;">Hide filters</button>
+      </div>
+
+      <div class="ib-body">
+
+        <!-- ── FILTER SIDEBAR (desktop left / mobile top) ── -->
+        <aside class="ib-sidebar" id="ibSidebar">
+
+          <!-- Desktop hide toggle -->
+          <div class="ib-sidebar-header">
+            <span class="ib-sidebar-title">Filters</span>
+            <button class="ib-sidebar-close" id="ibSidebarClose" title="Hide filters">✕</button>
+          </div>
+
+          <!-- ── PROPERTY FILTERS ── -->
+          <div id="ibFiltersProperty" class="ib-filter-group">
+            <div class="pr-filter">
+              <label>Transaction type</label>
+              <div style="display:flex;gap:6px;">
+                <button class="ps-type-tab active" data-type="buy" id="ibPrTypeBuy" style="flex:1;padding:8px;font-size:13px;border-radius:8px;border:1.5px solid var(--accent);background:rgba(241,77,76,0.08);color:var(--accent);font-weight:600;cursor:pointer;">For Sale</button>
+                <button class="ps-type-tab" data-type="rent" id="ibPrTypeRent" style="flex:1;padding:8px;font-size:13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);font-weight:500;cursor:pointer;">To Rent</button>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Sort by</label>
+              <div style="position:relative;">
+                <select id="ibPrSort"><option value="newest">Newest first</option><option value="price_asc">Price: low to high</option><option value="price_desc">Price: high to low</option><option value="beds_desc">Most bedrooms</option></select>
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Search radius</label>
+              <div style="position:relative;">
+                <select id="ibPrRadius"><option value="0.25">¼ mile</option><option value="0.5">½ mile</option><option value="1.0" selected>1 mile</option><option value="3.0">3 miles</option><option value="5.0">5 miles</option><option value="10.0">10 miles</option><option value="20.0">20 miles</option></select>
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Price range</label>
+              <div class="pr-filter-row">
+                <select id="ibPrMinPrice" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);"><option value="">No min</option><option value="50000">£50k</option><option value="100000">£100k</option><option value="150000">£150k</option><option value="200000">£200k</option><option value="300000">£300k</option><option value="400000">£400k</option><option value="500000">£500k</option><option value="750000">£750k</option><option value="1000000">£1m</option></select>
+                <select id="ibPrMaxPrice" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);"><option value="">No max</option><option value="100000">£100k</option><option value="150000">£150k</option><option value="200000">£200k</option><option value="300000">£300k</option><option value="400000">£400k</option><option value="500000">£500k</option><option value="750000">£750k</option><option value="1000000">£1m</option><option value="2000000">£2m</option><option value="5000000">£5m</option></select>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Bedrooms</label>
+              <div class="pr-filter-row">
+                <select id="ibPrMinBeds" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);"><option value="">Min</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="5">5+</option></select>
+                <select id="ibPrMaxBeds" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);"><option value="">Max</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Property type</label>
+              <div style="position:relative;">
+                <select id="ibPrType"><option value="">All types</option><option value="detached">Detached</option><option value="semi">Semi-detached</option><option value="terraced">Terraced</option><option value="flat">Flat / Apartment</option><option value="bungalow">Bungalow</option></select>
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Must-haves</label>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text-secondary);font-weight:normal;"><input type="checkbox" id="ibPrParking" style="accent-color:var(--accent);width:15px;height:15px;"> Parking</label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text-secondary);font-weight:normal;"><input type="checkbox" id="ibPrGarden" style="accent-color:var(--accent);width:15px;height:15px;"> Garden</label>
+              </div>
+            </div>
+            <button class="btn-accent-sm" style="width:100%;justify-content:center;margin-top:4px;" id="ibPrApply">Search &amp; Apply</button>
+          </div>
+
+          <!-- ── CARS FILTERS ── -->
+          <div id="ibFiltersCars" class="ib-filter-group" style="display:none;">
+            <div class="pr-filter">
+              <label>Make &amp; Model</label>
+              <div class="pr-filter-row">
+                <input type="text" id="ibCarsMake" placeholder="Make…" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 10px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+                <input type="text" id="ibCarsModel" placeholder="Model…" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 10px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Sort by</label>
+              <div style="position:relative;">
+                <select id="ibCarsSort"><option value="newest">Newest first</option><option value="price_asc">Price: low to high</option><option value="price_desc">Price: high to low</option><option value="year_desc">Newest year</option><option value="mileage_asc">Lowest mileage</option></select>
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Price range</label>
+              <div class="pr-filter-row">
+                <select id="ibCarsMinPrice" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);"><option value="">No min</option><option value="1000">£1k</option><option value="3000">£3k</option><option value="5000">£5k</option><option value="10000">£10k</option><option value="15000">£15k</option><option value="20000">£20k</option><option value="30000">£30k</option></select>
+                <select id="ibCarsMaxPrice" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);"><option value="">No max</option><option value="3000">£3k</option><option value="5000">£5k</option><option value="10000">£10k</option><option value="15000">£15k</option><option value="20000">£20k</option><option value="30000">£30k</option><option value="50000">£50k</option><option value="100000">£100k</option></select>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Year &amp; Mileage</label>
+              <div class="pr-filter-row">
+                <select id="ibCarsYear" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);"><option value="">Any year</option><option value="2022">2022+</option><option value="2020">2020+</option><option value="2018">2018+</option><option value="2015">2015+</option><option value="2010">2010+</option></select>
+                <select id="ibCarsMileage" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);"><option value="">Any miles</option><option value="10000">10k</option><option value="20000">20k</option><option value="40000">40k</option><option value="60000">60k</option><option value="80000">80k</option><option value="100000">100k</option></select>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Fuel type</label>
+              <div style="position:relative;">
+                <select id="ibCarsFuel"><option value="">All</option><option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="electric">Electric</option><option value="hybrid">Hybrid</option></select>
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Transmission</label>
+              <div style="position:relative;">
+                <select id="ibCarsTransmission"><option value="">Any</option><option value="manual">Manual</option><option value="automatic">Automatic</option></select>
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+              </div>
+            </div>
+            <button class="btn-accent-sm" style="width:100%;justify-content:center;margin-top:4px;" id="ibCarsApply">Search &amp; Apply</button>
+          </div>
+
+          <!-- ── JOBS FILTERS ── -->
+          <div id="ibFiltersJobs" class="ib-filter-group" style="display:none;">
+            <div class="pr-filter">
+              <label>Job title or keywords</label>
+              <input type="text" id="ibJobsQuery" placeholder="e.g. Software Developer, Nurse…" style="width:100%;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 12px;font-size:13px;background:var(--bg-card);color:var(--text-primary);">
+            </div>
+            <div class="pr-filter">
+              <label>Radius</label>
+              <div style="position:relative;">
+                <select id="ibJobsRadius"><option value="5">5 miles</option><option value="10">10 miles</option><option value="20" selected>20 miles</option><option value="30">30 miles</option><option value="50">50 miles</option></select>
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Sort by</label>
+              <div style="position:relative;">
+                <select id="ibJobsSort"><option value="newest">Newest first</option><option value="salary_desc">Salary: high to low</option><option value="salary_asc">Salary: low to high</option></select>
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Salary range (£/year)</label>
+              <div class="pr-filter-row">
+                <select id="ibJobsMinSalary" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);"><option value="">No min</option><option value="15000">£15k</option><option value="20000">£20k</option><option value="25000">£25k</option><option value="30000">£30k</option><option value="40000">£40k</option><option value="50000">£50k</option><option value="60000">£60k</option><option value="80000">£80k</option></select>
+                <select id="ibJobsMaxSalary" style="flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;padding:0 8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);"><option value="">No max</option><option value="25000">£25k</option><option value="35000">£35k</option><option value="50000">£50k</option><option value="60000">£60k</option><option value="80000">£80k</option><option value="100000">£100k</option><option value="150000">£150k</option></select>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Job type</label>
+              <div style="position:relative;">
+                <select id="ibJobsType"><option value="">All types</option><option value="Permanent">Permanent</option><option value="Contract">Contract</option><option value="Temp">Temp</option><option value="Part-time">Part-time</option></select>
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+              </div>
+            </div>
+            <div class="pr-filter">
+              <label>Remote working</label>
+              <div style="position:relative;">
+                <select id="ibJobsRemote"><option value="">Any</option><option value="Remote">Remote</option><option value="Hybrid">Hybrid</option><option value="Office">Office</option></select>
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #9b9a96;width:0;height:0;"></div>
+              </div>
+            </div>
+            <button class="btn-accent-sm" style="width:100%;justify-content:center;margin-top:4px;" id="ibJobsApply">Search &amp; Apply</button>
+          </div>
+
+          <!-- Source list -->
+          <div class="ib-sources-wrap" id="ibSourcesWrap" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+            <div class="pr-sidebar__title">Sources</div>
+            <div id="ibSourceList" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
+          </div>
+
+        </aside>
+
+        <!-- ── RESULTS AREA ── -->
+        <main class="ib-main" id="ibMain">
+
+          <!-- Stats bar -->
+          <div class="ib-stats-bar" id="ibStatsBar" style="display:none;">
+            <div class="ib-stats-text" id="ibStatsText"></div>
+            <button class="ib-show-filters-btn" id="ibShowFiltersBtn" style="display:none;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+              Show filters
             </button>
           </div>
-          <!-- Search input row -->
-          <div class="hero__search-bar" id="heroSearchBar">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input type="text" class="hero__search-input" id="heroSearchInput" placeholder="Search by location, title or keyword…" />
-            <button class="hero__search-btn" id="heroSearchSubmit">Search</button>
+
+          <!-- Loading -->
+          <div class="pr-loading" id="ibLoading" style="display:none;">
+            <div class="pr-loading__crab"><img src="/public/crab-logo.png" alt="Crabify" style="width:56px;height:56px;object-fit:contain;" /></div>
+            <div class="pr-loading__text" id="ibLoadingText">Searching…</div>
+            <div class="pr-loading__bar"><div class="pr-loading__fill"></div></div>
+            <div class="pr-loading__sources" id="ibLoadingSources"></div>
           </div>
-        </div>
 
-        <!-- Social proof stats below search bar -->
-        <div class="hero__sources hero-animate hero-animate--4">
-          <span class="hero__sources-label">Searches across</span>
-          <span class="hero__source-pill">Rightmove</span>
-          <span class="hero__source-pill">Zoopla</span>
-          <span class="hero__source-pill">OnTheMarket</span>
-          <span class="hero__source-pill">Gumtree</span>
-          <span class="hero__source-pill">SpareRoom</span>
-          <span class="hero__source-pill">AutoTrader</span>
-          <span class="hero__source-pill">Motors.co.uk</span>
-          <span class="hero__source-pill">Reed</span>
-          <span class="hero__source-pill">Indeed</span>
-          <span class="hero__source-pill">Glassdoor</span>
-        </div>
+          <!-- Grid -->
+          <div class="ib-grid" id="ibGrid" style="display:none;"></div>
 
+          <!-- Empty state -->
+          <div class="pr-empty" id="ibEmpty" style="display:none;">
+            <div class="pr-empty__icon">🔍</div>
+            <div class="pr-empty__title" id="ibEmptyTitle">No results found</div>
+            <div class="pr-empty__sub" id="ibEmptyMsg">Try adjusting your filters or location.</div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pr-pagination" id="ibPagination" style="display:none;"></div>
+
+        </main>
       </div>
     </div>
   </section>
@@ -5194,6 +5694,637 @@
       a.download = `crabify-jobs-${jobsState.queryLabel}-${jobsState.locationLabel}-${Date.now()}.csv`;
       a.click();
     });
+
+  })();
+  </script>
+
+  <!-- ============================================================
+       INLINE RESULTS ENGINE (ib-* elements)
+  ============================================================ -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* ─── HELPERS ─────────────────────────────────────────── */
+    const $  = id => document.getElementById(id);
+    const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+    /* ─── STATE ───────────────────────────────────────────── */
+    const LAST_CAT_KEY = 'crabify_last_cat';
+    let ibState = {
+      activeCat: localStorage.getItem(LAST_CAT_KEY) || 'property',
+      location: '',
+      filtersVisible: false,
+      allResults: [],
+      filteredResults: [],
+      totalResults: 0,
+      currentPage: 1,
+      perPage: 28,
+    };
+
+    /* ─── ELEMENT REFS ────────────────────────────────────── */
+    const ibSearchBtn      = $('ibSearchBtn');
+    const ibLocation       = $('ibLocation');
+    const ibGeoStatus      = $('ibGeoStatus');
+    const ibResultsSection = $('ibResultsSection');
+    const ibSidebar        = $('ibSidebar');
+    const ibSidebarClose   = $('ibSidebarClose');
+    const ibFilterToggleBtn= $('ibFilterToggleBtn');
+    const ibHideFiltersBtn = $('ibHideFiltersBtn');
+    const ibFilterToggleBar= $('ibFilterToggleBar');
+    const ibBody           = document.querySelector('.ib-body');
+    const ibLoading        = $('ibLoading');
+    const ibGrid           = $('ibGrid');
+    const ibEmpty          = $('ibEmpty');
+    const ibStatsBar       = $('ibStatsBar');
+    const ibStatsText      = $('ibStatsText');
+    const ibPagination     = $('ibPagination');
+    const ibResultsMeta    = $('ibResultsMeta');
+    const ibShowFiltersBtn = $('ibShowFiltersBtn');
+    const ibLoadingText    = $('ibLoadingText');
+
+    /* ─── TAB INIT (default: property or last used) ────────── */
+    const ibTabs = document.querySelectorAll('.ib-tab');
+    function setActiveTab(cat) {
+      ibState.activeCat = cat;
+      localStorage.setItem(LAST_CAT_KEY, cat);
+      ibTabs.forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
+      // Show correct filter group
+      ['property','cars','jobs'].forEach(c => {
+        const fg = $('ibFilters' + c.charAt(0).toUpperCase() + c.slice(1));
+        if (fg) fg.style.display = (c === cat) ? 'block' : 'none';
+      });
+      // Update placeholder
+      const placeholders = {
+        property: 'Enter your town or city…',
+        cars: 'Enter your town or city…',
+        jobs: 'Enter your town, city or leave blank for UK-wide…',
+      };
+      ibLocation.placeholder = placeholders[cat] || 'Enter your location…';
+    }
+    setActiveTab(ibState.activeCat);
+
+    ibTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        setActiveTab(tab.dataset.cat);
+        // If results are already showing, re-run with new category
+        if (ibResultsSection.style.display !== 'none') {
+          runIbSearch(false);
+        }
+      });
+    });
+
+    /* ─── GEOLOCATION ─────────────────────────────────────── */
+    function requestGeolocation() {
+      if (!navigator.geolocation) return;
+      ibGeoStatus.textContent = '📍 Detecting your location…';
+      navigator.geolocation.getCurrentPosition(
+        async pos => {
+          try {
+            const { latitude: lat, longitude: lon } = pos.coords;
+            // Reverse geocode using open nominatim
+            const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`, {
+              headers: { 'Accept-Language': 'en' }
+            });
+            const data = await resp.json();
+            const addr = data.address || {};
+            const city = addr.city || addr.town || addr.village || addr.county || '';
+            if (city) {
+              ibLocation.value = city;
+              ibState.location = city;
+              ibGeoStatus.textContent = `📍 Location set to ${city}`;
+              setTimeout(() => ibGeoStatus.textContent = '', 3000);
+              // Auto-run search with detected location
+              runIbSearch(true);
+            } else {
+              ibGeoStatus.textContent = '';
+            }
+          } catch(e) {
+            ibGeoStatus.textContent = '';
+          }
+        },
+        () => {
+          ibGeoStatus.textContent = '';
+          // Location denied — run nationwide search anyway
+          runIbSearch(true);
+        },
+        { timeout: 5000 }
+      );
+    }
+
+    // Kick off geolocation on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(requestGeolocation, 800);
+    });
+    // Also trigger if page is already loaded
+    if (document.readyState !== 'loading') {
+      setTimeout(requestGeolocation, 800);
+    }
+
+    /* ─── SHOW / HIDE FILTERS ─────────────────────────────── */
+    function showFilters() {
+      ibState.filtersVisible = true;
+      ibSidebar.classList.add('visible');
+      ibBody.classList.remove('no-sidebar');
+      ibHideFiltersBtn.style.display = 'inline';
+      ibShowFiltersBtn.classList.remove('visible');
+      ibFilterToggleBtn.style.display = 'none';
+    }
+    function hideFilters() {
+      ibState.filtersVisible = false;
+      ibSidebar.classList.remove('visible');
+      ibBody.classList.add('no-sidebar');
+      ibHideFiltersBtn.style.display = 'none';
+      ibShowFiltersBtn.classList.add('visible');
+      ibFilterToggleBtn.style.display = '';
+    }
+    if (ibSidebarClose) ibSidebarClose.addEventListener('click', hideFilters);
+    if (ibHideFiltersBtn) ibHideFiltersBtn.addEventListener('click', hideFilters);
+    if (ibFilterToggleBtn) ibFilterToggleBtn.addEventListener('click', () => {
+      ibState.filtersVisible ? hideFilters() : showFilters();
+    });
+    if (ibShowFiltersBtn) ibShowFiltersBtn.addEventListener('click', showFilters);
+
+    /* ─── SEARCH BUTTON ───────────────────────────────────── */
+    if (ibSearchBtn) {
+      ibSearchBtn.addEventListener('click', () => runIbSearch(false));
+    }
+    if (ibLocation) {
+      ibLocation.addEventListener('keydown', e => {
+        if (e.key === 'Enter') runIbSearch(false);
+      });
+    }
+
+    /* ─── APPLY BUTTONS IN SIDEBAR ────────────────────────── */
+    if ($('ibPrApply'))    $('ibPrApply').addEventListener('click',   () => runIbSearch(false));
+    if ($('ibCarsApply'))  $('ibCarsApply').addEventListener('click', () => runIbSearch(false));
+    if ($('ibJobsApply'))  $('ibJobsApply').addEventListener('click', () => runIbSearch(false));
+
+    /* ─── SORT CHANGE (re-filter without new fetch) ────────── */
+    if ($('ibPrSort'))    $('ibPrSort').addEventListener('change',    () => { applyIbFilters(); renderIbResults(); });
+    if ($('ibCarsSort'))  $('ibCarsSort').addEventListener('change',  () => { applyIbFilters(); renderIbResults(); });
+    if ($('ibJobsSort'))  $('ibJobsSort').addEventListener('change',  () => { applyIbFilters(); renderIbResults(); });
+
+    /* ─── MAIN SEARCH RUNNER ──────────────────────────────── */
+    function runIbSearch(autoRun) {
+      const loc = ibLocation.value.trim();
+      ibState.location = loc;
+      ibState.currentPage = 1;
+      ibState.allResults = [];
+      ibState.filteredResults = [];
+
+      const cat = ibState.activeCat;
+
+      // For auto-run jobs searches without a query, skip silently
+      if (autoRun && cat === 'jobs' && !getVal('ibJobsQuery')) {
+        return;
+      }
+
+      // Show results section
+      ibResultsSection.style.display = 'block';
+
+      // Show filters on first explicit search; on auto-run keep hidden
+      if (!autoRun && !ibState.filtersVisible) {
+        showFilters();
+      }
+
+      // Scroll to results section smoothly
+      if (!autoRun) {
+        setTimeout(() => {
+          ibResultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+
+      doIbFetch();
+    }
+
+    /* ─── FETCH ───────────────────────────────────────────── */
+    const loadingMsgsByCategory = {
+      property: ['Crabify is crawling property listings…','Scanning Rightmove…','Scanning OnTheMarket…','Scanning Gumtree…','Comparing prices across the market…'],
+      cars:     ['Crabify is searching for cars…','Scanning AutoTrader…','Scanning Exchange & Mart…','Comparing prices…','Gathering results…'],
+      jobs:     ['Crabify is searching for jobs…','Scanning Reed.co.uk…','Analysing salaries…','Gathering job descriptions…','Collating results…'],
+    };
+    let ibLoadInterval;
+    function startIbLoading() {
+      const msgs = loadingMsgsByCategory[ibState.activeCat] || loadingMsgsByCategory.property;
+      let i = 0;
+      if (ibLoadingText) ibLoadingText.textContent = msgs[0];
+      ibLoadInterval = setInterval(() => {
+        i = (i + 1) % msgs.length;
+        if (ibLoadingText) ibLoadingText.textContent = msgs[i];
+      }, 1400);
+    }
+    function stopIbLoading() { clearInterval(ibLoadInterval); }
+
+    async function doIbFetch(page) {
+      page = page || ibState.currentPage;
+      startIbLoading();
+      ibLoading.style.display = 'flex';
+      ibGrid.style.display = 'none';
+      ibEmpty.style.display = 'none';
+      ibStatsBar.style.display = 'none';
+      ibPagination.style.display = 'none';
+
+      const cat = ibState.activeCat;
+      const loc = ibState.location;
+      let endpoint = '';
+      let params = {};
+
+      if (cat === 'property') {
+        endpoint = '/api/search';
+        params = {
+          location: loc || 'London',
+          type: getTabType(),
+          radius: getVal('ibPrRadius') || '1.0',
+          min_price: getVal('ibPrMinPrice') || '',
+          max_price: getVal('ibPrMaxPrice') || '',
+          min_beds: getVal('ibPrMinBeds') || '',
+          max_beds: getVal('ibPrMaxBeds') || '',
+          property_type: getVal('ibPrType') || '',
+          must_parking: $('ibPrParking') && $('ibPrParking').checked ? 'true' : '',
+          must_garden: $('ibPrGarden') && $('ibPrGarden').checked ? 'true' : '',
+          sort: getVal('ibPrSort') || 'newest',
+          index: (page - 1) * ibState.perPage,
+        };
+      } else if (cat === 'cars') {
+        endpoint = '/api/cars';
+        params = {
+          location: loc || 'London',
+          make:    getVal('ibCarsMake') || '',
+          model:   getVal('ibCarsModel') || '',
+          sort:    getVal('ibCarsSort') || 'newest',
+          min_price: getVal('ibCarsMinPrice') || '',
+          max_price: getVal('ibCarsMaxPrice') || '',
+          min_year:  getVal('ibCarsYear') || '',
+          max_mileage: getVal('ibCarsMileage') || '',
+          fuel:      getVal('ibCarsFuel') || '',
+          transmission: getVal('ibCarsTransmission') || '',
+          index: (page - 1) * ibState.perPage,
+        };
+      } else if (cat === 'jobs') {
+        const jobsQuery = getVal('ibJobsQuery') || '';
+        // Jobs API requires a query — if empty, show a prompt rather than fail
+        if (!jobsQuery) {
+          stopIbLoading();
+          ibLoading.style.display = 'none';
+          ibEmpty.style.display = 'flex';
+          $('ibEmptyTitle').textContent = 'Enter a job title';
+          $('ibEmptyMsg').textContent = 'Type a job title or keyword in the filter panel to search for jobs.';
+          ibStatsBar.style.display = 'none';
+          ibGrid.style.display = 'none';
+          ibPagination.style.display = 'none';
+          // Make sure filters are visible so user can enter query
+          showFilters();
+          return;
+        }
+        endpoint = '/api/jobs';
+        params = {
+          query:    jobsQuery,
+          location: loc || '',
+          radius:   getVal('ibJobsRadius') || '20',
+          sort:     getVal('ibJobsSort') || 'newest',
+          job_min_salary: getVal('ibJobsMinSalary') || '',
+          job_max_salary: getVal('ibJobsMaxSalary') || '',
+          job_type: getVal('ibJobsType') || '',
+          index: (page - 1) * ibState.perPage,
+        };
+      }
+
+      const qs = new URLSearchParams();
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== '' && v !== null && v !== undefined && v !== false) qs.set(k, v);
+      });
+
+      try {
+        const resp = await fetch(`${endpoint}?${qs.toString()}`);
+        const data = await resp.json();
+        stopIbLoading();
+        ibLoading.style.display = 'none';
+
+        ibState.allResults = data.results || [];
+        ibState.totalResults = data.total || ibState.allResults.length;
+        ibState.currentPage = page;
+
+        // Update source badges in sidebar
+        const srcList = $('ibSourceList');
+        if (srcList) {
+          srcList.innerHTML = '';
+          const sources = data.source_totals || {};
+          if (Object.keys(sources).length) {
+            Object.entries(sources).forEach(([name, count]) => {
+              if (count > 0) {
+                const d = document.createElement('div');
+                d.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);';
+                const colors = { Rightmove:'#007a37', OnTheMarket:'#6c3dab', Zoopla:'#e05b00', Gumtree:'#72ac00', SpareRoom:'#e8003d', AutoTrader:'#e05b00', Reed:'#e63946', 'Exchange&Mart':'#2563eb' };
+                const c = colors[name] || '#888';
+                d.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0;"></span><span>${esc(name)}</span><span style="margin-left:auto;font-weight:600;color:var(--text-primary);">${Number(count).toLocaleString()}</span>`;
+                srcList.appendChild(d);
+              }
+            });
+          } else if (data.results && data.results.length > 0) {
+            const d = document.createElement('div');
+            d.style.cssText = 'font-size:12px;color:var(--text-secondary);';
+            d.textContent = `${ibState.totalResults.toLocaleString()} results`;
+            srcList.appendChild(d);
+          }
+        }
+
+        ibResultsMeta.textContent = `${ibState.totalResults.toLocaleString()} results`;
+        applyIbFilters();
+        renderIbResults();
+
+      } catch(err) {
+        stopIbLoading();
+        ibLoading.style.display = 'none';
+        ibEmpty.style.display = 'flex';
+        $('ibEmptyTitle').textContent = 'Could not load results';
+        $('ibEmptyMsg').textContent = 'Check your connection and try again.';
+        console.error('IB search error:', err);
+      }
+    }
+
+    /* ─── HELPERS FOR GETTING FILTER VALUES ────────────────── */
+    function getVal(id) {
+      const el = $(id);
+      if (!el) return '';
+      return el.value ? el.value.trim() : '';
+    }
+    let ibTransType = 'buy'; // track buy/rent state
+
+    function getTabType() {
+      return ibTransType;
+    }
+
+    /* Wire property buy/rent tab buttons in inline sidebar */
+    ['ibPrTypeBuy','ibPrTypeRent'].forEach(id => {
+      const btn = $(id);
+      if (btn) btn.addEventListener('click', () => {
+        ibTransType = btn.dataset.type || 'buy';
+        $('ibPrTypeBuy').style.cssText  = 'flex:1;padding:8px;font-size:13px;border-radius:8px;cursor:pointer;font-weight:500;border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);';
+        $('ibPrTypeRent').style.cssText = 'flex:1;padding:8px;font-size:13px;border-radius:8px;cursor:pointer;font-weight:500;border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);';
+        btn.style.cssText = 'flex:1;padding:8px;font-size:13px;border-radius:8px;cursor:pointer;font-weight:600;border:1.5px solid var(--accent);background:rgba(241,77,76,0.08);color:var(--accent);';
+      });
+    });
+
+    /* ─── APPLY CLIENT-SIDE FILTERS ───────────────────────── */
+    function applyIbFilters() {
+      let results = [...ibState.allResults];
+      const cat = ibState.activeCat;
+
+      if (cat === 'property') {
+        const minP = parseFloat(getVal('ibPrMinPrice')) || 0;
+        const maxP = parseFloat(getVal('ibPrMaxPrice')) || Infinity;
+        const minBeds = parseInt(getVal('ibPrMinBeds')) || 0;
+        const typeF = getVal('ibPrType');
+        const sortBy = getVal('ibPrSort');
+        const wantParking = $('ibPrParking') && $('ibPrParking').checked;
+        const wantGarden  = $('ibPrGarden') && $('ibPrGarden').checked;
+
+        results = results.filter(p => {
+          const priceNum = extractPriceNum(p.price);
+          if (minP > 0 && priceNum < minP) return false;
+          if (maxP < Infinity && priceNum > maxP) return false;
+          if (minBeds > 0 && (p.bedrooms || 0) < minBeds) return false;
+          if (typeF && p.property_type && !p.property_type.toLowerCase().includes(typeF.toLowerCase())) return false;
+          if (wantParking && !hasFeatureIb(p, 'parking')) return false;
+          if (wantGarden  && !hasFeatureIb(p, 'garden'))  return false;
+          return true;
+        });
+        if (sortBy === 'price_asc')  results.sort((a,b) => extractPriceNum(a.price) - extractPriceNum(b.price));
+        if (sortBy === 'price_desc') results.sort((a,b) => extractPriceNum(b.price) - extractPriceNum(a.price));
+        if (sortBy === 'beds_desc')  results.sort((a,b) => (b.bedrooms||0) - (a.bedrooms||0));
+
+      } else if (cat === 'cars') {
+        const minP = parseFloat(getVal('ibCarsMinPrice')) || 0;
+        const maxP = parseFloat(getVal('ibCarsMaxPrice')) || Infinity;
+        const minYear = parseInt(getVal('ibCarsYear')) || 0;
+        const maxMiles = parseInt(getVal('ibCarsMileage')) || 0;
+        const fuel = getVal('ibCarsFuel').toLowerCase();
+        const trans = getVal('ibCarsTransmission').toLowerCase();
+        const sortBy = getVal('ibCarsSort');
+
+        results = results.filter(c => {
+          const p = parseFloat(c.price_num || c.price_clean) || 0;
+          if (minP > 0 && p < minP) return false;
+          if (maxP < Infinity && p > maxP) return false;
+          if (minYear > 0 && (c.year || 0) < minYear) return false;
+          if (maxMiles > 0 && (c.mileage || 0) > maxMiles) return false;
+          if (fuel && c.fuel_type && !c.fuel_type.toLowerCase().includes(fuel)) return false;
+          if (trans && c.transmission && !c.transmission.toLowerCase().includes(trans)) return false;
+          return true;
+        });
+        const priceNum = c => parseFloat(c.price_num || c.price_clean) || 0;
+        if (sortBy === 'price_asc')    results.sort((a,b) => priceNum(a)-priceNum(b));
+        if (sortBy === 'price_desc')   results.sort((a,b) => priceNum(b)-priceNum(a));
+        if (sortBy === 'year_desc')    results.sort((a,b) => (b.year||0)-(a.year||0));
+        if (sortBy === 'mileage_asc')  results.sort((a,b) => (a.mileage||0)-(b.mileage||0));
+
+      } else if (cat === 'jobs') {
+        const minSal = parseFloat(getVal('ibJobsMinSalary')) || 0;
+        const maxSal = parseFloat(getVal('ibJobsMaxSalary')) || 0;
+        const typeF = getVal('ibJobsType');
+        const remoteF = getVal('ibJobsRemote');
+        const sortBy = getVal('ibJobsSort');
+
+        results = results.filter(j => {
+          const rawSal = j.salary_num || 0;
+          const annSal = rawSal > 0 && rawSal < 1000 ? rawSal * 2080 : rawSal;
+          if (minSal && annSal < minSal) return false;
+          if (maxSal && annSal > maxSal) return false;
+          if (typeF && j.job_type !== typeF) return false;
+          if (remoteF === 'Office') { if (j.remote && j.remote !== 'Office') return false; }
+          else if (remoteF && j.remote !== remoteF) return false;
+          return true;
+        });
+        if (sortBy === 'salary_desc') results.sort((a,b) => (b.salary_num||0)-(a.salary_num||0));
+        if (sortBy === 'salary_asc')  results.sort((a,b) => (a.salary_num||0)-(b.salary_num||0));
+      }
+
+      ibState.filteredResults = results;
+    }
+
+    function extractPriceNum(priceStr) {
+      if (!priceStr) return 0;
+      return parseFloat(String(priceStr).replace(/[^0-9.]/g, '')) || 0;
+    }
+    function hasFeatureIb(prop, keyword) {
+      return [prop.description||'', prop.address||'', prop.property_type||''].join(' ').toLowerCase().includes(keyword);
+    }
+
+    /* ─── RENDER RESULTS ──────────────────────────────────── */
+    function renderIbResults() {
+      ibGrid.innerHTML = '';
+      const results = ibState.filteredResults;
+      const cat = ibState.activeCat;
+      const loc = ibState.location || 'UK';
+
+      if (!results.length) {
+        ibEmpty.style.display = 'flex';
+        $('ibEmptyTitle').textContent = cat === 'property' ? 'No properties found' : cat === 'cars' ? 'No cars found' : 'No jobs found';
+        $('ibEmptyMsg').textContent = 'Try adjusting your filters or location.';
+        ibStatsBar.style.display = 'none';
+        ibGrid.style.display = 'none';
+        renderIbPagination();
+        return;
+      }
+
+      ibEmpty.style.display = 'none';
+      ibStatsBar.style.display = 'flex';
+      ibGrid.style.display = 'grid';
+
+      const catLabel = cat === 'property' ? 'properties' : cat === 'cars' ? 'cars' : 'jobs';
+      ibStatsText.innerHTML = `Showing <strong>${results.length}</strong> of <strong>${ibState.totalResults.toLocaleString()}</strong> ${catLabel}${loc ? ' near <strong>' + esc(loc) + '</strong>' : ''}`;
+
+      results.forEach((item, idx) => {
+        let card;
+        if (cat === 'property') card = buildIbPropertyCard(item);
+        else if (cat === 'cars') card = buildIbCarCard(item);
+        else card = buildIbJobCard(item);
+        card.style.animationDelay = `${Math.min(idx * 30, 400)}ms`;
+        card.style.animation = 'fadeInUp 0.4s ease both';
+        ibGrid.appendChild(card);
+      });
+
+      renderIbPagination();
+    }
+
+    /* ─── CARD BUILDERS ───────────────────────────────────── */
+    function buildIbPropertyCard(prop) {
+      const card = document.createElement('div');
+      card.className = 'pc';
+      const imgHtml = prop.image
+        ? `<img src="${esc(prop.image)}" alt="${esc(prop.address)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=pc__img-placeholder>🏠</div>'">`
+        : `<div class="pc__img-placeholder">🏠</div>`;
+      const srcColors = { Rightmove:'#007a37', OnTheMarket:'#6c3dab', Zoopla:'#e05b00', Gumtree:'#72ac00', SpareRoom:'#e8003d' };
+      const srcBg = srcColors[prop.source] || '#1a1a1a';
+      const addedBadge = prop.added_or_reduced ? `<span class="pc__new-badge">${esc(prop.added_or_reduced)}</span>` : '';
+      card.innerHTML = `
+        <div class="pc__img-wrap">
+          ${imgHtml}
+          <span class="pc__source-badge" style="background:${srcBg};">${esc(prop.source || 'Rightmove')}</span>
+          ${addedBadge}
+        </div>
+        <div class="pc__body">
+          <div class="pc__price">${esc(prop.price || 'POA')}<span class="pc__price-qual">${esc(prop.price_qualifier || '')}</span></div>
+          <div class="pc__address">${esc(prop.address || '')}</div>
+          <div class="pc__tags">
+            ${prop.bedrooms ? `<span class="pc__tag">🛏 ${prop.bedrooms} bed</span>` : ''}
+            ${prop.bathrooms ? `<span class="pc__tag">🚿 ${prop.bathrooms} bath</span>` : ''}
+            ${prop.property_type ? `<span class="pc__tag">🏠 ${esc(prop.property_type)}</span>` : ''}
+          </div>
+          ${prop.description ? `<div class="pc__description">${esc(prop.description)}</div>` : ''}
+          <div class="pc__agent">
+            <div class="pc__agent-info">
+              <div class="pc__agent-name">${esc(prop.agent || 'Agent')}</div>
+              <div class="pc__agent-source">via ${esc(prop.source || 'Rightmove')}</div>
+            </div>
+            <div class="pc__agent-actions">
+              ${prop.source_url ? `<a class="pc__btn" href="${esc(prop.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">View →</a>` : ''}
+            </div>
+          </div>
+        </div>`;
+      if (prop.source_url) card.onclick = () => window.open(prop.source_url, '_blank', 'noopener');
+      card.style.cursor = 'pointer';
+      return card;
+    }
+
+    function buildIbCarCard(car) {
+      const card = document.createElement('div');
+      card.className = 'pc';
+      const imgHtml = car.image
+        ? `<img src="${esc(car.image)}" alt="${esc(car.title)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=pc__img-placeholder>🚗</div>'">`
+        : `<div class="pc__img-placeholder">🚗</div>`;
+      const srcColors = { AutoTrader:'#e05b00', 'Exchange&Mart':'#2563eb', Motors:'#0d47a1' };
+      const srcBg = srcColors[car.source] || '#1a1a1a';
+      card.innerHTML = `
+        <div class="pc__img-wrap">
+          ${imgHtml}
+          <span class="pc__source-badge" style="background:${srcBg};">${esc(car.source || 'AutoTrader')}</span>
+        </div>
+        <div class="pc__body">
+          <div class="pc__price">${esc(car.price || 'POA')}</div>
+          <div class="pc__address" style="font-weight:600;color:var(--text-primary);">${esc(car.title || '')}</div>
+          <div class="pc__tags">
+            ${car.year ? `<span class="pc__tag">📅 ${car.year}</span>` : ''}
+            ${car.mileage ? `<span class="pc__tag">🛣 ${Number(car.mileage).toLocaleString()} mi</span>` : ''}
+            ${car.fuel_type ? `<span class="pc__tag">⛽ ${esc(car.fuel_type)}</span>` : ''}
+            ${car.transmission ? `<span class="pc__tag">⚙️ ${esc(car.transmission)}</span>` : ''}
+          </div>
+          ${car.description ? `<div class="pc__description">${esc(car.description)}</div>` : ''}
+          <div class="pc__agent">
+            <div class="pc__agent-info">
+              <div class="pc__agent-name">${esc(car.seller || 'Dealer')}</div>
+              <div class="pc__agent-source">${esc(car.location || '')}</div>
+            </div>
+            <div class="pc__agent-actions">
+              ${car.url ? `<a class="pc__btn" href="${esc(car.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">View →</a>` : ''}
+            </div>
+          </div>
+        </div>`;
+      if (car.url) card.onclick = () => window.open(car.url, '_blank', 'noopener');
+      card.style.cursor = 'pointer';
+      return card;
+    }
+
+    function buildIbJobCard(job) {
+      const card = document.createElement('div');
+      card.className = 'pc';
+      card.style.cursor = 'pointer';
+      const logoHtml = job.logo
+        ? `<img src="${esc(job.logo)}" alt="${esc(job.company)}" style="width:40px;height:40px;object-fit:contain;border-radius:8px;border:1px solid var(--border);flex-shrink:0;" loading="lazy" onerror="this.style.display='none'">`
+        : `<div style="width:40px;height:40px;border-radius:8px;background:var(--bg-card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💼</div>`;
+      const remoteTag = job.remote ? `<span class="pc__tag" style="background:rgba(34,197,94,0.1);color:#16a34a;">🏠 ${esc(job.remote)}</span>` : '';
+      card.innerHTML = `
+        <div class="pc__body" style="padding:14px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">
+            ${logoHtml}
+            <div style="flex:1;min-width:0;">
+              <div class="pc__price" style="font-size:14px;font-weight:700;margin-bottom:2px;line-height:1.3;">${esc(job.title)}</div>
+              <div style="font-size:12px;color:var(--text-secondary);font-weight:500;">${esc(job.company)}</div>
+            </div>
+          </div>
+          <div class="pc__tags" style="margin-bottom:8px;">
+            <span class="pc__tag">📍 ${esc(job.location)}</span>
+            <span class="pc__tag" style="color:var(--green);font-weight:600;">💷 ${esc(job.salary)}</span>
+            <span class="pc__tag">🕐 ${esc(job.job_type)}</span>
+            ${remoteTag}
+          </div>
+          <div class="pc__description" style="-webkit-line-clamp:2;">${esc(job.description)}</div>
+          <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:11px;color:var(--text-muted);">${esc(job.date_posted)}</div>
+            ${job.url ? `<a href="${esc(job.url)}" target="_blank" rel="noopener" class="pc__btn" onclick="event.stopPropagation()" style="font-size:11px;">Apply →</a>` : ''}
+          </div>
+        </div>`;
+      if (job.url) card.onclick = () => window.open(job.url, '_blank', 'noopener');
+      return card;
+    }
+
+    /* ─── PAGINATION ──────────────────────────────────────── */
+    function renderIbPagination() {
+      const total = ibState.totalResults;
+      const pages = Math.min(Math.ceil(total / ibState.perPage), 10);
+      ibPagination.innerHTML = '';
+      if (pages <= 1) { ibPagination.style.display = 'none'; return; }
+      ibPagination.style.display = 'flex';
+      const cur = ibState.currentPage;
+
+      const prev = document.createElement('button');
+      prev.className = 'pr-page-btn'; prev.textContent = '←'; prev.disabled = (cur === 1);
+      prev.onclick = () => { ibState.currentPage = cur - 1; doIbFetch(cur - 1); ibResultsSection.scrollIntoView({ behavior:'smooth', block:'start' }); };
+      ibPagination.appendChild(prev);
+
+      for (let i = 1; i <= pages; i++) {
+        const b = document.createElement('button');
+        b.className = 'pr-page-btn' + (i === cur ? ' active' : ''); b.textContent = i;
+        b.onclick = ((p) => () => { ibState.currentPage = p; doIbFetch(p); ibResultsSection.scrollIntoView({ behavior:'smooth', block:'start' }); })(i);
+        ibPagination.appendChild(b);
+      }
+
+      const next = document.createElement('button');
+      next.className = 'pr-page-btn'; next.textContent = '→'; next.disabled = (cur >= pages);
+      next.onclick = () => { ibState.currentPage = cur + 1; doIbFetch(cur + 1); ibResultsSection.scrollIntoView({ behavior:'smooth', block:'start' }); };
+      ibPagination.appendChild(next);
+    }
 
   })();
   </script>
