@@ -326,7 +326,7 @@
        HERO
     ============================================================ */
     .hero {
-      padding: 90px 0 40px;
+      padding: 88px 0 36px;
       position: relative;
       overflow: hidden;
       min-height: auto;
@@ -2350,62 +2350,82 @@
        INLINE HERO SEARCH (ib-*)
     ============================================================ */
 
-    /* Top row: headline + tabs */
+    /* Top row: headline left, tabs right */
     .ib-top {
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 24px;
       flex-wrap: nowrap;
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
     }
-    .ib-tabs {
-      display: flex;
-      gap: 4px;
-      background: #f0f0f0;
-      border-radius: 10px;
-      padding: 3px;
-      flex-shrink: 0;
-    }
-    .ib-tab {
-      padding: 7px 16px;
-      border: none; border-radius: 8px;
-      font-size: 13px; font-weight: 500;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      background: transparent;
-      color: var(--text-secondary);
-      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
-      white-space: nowrap;
-    }
-    .ib-tab:hover { color: var(--text-primary); }
-    .ib-tab.active {
-      background: #fff;
+
+    /* Headline */
+    .ib-headline {
+      font-size: clamp(32px, 4vw, 46px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
       color: var(--text-primary);
-      font-weight: 600;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      font-family: var(--font);
+      flex: 1;
+      min-width: 0;
+    }
+    .ib-headline em {
+      font-style: normal;
+      color: var(--accent);
     }
 
-    /* Search input row */
+    /* Tab group — individual buttons, NO pill-wrapper background */
+    .ib-tabs {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+      align-items: center;
+    }
+    .ib-tab {
+      padding: 10px 18px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      background: #fff;
+      color: #666;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .ib-tab:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .ib-tab.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Search bar row */
     .ib-search {
       width: 100%;
-      max-width: 900px;
-      margin: 16px auto 0;
+      max-width: 960px;
+      margin: 20px auto 0;
       display: flex;
       align-items: center;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.05);
-      padding: 6px 6px 6px 18px;
+      background: #f3f3f3;
+      border-radius: 14px;
+      padding: 7px 7px 7px 20px;
       gap: 8px;
-      border: 1.5px solid var(--border);
-      transition: border-color 0.2s, box-shadow 0.2s;
+      border: none;
+      transition: box-shadow 0.2s;
     }
     .ib-search:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 0 0 3px rgba(241,77,76,0.1);
+      box-shadow: 0 0 0 2px rgba(241,77,76,0.25);
     }
     .ib-input-wrap {
       flex: 1;
@@ -2415,31 +2435,44 @@
     }
     .ib-input {
       flex: 1;
-      border: none; outline: none;
+      border: none;
+      outline: none;
       background: transparent;
-      font-size: 15px;
+      font-size: 16px;
       font-family: var(--font);
       color: var(--text-primary);
-      padding: 6px 0;
+      padding: 8px 0;
     }
-    .ib-input::placeholder { color: #c4c4c4; }
+    .ib-input::placeholder { color: #c0c0c0; }
     .ib-btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      background: var(--accent); color: #fff;
-      border: none; border-radius: 9px;
-      padding: 12px 22px;
-      font-size: 14px; font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer; transition: background 0.15s, transform 0.1s;
-      white-space: nowrap; flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 26px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .ib-btn:hover { background: var(--accent-light); }
     .ib-btn:active { transform: scale(0.97); }
 
-    /* Geo status */
+    /* Geo status — left-aligned, small */
     .ib-geo-status {
-      font-size: 12px; color: var(--text-muted);
-      margin-top: 8px; text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      text-align: left;
+      max-width: 960px;
+      margin-left: auto;
+      margin-right: auto;
       min-height: 16px;
     }
 
@@ -2452,7 +2485,7 @@
     .ib-results-wrap {
       max-width: var(--max-w);
       margin: 0 auto;
-      padding: 0 24px 60px;
+      padding: 0 24px 80px;
     }
 
     /* Filter toggle bar (mobile "Filters" button + results meta) */
@@ -2557,13 +2590,15 @@
     /* Stats bar */
     .ib-stats-bar {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 0 10px;
+      padding: 10px 0 14px;
       flex-wrap: wrap; gap: 10px;
     }
     .ib-stats-text {
-      font-size: 13px; color: var(--text-secondary);
+      font-size: 14px; color: #555; font-weight: 400;
     }
-    .ib-stats-text strong { color: var(--text-primary); }
+    .ib-stats-text strong {
+      color: #0f0f0f; font-weight: 700;
+    }
 
     /* "Show filters" btn in stats bar (desktop, when sidebar is closed) */
     .ib-show-filters-btn {
@@ -2602,9 +2637,7 @@
 
     /* ── SOURCE FILTER PILLS BAR ── */
     .ib-source-bar {
-      padding: 14px 0 12px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 4px;
+      padding: 16px 0 4px;
     }
     .ib-source-pills {
       display: flex;
@@ -2612,38 +2645,44 @@
       gap: 8px;
       align-items: center;
     }
+    /* Default (inactive): gray border, gray text, white bg */
     .ib-source-pill {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1.5px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 9999px;
+      border: 1.5px solid #d9d9d9;
       background: #fff;
-      font-size: 12px; font-weight: 600;
-      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      color: #666;
       cursor: pointer;
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      transition: border-color 0.15s, color 0.15s;
       white-space: nowrap;
       font-family: var(--font);
+      line-height: 1;
     }
     .ib-source-pill:hover {
-      border-color: var(--border-hover);
+      border-color: #aaa;
       color: var(--text-primary);
     }
+    /* Active: red border, red text, white bg (no fill) */
     .ib-source-pill.active {
       border-color: var(--accent);
       color: var(--accent);
-      background: rgba(241,77,76,0.06);
+      background: #fff;
+      font-weight: 600;
     }
+    /* Count badge */
     .ib-source-pill__count {
-      font-size: 10px; font-weight: 500;
-      color: var(--text-muted);
-      background: #f0f0f0;
-      border-radius: 10px;
-      padding: 1px 5px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #aaa;
+      margin-left: 1px;
     }
     .ib-source-pill.active .ib-source-pill__count {
-      background: rgba(241,77,76,0.12);
-      color: var(--accent);
+      color: rgba(241,77,76,0.7);
     }
 
     /* ── LOADING STATE for inline ── */
@@ -2692,9 +2731,12 @@
     @media (max-width: 640px) {
       .ib-top {
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
+        gap: 16px;
       }
-      .ib-top h1 { text-align: center; font-size: clamp(20px, 6vw, 32px) !important; }
+      .ib-headline { font-size: clamp(28px, 8vw, 38px); }
+      .ib-tabs { width: 100%; justify-content: flex-start; }
+      .ib-tab { flex: 1; justify-content: center; font-size: 13px; padding: 9px 10px; }
     }
 
   </style>
@@ -2744,10 +2786,10 @@
     <div class="container">
       <div class="hero__inner">
 
-        <!-- Top row: headline left, tabs right -->
+        <!-- Row 1: Headline left, category tabs right -->
         <div class="ib-top hero-animate hero-animate--1">
-          <h1 class="display hero__headline" style="font-size:clamp(22px,3.2vw,42px);white-space:nowrap;margin-bottom:0;">
-            Multiple Websites. All in <em>ONE <span style="color:var(--text-primary);">Search.</span></em>
+          <h1 class="ib-headline">
+            Multiple Websites.<br>All in <em>ONE Search.</em>
           </h1>
           <div class="ib-tabs" id="ibTabs">
             <button class="ib-tab active" data-cat="property">🏠 Property</button>
@@ -2756,19 +2798,16 @@
           </div>
         </div>
 
-        <!-- Search bar row -->
+        <!-- Row 2: Search bar -->
         <div class="ib-search hero-animate hero-animate--2">
           <div class="ib-input-wrap">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <input type="text" id="ibLocation" class="ib-input" placeholder="Enter your town or city…" autocomplete="off" />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" id="ibLocation" class="ib-input" placeholder="Town, city or postcode..." autocomplete="off" />
           </div>
-          <button class="ib-btn" id="ibSearchBtn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            Search
-          </button>
+          <button class="ib-btn" id="ibSearchBtn">Search</button>
         </div>
 
-        <!-- Location status -->
+        <!-- Geo status -->
         <div class="ib-geo-status" id="ibGeoStatus"></div>
 
       </div>
@@ -6223,26 +6262,25 @@
       if (!entries.length) { if (ibSourceBar) ibSourceBar.style.display = 'none'; return; }
       if (ibSourceBar) ibSourceBar.style.display = 'block';
 
-      // "All" pill
-      const allPill = document.createElement('button');
-      allPill.className = 'ib-source-pill' + (ibState.activeSources.size === 0 ? ' active' : '');
-      allPill.textContent = 'All';
-      allPill.addEventListener('click', () => {
-        ibState.activeSources = new Set();
-        applyIbFilters(); renderIbResults(); renderIbSourcePills();
-      });
-      ibSourcePills.appendChild(allPill);
-
-      // Per-source pills
+      // Per-source pills only (no "All" pill — matching design)
+      // All sources active by default (activeSources empty = show all)
       entries.forEach(([name, count]) => {
-        const isActive = ibState.activeSources.has(name);
+        // A pill is "active" (red) when either:
+        //  - No sources selected (all shown), OR
+        //  - This source is explicitly selected
+        const noneSelected = ibState.activeSources.size === 0;
+        const isActive = noneSelected || ibState.activeSources.has(name);
         const pill = document.createElement('button');
         pill.className = 'ib-source-pill' + (isActive ? ' active' : '');
-        const col = SOURCE_COLORS[name] || '#888';
-        pill.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span>${esc(name)}<span class="ib-source-pill__count">${Number(count).toLocaleString()}</span>`;
+        pill.innerHTML = `${esc(name)}<span class="ib-source-pill__count">${Number(count).toLocaleString()}</span>`;
         pill.addEventListener('click', () => {
-          if (ibState.activeSources.has(name)) {
+          if (ibState.activeSources.size === 0) {
+            // Currently "all selected" — clicking one selects ONLY that source
+            ibState.activeSources = new Set([name]);
+          } else if (ibState.activeSources.has(name)) {
             ibState.activeSources.delete(name);
+            // If none left, reset to "all"
+            if (ibState.activeSources.size === 0) ibState.activeSources = new Set();
           } else {
             ibState.activeSources.add(name);
           }
@@ -6282,7 +6320,12 @@
       ibGrid.style.display = 'grid';
 
       const catLabel = cat === 'property' ? 'properties' : cat === 'cars' ? 'cars' : 'jobs';
-      ibStatsText.innerHTML = `Showing <strong>${results.length}</strong> of <strong>${ibState.totalResults.toLocaleString()}</strong> ${catLabel}${loc ? ' near <strong>' + esc(loc) + '</strong>' : ''}`;
+      // Get radius label for property/cars
+      const radiusEl = cat === 'property' ? $('ibPrRadius') : cat === 'cars' ? $('ibCarsRadius') : null;
+      const radiusVal = radiusEl ? parseFloat(radiusEl.value) : null;
+      const radiusStr = radiusVal ? ` · ${radiusVal < 1 ? (radiusVal * 1760).toFixed(0) + ' yards' : radiusVal + (radiusVal === 1 ? ' mile' : ' miles')}` : '';
+      const locStr = loc && loc !== 'UK' ? ` in <strong>${esc(loc)}</strong>${radiusStr}` : '';
+      ibStatsText.innerHTML = `<strong>${ibState.totalResults.toLocaleString()}</strong> ${catLabel} found${locStr}`;
 
       results.forEach((item, idx) => {
         let card;
