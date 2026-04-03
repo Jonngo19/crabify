@@ -2833,7 +2833,7 @@
       <div class="ib-body">
 
         <!-- ── FILTER SIDEBAR (desktop left / mobile top) ── -->
-        <aside class="ib-sidebar" id="ibSidebar">
+        <aside class="ib-sidebar visible" id="ibSidebar">
 
           <!-- Desktop hide toggle -->
           <div class="ib-sidebar-header">
@@ -5896,18 +5896,19 @@
       );
     }
 
-    /* ─── PAGE LOAD: show results immediately ─────────────── */
+    /* ─── PAGE LOAD: show results + filters immediately ─────── */
     function runDefaultSearch() {
-      // Show results section right away
       ibResultsSection.style.display = 'block';
-      // Run UK-wide property search instantly (no location needed)
+      // Open sidebar/filters immediately — same state as after clicking Search
+      showFilters();
+      // Run UK-wide property search instantly
       ibState.location = '';
       ibLocation.value = '';
       ibState.currentPage = 1;
       ibState.allResults = [];
       ibState.filteredResults = [];
       doIbFetch();
-      // Then silently try to upgrade to local results via geolocation
+      // Silently upgrade to local results if geolocation is granted
       setTimeout(requestGeolocation, 1000);
     }
 
