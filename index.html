@@ -2551,6 +2551,7 @@
     /* ── MAIN RESULTS AREA ── */
     .ib-main {
       min-width: 0;
+      overflow: hidden;
     }
 
     /* Stats bar */
@@ -2579,22 +2580,71 @@
     /* ── RESULTS GRID ── */
     .ib-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 16px;
     }
-    /* When sidebar is hidden, expand to 4 cols with slightly wider min */
+    /* When sidebar is hidden, 4 cols */
     .ib-body.no-sidebar .ib-grid {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
     /* Compact card images in multi-col grid */
-    .ib-grid .pc__img-wrap { height: 160px; }
-    .ib-grid .pc__body { padding: 12px; }
-    .ib-grid .pc__price { font-size: 16px; }
-    .ib-grid .pc__address { font-size: 12px; }
-    .ib-grid .pc__description { -webkit-line-clamp: 2; }
+    .ib-grid .pc__img-wrap { height: 150px; }
+    .ib-grid .pc__body { padding: 10px 12px 12px; }
+    .ib-grid .pc__price { font-size: 15px; }
+    .ib-grid .pc__address { font-size: 11px; margin-bottom:6px; }
+    .ib-grid .pc__description { -webkit-line-clamp: 2; font-size:11px; }
+    .ib-grid .pc__tags { gap:4px; margin-bottom:8px; }
+    .ib-grid .pc__tag { font-size:10px; padding:3px 7px; }
+    .ib-grid .pc { border-radius:12px; min-width:0; }
 
     /* ── SOURCES IN SIDEBAR ── */
     .ib-sources-wrap { padding: 0 16px 16px; }
+
+    /* ── SOURCE FILTER PILLS BAR ── */
+    .ib-source-bar {
+      padding: 14px 0 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+    .ib-source-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .ib-source-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      font-size: 12px; font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      white-space: nowrap;
+      font-family: var(--font);
+    }
+    .ib-source-pill:hover {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+    .ib-source-pill.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(241,77,76,0.06);
+    }
+    .ib-source-pill__count {
+      font-size: 10px; font-weight: 500;
+      color: var(--text-muted);
+      background: #f0f0f0;
+      border-radius: 10px;
+      padding: 1px 5px;
+    }
+    .ib-source-pill.active .ib-source-pill__count {
+      background: rgba(241,77,76,0.12);
+      color: var(--accent);
+    }
 
     /* ── LOADING STATE for inline ── */
     #ibLoading {
@@ -2608,7 +2658,7 @@
 
     /* Tablet: 3 cols */
     @media (max-width: 1100px) {
-      .ib-grid { grid-template-columns: repeat(3, 1fr); }
+      .ib-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .ib-body { grid-template-columns: 240px 1fr; }
     }
 
@@ -2907,6 +2957,11 @@
 
         <!-- ── RESULTS AREA ── -->
         <main class="ib-main" id="ibMain">
+
+          <!-- Source filter pills -->
+          <div class="ib-source-bar" id="ibSourceBar" style="display:none;">
+            <div class="ib-source-pills" id="ibSourcePills"></div>
+          </div>
 
           <!-- Stats bar -->
           <div class="ib-stats-bar" id="ibStatsBar" style="display:none;">
@@ -5715,6 +5770,8 @@
       totalResults: 0,
       currentPage: 1,
       perPage: 28,
+      activeSources: new Set(), // empty = show all sources
+      sourceTotals: {},         // { Rightmove: 120, Zoopla: 80, … }
     };
 
     /* ─── ELEMENT REFS ────────────────────────────────────── */
@@ -5919,6 +5976,7 @@
       ibEmpty.style.display = 'none';
       ibStatsBar.style.display = 'none';
       ibPagination.style.display = 'none';
+      if (ibSourceBar) ibSourceBar.style.display = 'none';
 
       const cat = ibState.activeCat;
       const loc = ibState.location;
@@ -6000,31 +6058,35 @@
         ibState.totalResults = data.total || ibState.allResults.length;
         ibState.currentPage = page;
 
-        // Update source badges in sidebar
+        // Compute source totals from results (use API data if available)
+        let sources = data.source_totals || {};
+        if (!Object.keys(sources).length && ibState.allResults.length > 0) {
+          ibState.allResults.forEach(r => {
+            const s = r.source || 'Unknown';
+            sources[s] = (sources[s] || 0) + 1;
+          });
+        }
+        ibState.sourceTotals = sources;
+        ibState.activeSources = new Set(); // reset to "All" on each new search
+
+        // Also update sidebar source list
         const srcList = $('ibSourceList');
         if (srcList) {
           srcList.innerHTML = '';
-          const sources = data.source_totals || {};
-          if (Object.keys(sources).length) {
-            Object.entries(sources).forEach(([name, count]) => {
-              if (count > 0) {
-                const d = document.createElement('div');
-                d.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);';
-                const colors = { Rightmove:'#007a37', OnTheMarket:'#6c3dab', Zoopla:'#e05b00', Gumtree:'#72ac00', SpareRoom:'#e8003d', AutoTrader:'#e05b00', Reed:'#e63946', 'Exchange&Mart':'#2563eb' };
-                const c = colors[name] || '#888';
-                d.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0;"></span><span>${esc(name)}</span><span style="margin-left:auto;font-weight:600;color:var(--text-primary);">${Number(count).toLocaleString()}</span>`;
-                srcList.appendChild(d);
-              }
-            });
-          } else if (data.results && data.results.length > 0) {
-            const d = document.createElement('div');
-            d.style.cssText = 'font-size:12px;color:var(--text-secondary);';
-            d.textContent = `${ibState.totalResults.toLocaleString()} results`;
-            srcList.appendChild(d);
-          }
+          Object.entries(sources).forEach(([name, count]) => {
+            if (count > 0) {
+              const d = document.createElement('div');
+              d.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);';
+              const colors = { Rightmove:'#007a37', OnTheMarket:'#6c3dab', Zoopla:'#e05b00', Gumtree:'#72ac00', SpareRoom:'#e8003d', AutoTrader:'#e05b00', Reed:'#e63946', 'Exchange&Mart':'#2563eb' };
+              const c = colors[name] || '#888';
+              d.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0;"></span><span>${esc(name)}</span><span style="margin-left:auto;font-weight:600;color:var(--text-primary);">${Number(count).toLocaleString()}</span>`;
+              srcList.appendChild(d);
+            }
+          });
         }
 
         ibResultsMeta.textContent = `${ibState.totalResults.toLocaleString()} results`;
+        renderIbSourcePills(); // render pills BEFORE filtering
         applyIbFilters();
         renderIbResults();
 
@@ -6135,7 +6197,59 @@
         if (sortBy === 'salary_asc')  results.sort((a,b) => (a.salary_num||0)-(b.salary_num||0));
       }
 
+      // Source filter (applied last)
+      if (ibState.activeSources.size > 0) {
+        results = results.filter(r => ibState.activeSources.has(r.source));
+      }
+
       ibState.filteredResults = results;
+    }
+
+    /* ─── SOURCE PILLS ────────────────────────────────────── */
+    const SOURCE_COLORS = {
+      Rightmove:'#007a37', Zoopla:'#e05b00', OnTheMarket:'#6c3dab',
+      Gumtree:'#72ac00',   SpareRoom:'#e8003d',
+      AutoTrader:'#e05b00','Exchange&Mart':'#2563eb', Motors:'#0d47a1',
+      Reed:'#e63946', Indeed:'#2557a7', TotalJobs:'#0067b1',
+    };
+    const ibSourceBar   = $('ibSourceBar');
+    const ibSourcePills = $('ibSourcePills');
+
+    function renderIbSourcePills() {
+      if (!ibSourcePills) return;
+      ibSourcePills.innerHTML = '';
+      const totals = ibState.sourceTotals;
+      const entries = Object.entries(totals).filter(([,n]) => n > 0);
+      if (!entries.length) { if (ibSourceBar) ibSourceBar.style.display = 'none'; return; }
+      if (ibSourceBar) ibSourceBar.style.display = 'block';
+
+      // "All" pill
+      const allPill = document.createElement('button');
+      allPill.className = 'ib-source-pill' + (ibState.activeSources.size === 0 ? ' active' : '');
+      allPill.textContent = 'All';
+      allPill.addEventListener('click', () => {
+        ibState.activeSources = new Set();
+        applyIbFilters(); renderIbResults(); renderIbSourcePills();
+      });
+      ibSourcePills.appendChild(allPill);
+
+      // Per-source pills
+      entries.forEach(([name, count]) => {
+        const isActive = ibState.activeSources.has(name);
+        const pill = document.createElement('button');
+        pill.className = 'ib-source-pill' + (isActive ? ' active' : '');
+        const col = SOURCE_COLORS[name] || '#888';
+        pill.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span>${esc(name)}<span class="ib-source-pill__count">${Number(count).toLocaleString()}</span>`;
+        pill.addEventListener('click', () => {
+          if (ibState.activeSources.has(name)) {
+            ibState.activeSources.delete(name);
+          } else {
+            ibState.activeSources.add(name);
+          }
+          applyIbFilters(); renderIbResults(); renderIbSourcePills();
+        });
+        ibSourcePills.appendChild(pill);
+      });
     }
 
     function extractPriceNum(priceStr) {
