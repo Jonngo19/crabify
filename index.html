@@ -2770,11 +2770,11 @@
       gap: 6px;
       padding: 7px 14px;
       border-radius: 8px;
-      border: 1.5px solid var(--border);
+      border: 1.5px solid #e0e0e0;
       background: #fff;
       font-size: 13px;
       font-weight: 500;
-      color: var(--text-secondary);
+      color: #666;
       cursor: pointer;
       transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
       white-space: nowrap;
@@ -2782,26 +2782,26 @@
       line-height: 1;
     }
     .ib-source-pill:hover {
-      border-color: var(--border-hover);
+      border-color: #aaa;
       color: var(--text-primary);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
-    /* Active: dark border, dark text — matches filter elements */
+    /* Active: red border, red text, white bg (no fill) */
     .ib-source-pill.active {
-      border-color: var(--border-hover);
-      color: var(--text-primary);
-      background: #f7f7f7;
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #fff;
       font-weight: 600;
     }
     /* Count badge */
     .ib-source-pill__count {
       font-size: 11px;
       font-weight: 500;
-      color: var(--text-muted);
+      color: #aaa;
       margin-left: 1px;
     }
     .ib-source-pill.active .ib-source-pill__count {
-      color: var(--text-secondary);
+      color: rgba(241,77,76,0.7);
     }
 
     /* ── LOADING STATE for inline ── */
