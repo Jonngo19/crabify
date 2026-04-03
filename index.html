@@ -337,7 +337,7 @@
        HERO
     ============================================================ */
     .hero {
-      padding: 88px 0 28px;
+      padding: 88px 0 36px;
       position: relative;
       overflow: hidden;
       min-height: auto;
@@ -2361,9 +2361,14 @@
        INLINE HERO SEARCH (ib-*)
     ============================================================ */
 
-    /* Row 1: Headline — full width */
+    /* Top row: headline left, tabs right — tabs sit on same baseline as second line */
     .ib-top {
       width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: nowrap;
       max-width: 960px;
       margin: 0 auto;
     }
@@ -2376,30 +2381,26 @@
       letter-spacing: -0.02em;
       color: var(--text-primary);
       font-family: var(--font);
+      flex: 1;
+      min-width: 0;
     }
     .ib-headline em {
       font-style: normal;
       color: var(--accent);
     }
 
-    /* Row 3: Category tabs row — sits directly below search bar */
-    .ib-tabs-row {
-      width: 100%;
-      max-width: 960px;
-      margin: 10px auto 0;
-    }
-
-    /* Tab group — RECTANGULAR shape, no rounded corners */
+    /* Tab group — individual buttons, NO pill-wrapper background */
     .ib-tabs {
       display: flex;
-      gap: 0;
+      gap: 8px;
+      flex-shrink: 0;
       align-items: center;
     }
     .ib-tab {
-      padding: 9px 20px;
+      padding: 10px 18px;
       border: 1.5px solid #e0e0e0;
-      border-radius: 0;
-      font-size: 14px;
+      border-radius: 12px;
+      font-size: 15px;
       font-weight: 600;
       font-family: var(--font);
       cursor: pointer;
@@ -2408,22 +2409,16 @@
       transition: background 0.15s, color 0.15s, border-color 0.15s;
       white-space: nowrap;
       line-height: 1;
-      margin-right: -1.5px; /* overlap borders so there's no double border */
-      position: relative;
     }
-    .ib-tab:first-child { border-radius: 4px 0 0 4px; }
-    .ib-tab:last-child  { border-radius: 0 4px 4px 0; margin-right: 0; }
     .ib-tab:hover {
       border-color: var(--accent);
       color: var(--accent);
-      z-index: 1;
     }
     .ib-tab.active {
       background: var(--accent);
       color: #fff;
       border-color: var(--accent);
       font-weight: 700;
-      z-index: 2;
     }
 
     /* Search bar row */
@@ -2479,186 +2474,6 @@
     }
     .ib-btn:hover { background: var(--accent-light); }
     .ib-btn:active { transform: scale(0.97); }
-
-    /* ── HERO SOURCE PILLS (below search bar, rectangular) ── */
-    .ib-hero-sources {
-      width: 100%;
-      max-width: 960px;
-      margin: 12px auto 0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .ib-hero-source-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
-    /* Rectangular source chips — white bg, thin border, 6px radius */
-    .ib-hero-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      border-radius: 6px;
-      border: 1.5px solid #d9d9d9;
-      background: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      color: #555;
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
-      white-space: nowrap;
-      font-family: var(--font);
-      line-height: 1;
-    }
-    .ib-hero-pill:hover { border-color: #aaa; color: #111; }
-    .ib-hero-pill.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: #fff;
-      font-weight: 700;
-    }
-    .ib-hero-pill__dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      display: inline-block;
-    }
-    .ib-hero-pill__count {
-      font-size: 10px;
-      font-weight: 400;
-      color: #aaa;
-      margin-left: 2px;
-    }
-    .ib-hero-pill.active .ib-hero-pill__count { color: rgba(241,77,76,0.65); }
-
-    /* ── ACTION BUTTONS (Shortlist / Print / Share) ── */
-    .ib-action-btns {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-    .ib-action-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 13px;
-      border-radius: 8px;
-      border: 1.5px solid #e0e0e0;
-      background: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      color: #555;
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
-      white-space: nowrap;
-      font-family: var(--font);
-    }
-    .ib-action-btn:hover { border-color: #aaa; color: #111; }
-    .ib-action-btn.has-items {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .ib-shortlist-count {
-      background: var(--accent);
-      color: #fff;
-      border-radius: 10px;
-      padding: 1px 6px;
-      font-size: 10px;
-      font-weight: 700;
-      margin-left: 2px;
-    }
-
-    /* Shortlist panel (slide-in drawer) */
-    .ib-shortlist-panel {
-      position: fixed;
-      top: 0; right: -420px;
-      width: 400px;
-      height: 100vh;
-      background: #fff;
-      border-left: 1px solid var(--border);
-      box-shadow: -4px 0 24px rgba(0,0,0,0.1);
-      z-index: 1200;
-      display: flex;
-      flex-direction: column;
-      transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
-      overflow: hidden;
-    }
-    .ib-shortlist-panel.open { right: 0; }
-    .ib-shortlist-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .ib-shortlist-title {
-      font-size: 16px; font-weight: 700; color: var(--text-primary);
-    }
-    .ib-shortlist-close {
-      width: 32px; height: 32px; border: none; background: none;
-      font-size: 18px; cursor: pointer; color: var(--text-muted);
-      border-radius: 6px; display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s;
-    }
-    .ib-shortlist-close:hover { background: #f0f0f0; color: #111; }
-    .ib-shortlist-body {
-      flex: 1; overflow-y: auto; padding: 16px;
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .ib-shortlist-empty {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      color: var(--text-muted); font-size: 14px; gap: 8px; text-align: center;
-    }
-    .ib-shortlist-item {
-      display: flex; gap: 12px; align-items: flex-start;
-      background: #f9f9f9; border-radius: 10px; padding: 12px;
-      border: 1px solid var(--border); position: relative;
-    }
-    .ib-shortlist-item__img {
-      width: 72px; height: 56px; object-fit: cover;
-      border-radius: 6px; flex-shrink: 0; background: #eee;
-    }
-    .ib-shortlist-item__info { flex: 1; min-width: 0; }
-    .ib-shortlist-item__price { font-size: 15px; font-weight: 800; color: var(--text-primary); }
-    .ib-shortlist-item__addr { font-size: 12px; color: var(--text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .ib-shortlist-item__src { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
-    .ib-shortlist-item__remove {
-      position: absolute; top: 8px; right: 8px;
-      width: 22px; height: 22px; border: none; background: none;
-      color: #bbb; font-size: 14px; cursor: pointer; border-radius: 4px;
-      display: flex; align-items: center; justify-content: center;
-      transition: color 0.15s, background 0.15s;
-    }
-    .ib-shortlist-item__remove:hover { color: var(--accent); background: rgba(241,77,76,0.08); }
-    .ib-shortlist-footer {
-      padding: 14px 16px;
-      border-top: 1px solid var(--border);
-      display: flex; gap: 8px; flex-shrink: 0;
-    }
-    .ib-shortlist-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.25);
-      z-index: 1199;
-      display: none;
-    }
-    .ib-shortlist-overlay.open { display: block; }
-
-    /* Share toast */
-    .ib-share-toast {
-      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: #111; color: #fff;
-      padding: 10px 20px; border-radius: 8px;
-      font-size: 13px; font-weight: 600;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s, transform 0.2s;
-      z-index: 2000; white-space: nowrap;
-    }
-    .ib-share-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     /* Geo status — left-aligned, small */
     .ib-geo-status {
@@ -2919,13 +2734,20 @@
     @media (max-width: 560px) {
       .ib-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .ib-results-wrap { padding: 0 12px 60px; }
+      .ib-top { flex-direction: column; align-items: flex-start; }
+      .ib-search { margin-top: 12px; }
     }
 
-    /* Hero responsive */
+    /* Hero top-row responsive */
     @media (max-width: 640px) {
-      .ib-headline { font-size: clamp(26px, 8vw, 36px); }
-      .ib-tabs { width: 100%; }
-      .ib-tab { flex: 1; justify-content: center; font-size: 13px; padding: 8px 8px; }
+      .ib-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .ib-headline { font-size: clamp(28px, 8vw, 38px); }
+      .ib-tabs { width: 100%; justify-content: flex-start; }
+      .ib-tab { flex: 1; justify-content: center; font-size: 13px; padding: 9px 10px; }
     }
 
   </style>
@@ -2983,11 +2805,16 @@
     <div class="container">
       <div class="hero__inner">
 
-        <!-- Row 1: Headline only (full width) -->
+        <!-- Row 1: Headline left, category tabs right -->
         <div class="ib-top hero-animate hero-animate--1">
           <h1 class="ib-headline">
             Multiple Websites.<br>All in <em>ONE Search.</em>
           </h1>
+          <div class="ib-tabs" id="ibTabs">
+            <button class="ib-tab active" data-cat="property">🏠 Property</button>
+            <button class="ib-tab" data-cat="cars">🚗 Cars</button>
+            <button class="ib-tab" data-cat="jobs">💼 Jobs</button>
+          </div>
         </div>
 
         <!-- Row 2: Search bar -->
@@ -2997,15 +2824,6 @@
             <input type="text" id="ibLocation" class="ib-input" placeholder="Town, city or postcode..." autocomplete="off" />
           </div>
           <button class="ib-btn" id="ibSearchBtn">Search</button>
-        </div>
-
-        <!-- Row 3: Category tabs — rectangular, directly below search bar -->
-        <div class="ib-tabs-row hero-animate hero-animate--3">
-          <div class="ib-tabs" id="ibTabs">
-            <button class="ib-tab active" data-cat="property">🏠 Property</button>
-            <button class="ib-tab" data-cat="cars">🚗 Cars</button>
-            <button class="ib-tab" data-cat="jobs">💼 Jobs</button>
-          </div>
         </div>
 
         <!-- Geo status -->
@@ -3198,27 +3016,18 @@
         <!-- ── RESULTS AREA ── -->
         <main class="ib-main" id="ibMain">
 
-          <!-- Stats bar + action buttons -->
+          <!-- Source filter pills -->
+          <div class="ib-source-bar" id="ibSourceBar" style="display:none;">
+            <div class="ib-source-pills" id="ibSourcePills"></div>
+          </div>
+
+          <!-- Stats bar -->
           <div class="ib-stats-bar" id="ibStatsBar" style="display:none;">
             <div class="ib-stats-text" id="ibStatsText"></div>
-            <div class="ib-action-btns">
-              <button class="ib-action-btn" id="ibShortlistBtn" title="View shortlist">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                Shortlist <span class="ib-shortlist-count" id="ibShortlistCount" style="display:none;">0</span>
-              </button>
-              <button class="ib-action-btn" id="ibPrintBtn" title="Print results">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                Print
-              </button>
-              <button class="ib-action-btn" id="ibShareBtn" title="Share this search">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                Share
-              </button>
-              <button class="ib-show-filters-btn" id="ibShowFiltersBtn" style="display:none;">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
-                Filters
-              </button>
-            </div>
+            <button class="ib-show-filters-btn" id="ibShowFiltersBtn" style="display:none;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+              Show filters
+            </button>
           </div>
 
           <!-- Loading -->
@@ -6689,393 +6498,5 @@
 
   })();
   </script>
-
-  <!-- ============================================================
-       SHORTLIST PANEL (slide-in drawer)
-  ============================================================ -->
-  <div class="ib-shortlist-overlay" id="ibShortlistOverlay"></div>
-  <div class="ib-shortlist-panel" id="ibShortlistPanel">
-    <div class="ib-shortlist-header">
-      <span class="ib-shortlist-title">❤ Shortlist <span id="ibShortlistPanelCount"></span></span>
-      <button class="ib-shortlist-close" id="ibShortlistClose" title="Close">✕</button>
-    </div>
-    <div class="ib-shortlist-body" id="ibShortlistBody">
-      <div class="ib-shortlist-empty" id="ibShortlistEmpty">
-        <span style="font-size:36px;">💔</span>
-        <span>No saved listings yet.<br>Click the heart on any card to save it.</span>
-      </div>
-    </div>
-    <div class="ib-shortlist-footer" id="ibShortlistFooter" style="display:none;">
-      <button class="ib-action-btn" id="ibShortlistPrintBtn" style="flex:1;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Print Shortlist
-      </button>
-      <button class="ib-action-btn" id="ibShortlistShareBtn" style="flex:1;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        Share
-      </button>
-      <button class="ib-action-btn" id="ibShortlistClearBtn" style="color:#dc2626;border-color:#fca5a5;">
-        Clear all
-      </button>
-    </div>
-  </div>
-
-  <!-- Share toast -->
-  <div class="ib-share-toast" id="ibShareToast">🔗 Link copied to clipboard!</div>
-
-  <!-- ============================================================
-       SHORTLIST + PRINT + SHARE  JAVASCRIPT
-  ============================================================ -->
-  <script>
-  (function () {
-    'use strict';
-
-    /* ─── SHORTLIST STATE ───────────────────────────────────── */
-    const SL_KEY = 'crabify_shortlist';
-    let shortlist = [];
-
-    function slLoad() {
-      try { shortlist = JSON.parse(localStorage.getItem(SL_KEY) || '[]'); } catch(e) { shortlist = []; }
-    }
-    function slSave() {
-      localStorage.setItem(SL_KEY, JSON.stringify(shortlist));
-    }
-    function slFind(url) { return shortlist.findIndex(i => i.url === url); }
-    function slAdd(item) { if (slFind(item.url) === -1) { shortlist.push(item); slSave(); } }
-    function slRemove(url) { shortlist = shortlist.filter(i => i.url !== url); slSave(); }
-
-    slLoad();
-
-    /* ─── COUNTER BADGE ─────────────────────────────────────── */
-    const slCountEl   = document.getElementById('ibShortlistCount');
-    const slPanelCount = document.getElementById('ibShortlistPanelCount');
-    const slBtn       = document.getElementById('ibShortlistBtn');
-
-    function updateSlBadge() {
-      const n = shortlist.length;
-      if (slCountEl) {
-        slCountEl.textContent = n;
-        slCountEl.style.display = n > 0 ? 'inline-flex' : 'none';
-      }
-      if (slBtn) slBtn.classList.toggle('has-items', n > 0);
-      if (slPanelCount) slPanelCount.textContent = n > 0 ? `(${n})` : '';
-    }
-    updateSlBadge();
-
-    /* ─── OPEN / CLOSE PANEL ────────────────────────────────── */
-    const panel    = document.getElementById('ibShortlistPanel');
-    const overlay  = document.getElementById('ibShortlistOverlay');
-    const closeBtn = document.getElementById('ibShortlistClose');
-
-    function openPanel() {
-      renderShortlistPanel();
-      panel.classList.add('open');
-      overlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closePanel() {
-      panel.classList.remove('open');
-      overlay.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    if (slBtn)    slBtn.addEventListener('click', openPanel);
-    if (closeBtn) closeBtn.addEventListener('click', closePanel);
-    if (overlay)  overlay.addEventListener('click', closePanel);
-
-    /* ─── RENDER PANEL ──────────────────────────────────────── */
-    const slBody   = document.getElementById('ibShortlistBody');
-    const slEmpty  = document.getElementById('ibShortlistEmpty');
-    const slFooter = document.getElementById('ibShortlistFooter');
-
-    function renderShortlistPanel() {
-      slLoad();
-      updateSlBadge();
-      // Clear old items (but keep the empty state node)
-      Array.from(slBody.querySelectorAll('.ib-shortlist-item')).forEach(el => el.remove());
-
-      if (shortlist.length === 0) {
-        slEmpty.style.display = 'flex';
-        slFooter.style.display = 'none';
-        return;
-      }
-      slEmpty.style.display = 'none';
-      slFooter.style.display = 'flex';
-
-      shortlist.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'ib-shortlist-item';
-        div.innerHTML = `
-          <img class="ib-shortlist-item__img" src="${escSl(item.image || '')}" alt="${escSl(item.title)}" onerror="this.style.display='none'">
-          <div class="ib-shortlist-item__info">
-            <div class="ib-shortlist-item__price">${escSl(item.price || 'POA')}</div>
-            <div class="ib-shortlist-item__addr">${escSl(item.title)}</div>
-            <div class="ib-shortlist-item__src">via ${escSl(item.source || '')}</div>
-          </div>
-          <button class="ib-shortlist-item__remove" data-url="${escSl(item.url)}" title="Remove">✕</button>
-        `;
-        // Clicking the card opens the listing
-        div.addEventListener('click', (e) => {
-          if (!e.target.closest('.ib-shortlist-item__remove')) {
-            window.open(item.url, '_blank', 'noopener');
-          }
-        });
-        div.style.cursor = 'pointer';
-        // Remove button
-        div.querySelector('.ib-shortlist-item__remove').addEventListener('click', (e) => {
-          e.stopPropagation();
-          slRemove(item.url);
-          renderShortlistPanel();
-          updateSlBadge();
-          // Update heart on card if visible
-          refreshHeartOnCard(item.url, false);
-        });
-        slBody.appendChild(div);
-      });
-    }
-
-    function escSl(s) {
-      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    /* ─── HEART BUTTON ON CARDS ─────────────────────────────── */
-    // We inject a heart ♥ button into each card after renderIbResults runs.
-    // Use a MutationObserver to watch the grid.
-    const grid = document.getElementById('ibGrid');
-
-    function addHeartButtons(container) {
-      container.querySelectorAll('.pc').forEach(card => {
-        if (card.querySelector('.ib-heart-btn')) return; // already has one
-        // Build a data object from the card
-        const priceEl  = card.querySelector('.pc__price');
-        const addrEl   = card.querySelector('.pc__address');
-        const srcBadge = card.querySelector('.pc__source-badge');
-        const imgEl    = card.querySelector('img');
-        const linkEl   = card.querySelector('a.pc__btn');
-
-        const url   = linkEl ? linkEl.href : '';
-        const price = priceEl ? priceEl.textContent.trim() : '';
-        const title = addrEl  ? addrEl.textContent.trim()  : '';
-        const source= srcBadge? srcBadge.textContent.trim() : '';
-        const image = imgEl   ? imgEl.src  : '';
-
-        if (!url) return; // can't shortlist without a URL
-
-        const saved = slFind(url) !== -1;
-        const heartBtn = document.createElement('button');
-        heartBtn.className = 'ib-heart-btn' + (saved ? ' saved' : '');
-        heartBtn.title = saved ? 'Remove from shortlist' : 'Save to shortlist';
-        heartBtn.innerHTML = '♥';
-        heartBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (slFind(url) !== -1) {
-            slRemove(url);
-            heartBtn.classList.remove('saved');
-            heartBtn.title = 'Save to shortlist';
-          } else {
-            slAdd({ url, price, title, source, image });
-            heartBtn.classList.add('saved');
-            heartBtn.title = 'Remove from shortlist';
-            showToast('❤ Added to shortlist!');
-          }
-          updateSlBadge();
-        });
-        // Place heart inside the image wrapper overlay
-        const imgWrap = card.querySelector('.pc__img-wrap');
-        if (imgWrap) imgWrap.appendChild(heartBtn);
-      });
-    }
-
-    function refreshHeartOnCard(url, saved) {
-      if (!grid) return;
-      grid.querySelectorAll('.ib-heart-btn').forEach(btn => {
-        const card = btn.closest('.pc');
-        const linkEl = card && card.querySelector('a.pc__btn');
-        if (linkEl && linkEl.href === url) {
-          btn.classList.toggle('saved', saved);
-          btn.title = saved ? 'Remove from shortlist' : 'Save to shortlist';
-        }
-      });
-    }
-
-    if (grid) {
-      const obs = new MutationObserver(() => addHeartButtons(grid));
-      obs.observe(grid, { childList: true, subtree: true });
-      // Run once on existing cards
-      addHeartButtons(grid);
-    }
-
-    /* ─── SHORTLIST PANEL — PRINT & SHARE ───────────────────── */
-    const slPrintBtn = document.getElementById('ibShortlistPrintBtn');
-    const slShareBtn = document.getElementById('ibShortlistShareBtn');
-    const slClearBtn = document.getElementById('ibShortlistClearBtn');
-
-    if (slPrintBtn) slPrintBtn.addEventListener('click', () => {
-      printShortlist();
-    });
-    if (slShareBtn) slShareBtn.addEventListener('click', () => {
-      shareShortlist();
-    });
-    if (slClearBtn) slClearBtn.addEventListener('click', () => {
-      if (confirm('Clear all shortlisted items?')) {
-        shortlist = [];
-        slSave();
-        renderShortlistPanel();
-        updateSlBadge();
-        // Remove saved state from all visible cards
-        if (grid) grid.querySelectorAll('.ib-heart-btn.saved').forEach(b => {
-          b.classList.remove('saved');
-          b.title = 'Save to shortlist';
-        });
-      }
-    });
-
-    function printShortlist() {
-      const win = window.open('', '_blank');
-      if (!win) return;
-      const rows = shortlist.map(i => `
-        <tr>
-          <td>${escSl(i.price)}</td>
-          <td>${escSl(i.title)}</td>
-          <td>${escSl(i.source)}</td>
-          <td><a href="${escSl(i.url)}">${escSl(i.url)}</a></td>
-        </tr>`).join('');
-      win.document.write(`<!DOCTYPE html><html><head><title>My Crabify Shortlist</title>
-        <style>body{font-family:sans-serif;padding:24px;}table{border-collapse:collapse;width:100%;}
-        th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:13px;}th{background:#f5f5f5;}
-        h2{font-size:20px;margin-bottom:16px;}</style></head>
-        <body><h2>My Crabify Shortlist (${shortlist.length} listings)</h2>
-        <table><thead><tr><th>Price</th><th>Address / Title</th><th>Source</th><th>Link</th></tr></thead>
-        <tbody>${rows}</tbody></table></body></html>`);
-      win.document.close();
-      win.print();
-    }
-
-    function shareShortlist() {
-      if (shortlist.length === 0) { showToast('Nothing on your shortlist yet!'); return; }
-      const lines = shortlist.map((i,n) => `${n+1}. ${i.price} — ${i.title} (${i.source}): ${i.url}`).join('\n');
-      const text  = `My Crabify shortlist:\n\n${lines}\n\nSearch at ${location.origin}`;
-      if (navigator.share) {
-        navigator.share({ title:'My Crabify Shortlist', text }).catch(() => fallbackCopy(text));
-      } else {
-        fallbackCopy(text);
-      }
-    }
-
-    /* ─── PRINT RESULTS (all visible cards) ─────────────────── */
-    const printBtn = document.getElementById('ibPrintBtn');
-    if (printBtn) printBtn.addEventListener('click', () => {
-      const cat = (typeof ibState !== 'undefined' ? ibState.activeCat : null) || 'results';
-      const loc = (typeof ibState !== 'undefined' ? ibState.location : null) || '';
-      const items = typeof ibState !== 'undefined' ? ibState.filteredResults : [];
-      if (!items || items.length === 0) { showToast('No results to print.'); return; }
-      const win = window.open('', '_blank');
-      if (!win) return;
-      let rows = '';
-      items.forEach(item => {
-        if (cat === 'property') {
-          rows += `<tr><td>${escSl(item.price||'')}</td><td>${escSl(item.address||'')}</td><td>${escSl(item.bedrooms||'')} bed</td><td>${escSl(item.source||'')}</td><td><a href="${escSl(item.source_url||'')}">View</a></td></tr>`;
-        } else if (cat === 'cars') {
-          rows += `<tr><td>${escSl(item.price||'')}</td><td>${escSl(item.title||'')}</td><td>${escSl(item.year||'')} · ${escSl(item.mileage||'')} mi</td><td>${escSl(item.source||'')}</td><td><a href="${escSl(item.url||'')}">View</a></td></tr>`;
-        } else {
-          rows += `<tr><td>${escSl(item.title||'')}</td><td>${escSl(item.company||'')}</td><td>${escSl(item.salary||'')}</td><td>${escSl(item.source||'')}</td><td><a href="${escSl(item.url||'')}">Apply</a></td></tr>`;
-        }
-      });
-      const headers = cat === 'jobs'
-        ? '<th>Title</th><th>Company</th><th>Salary</th><th>Source</th><th>Link</th>'
-        : '<th>Price</th><th>Address/Title</th><th>Details</th><th>Source</th><th>Link</th>';
-      win.document.write(`<!DOCTYPE html><html><head><title>Crabify Results — ${escSl(loc||'UK')}</title>
-        <style>body{font-family:sans-serif;padding:24px;}table{border-collapse:collapse;width:100%;}
-        th,td{border:1px solid #ddd;padding:7px 10px;text-align:left;font-size:12px;}th{background:#f5f5f5;}
-        h2{font-size:18px;margin-bottom:12px;}p{font-size:12px;color:#666;margin-bottom:12px;}</style></head>
-        <body><h2>Crabify ${cat.charAt(0).toUpperCase()+cat.slice(1)} Results</h2>
-        <p>${escSl(loc||'UK')} · ${items.length} results · Printed ${new Date().toLocaleDateString()}</p>
-        <table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table></body></html>`);
-      win.document.close();
-      win.print();
-    });
-
-    /* ─── SHARE SEARCH ───────────────────────────────────────── */
-    const shareBtn = document.getElementById('ibShareBtn');
-    if (shareBtn) shareBtn.addEventListener('click', () => {
-      const url = new URL(location.href);
-      const cat = typeof ibState !== 'undefined' ? ibState.activeCat  : 'property';
-      const loc = typeof ibState !== 'undefined' ? ibState.location   : '';
-      if (cat) url.searchParams.set('cat', cat);
-      if (loc) url.searchParams.set('loc', loc);
-      const shareUrl = url.toString();
-      if (navigator.share) {
-        navigator.share({ title:'Crabify Search', url: shareUrl }).catch(() => fallbackCopy(shareUrl));
-      } else {
-        fallbackCopy(shareUrl);
-        showToast('🔗 Link copied to clipboard!');
-      }
-    });
-
-    /* ─── HELPERS ────────────────────────────────────────────── */
-    function fallbackCopy(text) {
-      try {
-        navigator.clipboard.writeText(text).then(() => showToast('🔗 Copied to clipboard!'));
-      } catch(e) {
-        const ta = document.createElement('textarea');
-        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-        document.body.appendChild(ta); ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('🔗 Copied to clipboard!');
-      }
-    }
-
-    const toastEl = document.getElementById('ibShareToast');
-    let toastTimer;
-    function showToast(msg) {
-      if (!toastEl) return;
-      toastEl.textContent = msg;
-      toastEl.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
-    }
-
-    /* ─── PARSE URL PARAMS ON LOAD ───────────────────────────── */
-    (function restoreFromUrl() {
-      const params = new URLSearchParams(location.search);
-      const cat = params.get('cat');
-      const loc = params.get('loc');
-      if (cat && ['property','cars','jobs'].includes(cat)) {
-        if (typeof setActiveTab === 'function') setActiveTab(cat);
-      }
-      if (loc) {
-        const locInput = document.getElementById('ibLocation');
-        if (locInput) locInput.value = loc;
-      }
-    })();
-
-  })();
-  </script>
-
-  <!-- ────────────────────────────────────────────────────────────
-       HEART BUTTON + SHORTLIST STYLES
-  ──────────────────────────────────────────────────────────────── -->
-  <style>
-    .ib-heart-btn {
-      position: absolute;
-      top: 8px; right: 8px;
-      width: 30px; height: 30px;
-      border: none;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.92);
-      color: #bbb;
-      font-size: 16px;
-      line-height: 1;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-      transition: color 0.15s, background 0.15s, transform 0.1s;
-      z-index: 5;
-    }
-    .ib-heart-btn:hover { color: var(--accent); transform: scale(1.12); }
-    .ib-heart-btn.saved { color: var(--accent); background: #fff; }
-    .ib-heart-btn.saved:hover { color: #c0392b; }
-  </style>
 </body>
 </html>
