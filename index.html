@@ -6233,7 +6233,7 @@
           });
         }
 
-        ibResultsMeta.textContent = `${ibState.totalResults.toLocaleString()} results`;
+        if (ibResultsMeta) ibResultsMeta.textContent = `${ibState.totalResults.toLocaleString()} results`;
         renderIbSourcePills(); // render pills BEFORE filtering
         applyIbFilters();
         renderIbResults();
