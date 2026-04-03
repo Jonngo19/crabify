@@ -2495,27 +2495,9 @@
     .ib-hero-source-pills {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
     }
-    .ib-hero-pill {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 12px;
-      border-radius: 20px;
-      border: 1.5px solid #d9d9d9;
-      background: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      color: #555;
-      font-family: var(--font);
-      white-space: nowrap;
-      line-height: 1;
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
-    }
-    .ib-hero-pill:hover  { border-color: var(--accent); color: var(--accent); }
-    .ib-hero-pill.active { border-color: var(--accent); color: var(--accent); font-weight: 700; }
 
     /* Geo status — left-aligned, small */
     .ib-geo-status {
@@ -5940,17 +5922,23 @@
     function renderHeroPills(cat) {
       if (!ibHeroSourcePills) return;
       ibHeroSourcePills.innerHTML = '';
-      const names = HERO_SOURCES[cat] || [];
+      const names   = HERO_SOURCES[cat] || [];
+      const totals  = ibState.sourceTotals || {};
+      const hasCounts = Object.keys(totals).length > 0;
+
       names.forEach(name => {
+        const count       = totals[name] || 0;
+        const noneSelected = !ibState.activeSources || ibState.activeSources.size === 0;
+        const isActive    = noneSelected || ibState.activeSources.has(name);
+
+        // Skip sources with 0 results once we have real data
+        if (hasCounts && count === 0) return;
+
         const btn = document.createElement('button');
-        btn.className = 'ib-hero-pill';
-        btn.textContent = name;
-        // Reflect active filter state
-        function syncActive() {
-          const noneSelected = !ibState.activeSources || ibState.activeSources.size === 0;
-          btn.classList.toggle('active', noneSelected || ibState.activeSources.has(name));
-        }
-        syncActive();
+        // Re-use the same CSS class as in-results pills for identical styling
+        btn.className = 'ib-source-pill' + (isActive ? ' active' : '');
+        btn.innerHTML = `${esc(name)}${hasCounts ? `<span class="ib-source-pill__count">${Number(count).toLocaleString()}</span>` : ''}`;
+
         btn.addEventListener('click', () => {
           if (!ibState.activeSources) ibState.activeSources = new Set();
           if (ibState.activeSources.size === 0) {
@@ -5961,11 +5949,10 @@
           } else {
             ibState.activeSources.add(name);
           }
-          // Re-filter & re-render results if they are visible
-          if (typeof applyIbFilters === 'function') applyIbFilters();
-          if (typeof renderIbResults  === 'function') renderIbResults();
+          // Re-filter & re-render results
+          if (typeof applyIbFilters    === 'function') applyIbFilters();
+          if (typeof renderIbResults   === 'function') renderIbResults();
           if (typeof renderIbSourcePills === 'function') renderIbSourcePills();
-          // Sync all hero pill active states
           renderHeroPills(ibState.activeCat);
         });
         ibHeroSourcePills.appendChild(btn);
