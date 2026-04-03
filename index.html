@@ -321,6 +321,17 @@
       transition: color 0.2s;
     }
     .nav__mobile a:hover { color: var(--accent); }
+    .nav__mobile-link {
+      font-size: 22px !important;
+      font-weight: 600 !important;
+      color: var(--text-primary);
+      text-decoration: none;
+      padding: 10px 0;
+      border-radius: 8px;
+      transition: color 0.15s;
+      text-align: center;
+    }
+    .nav__mobile-link:hover { color: var(--accent) !important; }
 
     /* ============================================================
        HERO
@@ -2756,6 +2767,9 @@
           Crabify
         </a>
         <ul class="nav__links">
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#benefits">Why Crabify</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
         </ul>
         <div class="nav__cta">
           <a href="#pricing" class="btn btn-ghost btn-sm" id="navBrowse">Sign in</a>
@@ -2770,7 +2784,12 @@
 
   <!-- Mobile Menu -->
   <div class="nav__mobile" id="mobileMenu">
-    <div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+    <div style="margin-top:24px;display:flex;flex-direction:column;gap:4px;">
+      <a href="#how-it-works" class="nav__mobile-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">How It Works</a>
+      <a href="#benefits"     class="nav__mobile-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">Why Crabify</a>
+      <a href="#testimonials" class="nav__mobile-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">Reviews</a>
+    </div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
       <a href="#pricing" class="btn btn-ghost">Sign in</a>
     </div>
   </div>
