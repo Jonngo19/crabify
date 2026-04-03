@@ -2975,10 +2975,9 @@
         <!-- ── FILTER SIDEBAR (desktop left / mobile top) ── -->
         <aside class="ib-sidebar visible" id="ibSidebar">
 
-          <!-- Desktop hide toggle -->
-          <div class="ib-sidebar-header">
-            <span class="ib-sidebar-title">Filters</span>
-            <button class="ib-sidebar-close" id="ibSidebarClose" title="Hide filters">✕</button>
+          <!-- Source filter pills moved into sidebar header -->
+          <div class="ib-sidebar-header" style="border-bottom:1px solid var(--border);padding:12px 18px;">
+            <div class="ib-source-pills" id="ibSourcePills" style="flex-wrap:wrap;gap:6px;display:flex;"></div>
           </div>
 
           <!-- ── PROPERTY FILTERS ── -->
@@ -3126,10 +3125,9 @@
             <button class="btn-accent-sm" style="width:100%;justify-content:center;margin-top:4px;" id="ibJobsApply">Search &amp; Apply</button>
           </div>
 
-          <!-- Source list -->
-          <div class="ib-sources-wrap" id="ibSourcesWrap" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
-            <div class="pr-sidebar__title">Sources</div>
-            <div id="ibSourceList" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
+          <!-- Source list (hidden — replaced by pills in header) -->
+          <div class="ib-sources-wrap" id="ibSourcesWrap" style="display:none;">
+            <div id="ibSourceList"></div>
           </div>
 
         </aside>
@@ -3137,10 +3135,8 @@
         <!-- ── RESULTS AREA ── -->
         <main class="ib-main" id="ibMain">
 
-          <!-- Source filter pills -->
-          <div class="ib-source-bar" id="ibSourceBar" style="display:none;">
-            <div class="ib-source-pills" id="ibSourcePills"></div>
-          </div>
+          <!-- Source filter pills moved to sidebar header -->
+          <div class="ib-source-bar" id="ibSourceBar" style="display:none;"></div>
 
           <!-- Stats bar -->
           <div class="ib-stats-bar" id="ibStatsBar" style="display:none;">
@@ -6475,8 +6471,8 @@
       ibSourcePills.innerHTML = '';
       const totals = ibState.sourceTotals;
       const entries = Object.entries(totals).filter(([,n]) => n > 0);
-      if (!entries.length) { if (ibSourceBar) ibSourceBar.style.display = 'none'; return; }
-      if (ibSourceBar) ibSourceBar.style.display = 'block';
+      if (!entries.length) { return; }
+      // ibSourceBar is now empty placeholder — pills live in sidebar header
 
       // Per-source pills only (no "All" pill — matching design)
       // All sources active by default (activeSources empty = show all)
