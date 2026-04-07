@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="/public/crab-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@700;800&family=IBM+Plex+Mono:wght@600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     /* ============================================================
        RESET & BASE
@@ -40,7 +40,8 @@
       --shadow-glow:  none;
       --transition:   0.2s cubic-bezier(0.4,0,0.2,1);
       --transition-spring: 0.4s cubic-bezier(0.34,1.56,0.64,1);
-      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --font: 'Share Tech Mono', monospace;
+      --font-heading: 'Orbitron', monospace;
       --max-w: 1400px;
     }
 
@@ -96,14 +97,14 @@
       flex-shrink: 0;
     }
 
-    h1, h2, h3, h4 { line-height: 1.15; font-weight: 800; }
+    h1, h2, h3, h4 { line-height: 1.15; font-weight: 800; font-family: var(--font-heading); }
 
     .display {
       font-size: clamp(36px, 5vw, 60px);
       font-weight: 700;
       letter-spacing: -0.025em;
       line-height: 1.1;
-      font-family: var(--font);
+      font-family: var(--font-heading);
     }
     .display em { font-style: normal; color: var(--accent); }
 
@@ -111,10 +112,10 @@
       font-size: clamp(28px, 4vw, 42px);
       font-weight: 700;
       letter-spacing: -0.02em;
-      font-family: var(--font);
+      font-family: var(--font-heading);
       line-height: 1.2;
     }
-    .h3 { font-size: clamp(24px, 2.5vw, 32px); font-weight: 700; letter-spacing: -0.02em; }
+    .h3 { font-size: clamp(24px, 2.5vw, 32px); font-weight: 700; letter-spacing: -0.02em; font-family: var(--font-heading); }
 
     .body-lg { font-size: 18px; line-height: 1.7; color: var(--text-secondary); }
     .body-md { font-size: 15px; line-height: 1.65; color: var(--text-secondary); }
@@ -129,7 +130,7 @@
       gap: 8px;
       padding: 14px 28px;
       border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font);
       font-size: 14px;
       font-weight: 600;
       letter-spacing: 0.01em;
@@ -231,9 +232,9 @@
       text-decoration: none;
       font-size: 18px;
       font-weight: 800;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: var(--font-heading);
       color: var(--text-primary);
-      letter-spacing: -0.02em;
+      letter-spacing: 0.02em;
     }
     .nav__logo-icon {
       width: 52px;
@@ -263,7 +264,7 @@
       padding: 8px 16px;
       font-size: 14px;
       font-weight: 500;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font);
       color: var(--text-secondary);
       text-decoration: none;
       border-radius: 8px;
@@ -431,7 +432,7 @@
       padding: 7px 15px;
       border-radius: 8px;
       font-size: 13px; font-weight: 500;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font);
       cursor: pointer;
       border: none;
       background: transparent;
@@ -472,7 +473,7 @@
       background: var(--accent); color: #fff;
       border: none; border-radius: 8px;
       padding: 11px 20px; font-size: 13px; font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font);
       cursor: pointer; transition: background 0.15s; white-space: nowrap;
       flex-shrink: 0;
     }
@@ -1789,7 +1790,7 @@
       text-decoration: none;
       font-size: 16px;
       font-weight: 800;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: var(--font-heading);
       color: #ffffff;
     }
     .footer__logo-icon {
@@ -2109,7 +2110,7 @@
       display: block; width: 100%; padding: 9px;
       background: var(--accent); color: #fff;
       text-align: center; font-size: 13px; font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font);
       border: none; cursor: pointer;
       opacity: 0; transform: translateY(6px);
       transition: opacity 0.2s, transform 0.2s;
@@ -2384,12 +2385,12 @@
 
     /* Headline */
     .ib-headline {
-      font-size: clamp(36px, 3.8vw, 52px);
-      font-weight: 900;
-      line-height: 1.0;
-      letter-spacing: -0.03em;
+      font-size: clamp(28px, 3.2vw, 44px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: 0.02em;
       color: var(--text-primary);
-      font-family: var(--font);
+      font-family: var(--font-heading);
       flex: 1;
       min-width: 0;
     }
