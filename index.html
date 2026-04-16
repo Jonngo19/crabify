@@ -4168,12 +4168,17 @@
           <a href="https://scrapfly.io" target="_blank" rel="noopener" style="color:var(--accent);">Scrapfly</a>
           — a scraping API that bypasses bot detection.
         </p>
+        <div style="background:rgba(0,176,79,0.07);border:1px solid rgba(0,176,79,0.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;">
+          <div style="font-weight:600;color:#00b04f;margin-bottom:4px;">ℹ️ Note on other sources</div>
+          <div style="color:var(--text-secondary);line-height:1.5;">Rightmove and OnTheMarket work completely free with no API key or quota limits. Zoopla is the only source that requires Scrapfly.</div>
+        </div>
         <div style="background:var(--bg-card2);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:13px;">
-          <div style="font-weight:600;margin-bottom:8px;color:var(--text-primary);">How to get a free key:</div>
+          <div style="font-weight:600;margin-bottom:8px;color:var(--text-primary);">How to get a free Scrapfly key:</div>
           <ol style="margin:0;padding-left:18px;color:var(--text-secondary);line-height:1.8;">
             <li>Go to <a href="https://scrapfly.io" target="_blank" style="color:var(--accent);">scrapfly.io</a> and sign up (free)</li>
             <li>Copy your API key from the dashboard</li>
             <li>Paste it below — free plan gives 1,000 scrapes/month</li>
+            <li>If your quota is used up, create a new free account to get another 1,000/month</li>
           </ol>
         </div>
         <div id="zpStatus" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:8px;font-size:13px;"></div>
@@ -4981,7 +4986,7 @@
           const q = data.quota || {};
           let statusText = `✅ Zoopla enabled`;
           if (q.quota_reached) {
-            statusText = `⚠️ Quota reached (${q.used}/${q.limit} scrapes used this month). Resets monthly.`;
+            statusText = `⚠️ Quota reached (${q.used}/${q.limit} used). Create a new free Scrapfly account to get another 1,000/month.`;
           } else if (q.remaining !== undefined) {
             statusText = `✅ Zoopla active · ${q.remaining} scrapes remaining (${q.plan} plan)`;
           }
@@ -5018,7 +5023,7 @@
         const data = await resp.json();
         if (data.success) {
           if (data.quota_reached) {
-            showZpStatus(`Key saved! But quota is reached (${data.plan} plan). Next reset at start of next month.`, 'warn');
+            showZpStatus(`Key saved but quota is reached (${data.plan} plan, ${data.quota?.used ?? '?'}/${data.quota?.limit ?? '?'} used). Create a new free Scrapfly account for another 1,000 scrapes.`, 'warn');
           } else {
             showZpStatus(`✅ ${data.message}`, 'success');
           }

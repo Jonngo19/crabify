@@ -92,61 +92,61 @@ PROPERTY_TYPE_MAP_OTM = {
 
 
 # ─────────────────────────────────────────────
-# RIGHTMOVE TYPEAHEAD
+# RIGHTMOVE LOCATION RESOLVER  (slug-based, no typeahead API)
 # ─────────────────────────────────────────────
-
-def _make_typeahead_path(query: str) -> str:
-    """
-    Rightmove typeahead URL format: 2-character chunks separated by '/'.
-    e.g. "CLAPHAM" → "CL/AP/HA/M"
-    """
-    q = query.strip().upper().replace(" ", "")
-    chunks = [q[i:i+2] for i in range(0, len(q), 2)]
-    return "/".join(chunks)
-
 
 def rm_typeahead(query: str) -> tuple:
     """
     Convert a place name / postcode to Rightmove locationIdentifier.
+    Uses the search page slug approach (no typeahead API needed) — immune to
+    Rightmove's bot-detection on the /typeAhead/uknostreet/ endpoint.
+
+    Strategy: fetch https://www.rightmove.co.uk/property-for-sale/<slug>.html
+    and extract the locationIdentifier from the embedded __NEXT_DATA__ JSON.
+    This also works for rent — RM redirects to the correct channel.
+
     Returns (identifier, display_name).
     """
-    def try_typeahead(path):
-        url = f"https://www.rightmove.co.uk/typeAhead/uknostreet/{path}"
-        try:
-            req = urllib.request.Request(url, headers=TYPEAHEAD_HEADERS)
-            with urllib.request.urlopen(req, timeout=8) as resp:
-                data = json.loads(resp.read().decode("utf-8", errors="replace"))
-                locations = data.get("typeAheadLocations", [])
-                if locations:
-                    loc = locations[0]
-                    return loc.get("locationIdentifier", ""), loc.get("displayName", query)
-        except Exception as e:
-            print(f"  RM typeahead failed ({url}): {e}")
-        return None, None
+    slug = urllib.parse.quote(query.strip())
+    url = f"https://www.rightmove.co.uk/property-for-sale/{slug}.html"
+    req = urllib.request.Request(url, headers=BROWSER_HEADERS)
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            html = resp.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        print(f"  [RM] Location resolve error for '{query}': {e}")
+        return "", query
 
-    q_clean = query.strip().upper()
+    m = re.search(
+        r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>',
+        html, re.DOTALL
+    )
+    if not m:
+        print(f"  [RM] No __NEXT_DATA__ while resolving '{query}'")
+        return "", query
 
-    # Primary: full query as 2-char pairs
-    path1 = _make_typeahead_path(q_clean)
-    loc_id, display = try_typeahead(path1)
-    if loc_id:
-        return loc_id, display
+    try:
+        data = json.loads(m.group(1))
+    except Exception as e:
+        print(f"  [RM] JSON parse error while resolving '{query}': {e}")
+        return "", query
 
-    # Fallback 1: first 8 chars
-    if len(q_clean) > 8:
-        path2 = _make_typeahead_path(q_clean[:8])
-        loc_id, display = try_typeahead(path2)
-        if loc_id:
-            return loc_id, display
+    # Extract locationIdentifier (e.g. "REGION^87490", "OUTCODE^749", "POSTCODE^...")
+    data_str = json.dumps(data)
+    loc_match = re.search(r'"locationIdentifier"\s*:\s*"([A-Z]+\^[0-9]+)"', data_str)
+    if loc_match:
+        loc_id = loc_match.group(1)
+        print(f"  [RM] Resolved '{query}' → {loc_id}")
+        return loc_id, query
 
-    # Fallback 2: first 4 chars
-    if len(q_clean) >= 4:
-        path3 = _make_typeahead_path(q_clean[:4])
-        loc_id, display = try_typeahead(path3)
-        if loc_id:
-            return loc_id, display
+    # Fallback: if we got properties back, the slug itself is valid — use DIRECT marker
+    props = (data.get("props", {}).get("pageProps", {})
+                 .get("searchResults", {}).get("properties", []))
+    if props:
+        print(f"  [RM] No locationIdentifier but got {len(props)} props for '{query}' — using slug")
+        return "DIRECT:" + slug, query
 
-    print(f"  All RM typeahead attempts failed for: '{query}'")
+    print(f"  [RM] Could not resolve '{query}'")
     return "", query
 
 
@@ -157,6 +157,9 @@ def rm_typeahead(query: str) -> tuple:
 def rm_search_html(location_id: str, params: dict) -> tuple:
     """
     Fetch Rightmove search results page (HTML) and extract __NEXT_DATA__ JSON.
+    Supports both normal locationIdentifier values (REGION^…, OUTCODE^…, etc.)
+    and the "DIRECT:<slug>" fallback produced by rm_typeahead when no explicit
+    identifier was found in __NEXT_DATA__.
     Returns (list_of_properties, total_count).
     """
     channel = "BUY" if params.get("transaction_type", "buy") == "buy" else "RENT"
@@ -172,6 +175,50 @@ def rm_search_html(location_id: str, params: dict) -> tuple:
     }
     sort_val = params.get("sort", "newest")
     rm_sort = sort_map_rm.get(sort_val, "2")
+
+    # Handle DIRECT slug fallback (no explicit locationIdentifier in __NEXT_DATA__)
+    if location_id.startswith("DIRECT:"):
+        slug = location_id[len("DIRECT:"):]
+        extra_qs_parts = []
+        if params.get("min_beds"):
+            extra_qs_parts.append(f"minBedrooms={params['min_beds']}")
+        if params.get("max_beds"):
+            extra_qs_parts.append(f"maxBedrooms={params['max_beds']}")
+        if params.get("min_price"):
+            extra_qs_parts.append(f"minPrice={params['min_price']}")
+        if params.get("max_price"):
+            extra_qs_parts.append(f"maxPrice={params['max_price']}")
+        if params.get("index"):
+            extra_qs_parts.append(f"index={params['index']}")
+        extra_qs_parts.append(f"sortType={rm_sort}")
+        url = f"https://www.rightmove.co.uk/{endpoint}/{slug}.html"
+        if extra_qs_parts:
+            url += "?" + "&".join(extra_qs_parts)
+        print(f"  [RM] Fetching (direct slug): {url}")
+        try:
+            req = urllib.request.Request(url, headers=BROWSER_HEADERS)
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                html = resp.read().decode("utf-8", errors="replace")
+        except Exception as e:
+            print(f"  [RM] HTTP error (direct): {e}")
+            return [], 0
+        m = re.search(
+            r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>',
+            html, re.DOTALL
+        )
+        if not m:
+            return [], 0
+        try:
+            data = json.loads(m.group(1))
+            sr = data["props"]["pageProps"].get("searchResults", {})
+            props_raw = sr.get("properties", [])
+            total = int(str(sr.get("resultCount", 0)).replace(",", ""))
+            properties = [parse_rm_property(p, channel) for p in props_raw]
+            print(f"  [RM] Got {len(properties)} properties (total: {total})")
+            return properties, total
+        except Exception as e:
+            print(f"  [RM] Parse error (direct): {e}")
+            return [], 0
 
     query_params = {
         "locationIdentifier": location_id,
