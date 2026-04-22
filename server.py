@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
 Crabify Property Search Backend
-Scrapes real UK property listings from Rightmove, OnTheMarket and Zoopla
-via HTML/Next.js data extraction. Runs all sources in parallel.
+Scrapes real UK property listings from Rightmove, OnTheMarket, Zoopla,
+Gumtree and SpareRoom via HTML/Next.js data extraction. Runs in parallel.
 
-Zoopla requires Scrapfly (https://scrapfly.io) to bypass Cloudflare.
-Set SCRAPFLY_API_KEY in the config file or via the app settings.
+Zoopla: uses headless Firefox (Playwright) to bypass Cloudflare — no API key needed.
+         Falls back to Scrapfly if a key is configured and the browser fails.
 """
 import json
 import os
@@ -694,15 +694,62 @@ def _map_zoopla_listing(raw: dict, transaction_type: str) -> dict:
     }
 
 
+def _zoopla_browser_fetch(zoopla_url: str) -> str:
+    """
+    Use headless Firefox (Playwright) to bypass Cloudflare and return the page HTML.
+    No Scrapfly, no API key, no third-party service required.
+    Returns HTML string or empty string on failure.
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        print("  [Zoopla] playwright not installed — run: pip install playwright && python -m playwright install firefox")
+        return ""
+
+    html = ""
+    try:
+        with sync_playwright() as pw:
+            browser = pw.firefox.launch(
+                headless=True,
+                firefox_user_prefs={
+                    'general.platform.override': 'Win32',
+                    'intl.accept_languages': 'en-GB,en;q=0.9',
+                    'privacy.trackingprotection.enabled': False,
+                    'dom.webdriver.enabled': False,
+                }
+            )
+            context = browser.new_context(
+                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0',
+                locale='en-GB',
+                timezone_id='Europe/London',
+                viewport={'width': 1366, 'height': 768},
+            )
+            page = context.new_page()
+            try:
+                resp = page.goto(zoopla_url, wait_until='domcontentloaded', timeout=30000)
+                # Wait for Cloudflare JS challenge to complete (typically 3-8s)
+                page.wait_for_timeout(8000)
+                status = resp.status if resp else 0
+                if status == 200:
+                    html = page.content()
+                else:
+                    print(f"  [Zoopla] Browser got HTTP {status}")
+            except Exception as e:
+                print(f"  [Zoopla] Browser navigation error: {e}")
+            finally:
+                browser.close()
+    except Exception as e:
+        print(f"  [Zoopla] Browser launch error: {e}")
+
+    return html
+
+
 def zoopla_search(location: str, params: dict) -> tuple:
     """
-    Search Zoopla via Scrapfly.
+    Search Zoopla using headless Firefox to bypass Cloudflare.
+    No Scrapfly, no API key — completely free and unlimited.
     Returns (results_list, total_count, error_string_or_None).
     """
-    api_key = get_scrapfly_key()
-    if not api_key:
-        return [], 0, "no_key"
-
     transaction_type = params.get("transaction_type", "buy")
     channel = "for-sale" if transaction_type == "buy" else "to-rent"
     slug = _zoopla_location_slug(location)
@@ -729,53 +776,54 @@ def zoopla_search(location: str, params: dict) -> tuple:
     if prop_type and prop_type != "any":
         prop_subpath = ZOOPLA_PROPERTY_TYPE_MAP.get(prop_type, "property")
 
-    page = (params.get("index", 0) // 25) + 1
-    if page > 1:
-        zoopla_params["pn"] = page
+    page_num = (params.get("index", 0) // 25) + 1
+    if page_num > 1:
+        zoopla_params["pn"] = page_num
 
     zoopla_url = f"https://www.zoopla.co.uk/{channel}/{prop_subpath}/{slug}/"
     if zoopla_params:
         zoopla_url += "?" + urllib.parse.urlencode(zoopla_params)
 
-    print(f"  [Zoopla] Fetching: {zoopla_url}")
+    print(f"  [Zoopla] Fetching via headless Firefox: {zoopla_url}")
 
-    # Call Scrapfly
-    scrapfly_params = urllib.parse.urlencode({
-        "key": api_key,
-        "url": zoopla_url,
-        "asp": "true",
-        "render_js": "false",
-        "country": "gb",
-        "proxy_pool": "public_residential_pool",
-    })
-    scrapfly_url = f"https://api.scrapfly.io/scrape?{scrapfly_params}"
+    content = _zoopla_browser_fetch(zoopla_url)
 
-    try:
-        req = urllib.request.Request(scrapfly_url)
-        req.add_header("Accept", "application/json")
-        with urllib.request.urlopen(req, timeout=30) as r:
-            resp = json.loads(r.read())
-    except urllib.error.HTTPError as e:
-        if e.code == 401:
-            return [], 0, "invalid_key"
-        if e.code == 429:
-            return [], 0, "quota_exceeded"
-        return [], 0, f"scrapfly_http_{e.code}"
-    except Exception as e:
-        return [], 0, f"scrapfly_error: {str(e)[:80]}"
+    if not content:
+        # Fallback: try Scrapfly if a key exists (backward compat)
+        api_key = get_scrapfly_key()
+        if api_key:
+            print("  [Zoopla] Browser failed, falling back to Scrapfly...")
+            scrapfly_params = urllib.parse.urlencode({
+                "key": api_key,
+                "url": zoopla_url,
+                "asp": "true",
+                "render_js": "false",
+                "country": "gb",
+                "proxy_pool": "public_residential_pool",
+            })
+            scrapfly_url = f"https://api.scrapfly.io/scrape?{scrapfly_params}"
+            try:
+                req = urllib.request.Request(scrapfly_url)
+                req.add_header("Accept", "application/json")
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    resp_data = json.loads(r.read())
+                result = resp_data.get("result", {})
+                if result.get("status_code") == 200:
+                    content = result.get("content", "")
+            except urllib.error.HTTPError as e:
+                if e.code == 429:
+                    return [], 0, "quota_exceeded"
+                return [], 0, f"scrapfly_http_{e.code}"
+            except Exception as e:
+                return [], 0, f"scrapfly_error: {str(e)[:80]}"
+        else:
+            return [], 0, "browser_failed"
 
-    result = resp.get("result", {})
-    status_code = result.get("status_code", 0)
-    content = result.get("content", "")
-
-    if status_code != 200:
-        return [], 0, f"zoopla_http_{status_code}"
+    if not content or len(content) < 50000:
+        return [], 0, "cf_blocked"
 
     raw_listings = _parse_zoopla_rsc(content)
     if not raw_listings:
-        # Check if quota reached in response body
-        if "quota" in content.lower() or "upgrade" in content.lower():
-            return [], 0, "quota_exceeded"
         return [], 0, None  # No results for this area (not an error)
 
     listings = [_map_zoopla_listing(r, transaction_type) for r in raw_listings]
@@ -801,7 +849,7 @@ def zoopla_search(location: str, params: dict) -> tuple:
             all_text += json.loads(chunk)
         except Exception:
             all_text += chunk
-    ni_match = re.search(r'"numberOfItems":(\d+)', all_text)
+    ni_match = re.search(r'"(?:numberOfItems|totalResults|total)"\s*:\s*(\d+)', all_text)
     if ni_match:
         total = int(ni_match.group(1))
 
@@ -1209,7 +1257,7 @@ def combined_search(location: str, params: dict) -> dict:
     t_rm.start(); t_otm.start(); t_zp.start(); t_gt.start(); t_sr.start()
     t_rm.join(timeout=25)
     t_otm.join(timeout=25)
-    t_zp.join(timeout=35)
+    t_zp.join(timeout=55)   # Browser-based: needs ~12-15s for CF challenge + render
     t_gt.join(timeout=20)
     t_sr.join(timeout=20)
 
@@ -2036,8 +2084,19 @@ class CrabifyHandler(BaseHTTPRequestHandler):
             })
 
         elif path == "/api/zoopla-status":
+            # Zoopla now uses headless Firefox — always enabled, no key needed
+            try:
+                from playwright.sync_api import sync_playwright
+                browser_available = True
+            except ImportError:
+                browser_available = False
             has_key = bool(get_scrapfly_key())
-            self.send_json({"enabled": has_key, "key_set": has_key})
+            self.send_json({
+                "enabled": True,
+                "browser_mode": browser_available,
+                "scrapfly_fallback": has_key,
+                "key_set": has_key,
+            })
 
         elif path == "/api/cars":
             location = qs.get("location", [""])[0].strip()
