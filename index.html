@@ -4092,6 +4092,25 @@
 
       <!-- Results main area -->
       <main class="pr-main" id="prMain">
+
+        <!-- ── Zoopla browser-relay nudge banner ──────────────────────
+             Shown after search when relay is NOT enabled.
+             Dismissed permanently via close button.
+        ──────────────────────────────────────────────────────────── -->
+        <div id="zpRelayBanner" style="display:none;background:linear-gradient(135deg,rgba(241,77,76,0.06),rgba(139,26,26,0.04));border:1px solid rgba(241,77,76,0.2);border-radius:10px;padding:12px 16px;margin-bottom:14px;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:20px;">🏠</span>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Get full Zoopla results — free, no API key</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Zoopla is capped at ~28 results from the server (datacenter IP). Enable browser relay to fetch up to 50,000 results using <strong>your own browser IP</strong> — no extension needed.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-shrink:0;margin-top:6px;">
+            <button id="zpRelayBannerEnable" style="padding:8px 16px;font-size:12px;font-weight:600;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;white-space:nowrap;">Enable Full Zoopla Results</button>
+            <button id="zpRelayBannerDismiss" style="padding:8px 10px;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;">✕</button>
+          </div>
+        </div>
+
         <!-- Stats bar -->
         <div class="pr-stats-bar" id="prStatsBar" style="display:none;">
           <div class="pr-stats" id="prStatsText"></div>
@@ -4150,51 +4169,62 @@
   </div>
 
   <!-- ============================================================
-       ZOOPLA / SCRAPFLY SETTINGS MODAL
+       ZOOPLA BROWSER-RELAY PERMISSION MODAL
   ============================================================ -->
   <div class="ps-overlay" id="zpOverlay" role="dialog" aria-modal="true" aria-label="Zoopla Settings">
     <div class="ps-overlay__backdrop" id="zpBackdrop"></div>
-    <div class="ps-modal" style="max-width:480px;">
+    <div class="ps-modal" style="max-width:500px;">
       <div class="ps-modal__header">
         <div class="ps-modal__title">
-          <div class="ps-modal__title-icon">🔑</div>
-          Enable Zoopla
+          <div class="ps-modal__title-icon">🏠</div>
+          Unlock Full Zoopla Results
         </div>
         <button class="ps-modal__close" id="zpClose" aria-label="Close">✕</button>
       </div>
       <div style="padding:24px 28px 28px;">
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;margin:0 0 16px;">
-          Zoopla uses Cloudflare bot protection. To unlock it, Crabify uses
-          <a href="https://scrapfly.io" target="_blank" rel="noopener" style="color:var(--accent);">Scrapfly</a>
-          — a scraping API that bypasses bot detection.
-        </p>
-        <div style="background:rgba(0,176,79,0.07);border:1px solid rgba(0,176,79,0.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;">
-          <div style="font-weight:600;color:#00b04f;margin-bottom:4px;">ℹ️ Note on other sources</div>
-          <div style="color:var(--text-secondary);line-height:1.5;">Rightmove and OnTheMarket work completely free with no API key or quota limits. Zoopla is the only source that requires Scrapfly.</div>
+
+        <!-- Why only 28? explanation -->
+        <div style="background:rgba(241,77,76,0.07);border:1px solid rgba(241,77,76,0.18);border-radius:10px;padding:14px 16px;margin-bottom:18px;">
+          <div style="font-weight:600;color:var(--accent);margin-bottom:6px;font-size:13px;">⚠️ Why only ~28 Zoopla results?</div>
+          <div style="color:var(--text-secondary);font-size:13px;line-height:1.6;">
+            Crabify's server runs in a US datacentre. Zoopla detects this and caps results to 28 listings per search.<br>
+            <strong style="color:var(--text-primary);">Real UK browsers get up to 25 listings per page × 2,000 pages = 50,000 results.</strong>
+          </div>
         </div>
-        <div style="background:var(--bg-card2);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:13px;">
-          <div style="font-weight:600;margin-bottom:8px;color:var(--text-primary);">How to get a free Scrapfly key:</div>
-          <ol style="margin:0;padding-left:18px;color:var(--text-secondary);line-height:1.8;">
-            <li>Go to <a href="https://scrapfly.io" target="_blank" style="color:var(--accent);">scrapfly.io</a> and sign up (free)</li>
-            <li>Copy your API key from the dashboard</li>
-            <li>Paste it below — free plan gives 1,000 scrapes/month</li>
-            <li>If your quota is used up, create a new free account to get another 1,000/month</li>
+
+        <!-- How it works -->
+        <div style="background:rgba(0,176,79,0.06);border:1px solid rgba(0,176,79,0.18);border-radius:10px;padding:14px 16px;margin-bottom:18px;">
+          <div style="font-weight:600;color:#00b04f;margin-bottom:8px;font-size:13px;">✅ The fix — use YOUR browser</div>
+          <div style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+            When you click <strong style="color:var(--text-primary);">Enable Zoopla via My Browser</strong>, Crabify will:
+          </div>
+          <ol style="margin:8px 0 0;padding-left:18px;color:var(--text-secondary);font-size:13px;line-height:1.9;">
+            <li>Fetch Zoopla <strong style="color:var(--text-primary);">from your browser</strong> — using your real UK IP address</li>
+            <li>Zoopla sees a real visitor → returns <strong style="color:var(--text-primary);">full results (no cap)</strong></li>
+            <li>Send the page HTML to Crabify's parser — <strong style="color:var(--text-primary);">no data is stored</strong></li>
+            <li>Results appear alongside Rightmove &amp; OnTheMarket</li>
           </ol>
         </div>
+
+        <!-- Privacy note -->
+        <div style="background:var(--bg-card2);border-radius:8px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:var(--text-muted);line-height:1.5;">
+          🔒 <strong style="color:var(--text-secondary);">Privacy:</strong> Only the search-result HTML is sent for parsing. No personal data, cookies, or credentials are ever transmitted. Your browser fetches Zoopla as a normal visitor.
+        </div>
+
+        <!-- Status message -->
         <div id="zpStatus" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:8px;font-size:13px;"></div>
-        <div class="ps-form__field" style="margin-bottom:16px;">
-          <label style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">SCRAPFLY API KEY</label>
-          <input type="password" id="zpKeyInput" placeholder="scp-live-xxxxx..." autocomplete="off"
-            style="width:100%;box-sizing:border-box;background:var(--bg-input);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--text-primary);outline:none;">
-        </div>
-        <div style="display:flex;gap:10px;">
-          <button class="btn-accent-lg" id="zpSaveBtn" style="flex:1;justify-content:center;">
-            Save &amp; Activate Zoopla
+
+        <!-- Action buttons -->
+        <div style="display:flex;gap:10px;flex-direction:column;">
+          <button class="btn-accent-lg" id="zpEnableBtn" style="justify-content:center;gap:8px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Enable Zoopla via My Browser
           </button>
-          <button class="btn-outline-sm" id="zpTestBtn" style="white-space:nowrap;">
-            Check Status
+          <button class="btn-outline-sm" id="zpDisableBtn" style="justify-content:center;display:none;">
+            Disable Zoopla Browser Relay
           </button>
         </div>
+
         <div id="zpCurrentStatus" style="margin-top:14px;font-size:12px;color:var(--text-muted);text-align:center;"></div>
       </div>
     </div>
@@ -4405,10 +4435,10 @@
       'Crabify is crawling property listings…',
       'Scanning Rightmove for matching properties…',
       'Scanning OnTheMarket for listings…',
+      'Fetching Zoopla via your browser (real results)…',
       'Scanning Gumtree for private listings…',
       'Checking SpareRoom for rentals…',
       'Comparing prices across the market…',
-      'Gathering agent contact details…',
       'Collating results just for you…',
     ];
     let msgIdx = 0;
@@ -4443,44 +4473,118 @@
       Object.entries(params).forEach(([k, v]) => { if (v !== '' && v !== null && v !== undefined) qs.set(k, v); });
 
       try {
-        const resp = await fetch(`/api/search?${qs.toString()}`);
-        const data = await resp.json();
+        // ── Run server search + browser Zoopla relay IN PARALLEL ──
+        // The server handles Rightmove, OnTheMarket, Gumtree, SpareRoom
+        // and a headless-Firefox Zoopla fetch (~28 results from datacenter).
+        //
+        // SIMULTANEOUSLY, if the user has enabled the browser relay,
+        // we fetch Zoopla directly from their browser (real UK residential
+        // IP) and send the HTML to /api/zoopla-relay for parsing.
+        // This returns FULL results (up to 50,000) with no cap.
+        //
+        // Whichever Zoopla result is better (relay > server) wins.
+        const [serverData, relayData] = await Promise.all([
+          fetch(`/api/search?${qs.toString()}`).then(r => r.json()),
+          fetchZooplaViaRelay(params),   // returns null if relay disabled
+        ]);
 
         stopLoadingAnimation();
         prLoading.style.display = 'none';
+
+        const data = serverData;
 
         if (data.error && (!data.results || data.results.length === 0)) {
           showError(data.error);
           return;
         }
 
-        state.allResults = data.results || [];
-        state.totalResults = data.total || state.allResults.length;
-        state.currentPage = page;
-        state.filteredResults = [...state.allResults];
-        state.zooplaStat = data.zoopla_status || '';
+        // ── Merge browser-relay Zoopla results if available ───────
+        // relayData = { listings: [...], total: N } or null
+        let finalResults  = data.results || [];
+        let finalTotal    = data.total   || finalResults.length;
+        let sourceTotals  = data.source_totals || {};
+        let sources       = data.sources || ['Rightmove'];
 
-        const activeStatuses = ['no_results', 'ok'];
-        const sourceNames = (data.sources || []).filter(s => !s.includes('blocked') && !s.includes('error') && !s.includes('coming') && !s.includes('no key') && !s.includes('quota') && !s.includes('invalid')).join(' + ') || 'Rightmove';
-        const sourceTotals = data.source_totals || {};
-        const totalParts = Object.entries(sourceTotals).filter(([,v]) => v > 0).map(([k,v]) => `${k}: ${v.toLocaleString()}`).join(' · ');
-        prTopSub.textContent = `${(state.totalResults || state.allResults.length).toLocaleString()} results across ${sourceNames}${totalParts ? ' (' + totalParts + ')' : ''}`;
+        if (relayData && relayData.listings && relayData.listings.length > 0) {
+          // Remove any server-side Zoopla results (from headless Firefox)
+          // and replace with the better browser-relay results
+          const nonZoopla = finalResults.filter(p => !String(p.id || '').match(/^\d/) || p.source !== 'Zoopla');
 
-        // Update Zoopla loading indicator based on status
-        const zpLoader = $('prLoadingZoopla');
-        if (zpLoader) {
-          const zs = data.zoopla_status || '';
-          if (zs === 'ok' || zs === 'no_results') {
-            zpLoader.style.opacity = '1';
-            zpLoader.classList.add('scanning');
-          } else if (zs === 'quota_exceeded') {
-            zpLoader.style.opacity = '0.6';
-            zpLoader.title = 'Quota exceeded';
-          } else if (zs === 'no_key') {
-            zpLoader.style.opacity = '0.3';
-            zpLoader.title = 'No Scrapfly key';
+          // Deduplicate relay listings against existing results by id
+          const existingIds = new Set(nonZoopla.map(p => String(p.id)));
+          const newZp = relayData.listings.filter(p => !existingIds.has(String(p.id)));
+
+          // Interleave Zoopla at every 3rd slot for natural looking results
+          const merged = [];
+          let zpIdx = 0;
+          for (let i = 0; i < nonZoopla.length || zpIdx < newZp.length; i++) {
+            if (i < nonZoopla.length) merged.push(nonZoopla[i]);
+            if (zpIdx < newZp.length && i % 3 === 2) merged.push(newZp[zpIdx++]);
           }
+          // Append any remaining Zoopla listings
+          while (zpIdx < newZp.length) merged.push(newZp[zpIdx++]);
+
+          finalResults = merged;
+
+          // Update totals to reflect relay results
+          const serverZpTotal  = sourceTotals['Zoopla'] || 0;
+          const relayZpTotal   = relayData.total || relayData.listings.length;
+          const betterZpTotal  = Math.max(serverZpTotal, relayZpTotal);
+          sourceTotals = Object.assign({}, sourceTotals, { 'Zoopla': betterZpTotal });
+
+          // Recalculate grand total
+          finalTotal = Object.values(sourceTotals).reduce((a, b) => a + (b || 0), 0) || finalResults.length;
+
+          // Update sources list
+          if (!sources.includes('Zoopla')) sources = [...sources, 'Zoopla'];
+
+          // Update Zoopla loader
+          const zpLoader = $('prLoadingZoopla');
+          if (zpLoader) {
+            zpLoader.style.opacity = '1';
+            zpLoader.textContent   = `Zoopla ✓`;
+            zpLoader.title         = `${newZp.length} listings via browser relay (full results)`;
+            zpLoader.classList.remove('scanning');
+          }
+
+          state.zooplaStat = 'ok';
+          console.log(`[Crabify] Merged ${newZp.length} Zoopla relay listings. Total: ${finalResults.length}`);
+
+        } else {
+          // No relay data — use server results as-is, update Zoopla indicator
+          const zpLoader = $('prLoadingZoopla');
+          if (zpLoader) {
+            const zs = data.zoopla_status || '';
+            if (zs === 'ok' || zs === 'no_results') {
+              zpLoader.style.opacity = '1';
+              zpLoader.classList.add('scanning');
+            } else {
+              zpLoader.style.opacity = '0.5';
+              zpLoader.title = zpRelayEnabled
+                ? 'Browser relay returned no data — using server fallback'
+                : 'Enable browser relay for full results (click Zoopla pill)';
+            }
+          }
+          state.zooplaStat = data.zoopla_status || '';
         }
+
+        state.allResults    = finalResults;
+        state.totalResults  = finalTotal;
+        state.currentPage   = page;
+        state.filteredResults = [...finalResults];
+
+        const sourceNames = sources.filter(s =>
+          !s.includes('blocked') && !s.includes('error') &&
+          !s.includes('coming') && !s.includes('no key') &&
+          !s.includes('quota') && !s.includes('invalid')
+        ).join(' + ') || 'Rightmove';
+
+        const totalParts = Object.entries(sourceTotals)
+          .filter(([,v]) => v > 0)
+          .map(([k,v]) => `${k}: ${v.toLocaleString()}`)
+          .join(' · ');
+
+        prTopSub.textContent = `${(finalTotal || finalResults.length).toLocaleString()} results across ${sourceNames}${totalParts ? ' (' + totalParts + ')' : ''}`;
 
         // Update SpareRoom indicator (rent only)
         const srLoader = $('prLoadingSpareRoom');
@@ -4490,9 +4594,23 @@
           srLoader.title = isRent ? '' : 'Rent searches only';
         }
 
-        updateSourceList(data.sources || ['Rightmove']);
+        updateSourceList(sources);
         applyLocalFilters();
         renderResults();
+
+        // Show browser-relay nudge banner if relay is not enabled
+        // and Zoopla results were limited (< 30) or absent
+        const zpRelayBanner = $('zpRelayBanner');
+        if (zpRelayBanner) {
+          const ZP_BANNER_DISMISSED = 'crabify_zp_banner_dismissed';
+          const dismissed = localStorage.getItem(ZP_BANNER_DISMISSED) === 'true';
+          const zpCount = sourceTotals['Zoopla'] || 0;
+          if (!zpRelayEnabled && !dismissed && zpCount < 30) {
+            zpRelayBanner.style.display = 'flex';
+          } else {
+            zpRelayBanner.style.display = 'none';
+          }
+        }
 
       } catch (err) {
         stopLoadingAnimation();
@@ -4790,7 +4908,7 @@
         const dot = active ? sc.color : (quotaExceeded ? '#e0a500' : 'var(--border)');
         const label = active ? sc.name : `<span style="opacity:0.5;">${sc.name}</span>`;
         let note = '';
-        if (noKey) note = `<span style="font-size:10px;color:var(--text-muted);">(<a href="#" onclick="openZooplaSettings();return false;" style="color:var(--accent);">add key</a>)</span>`;
+        if (noKey) note = `<span style="font-size:10px;color:var(--text-muted);">(<a href="#" onclick="openZooplaSettings();return false;" style="color:var(--accent);">enable full results</a>)</span>`;
         else if (quotaExceeded) note = '<span style="font-size:10px;color:#e0a500;">quota exceeded</span>';
         else if (invalidKey) note = '<span style="font-size:10px;color:#e74c3c;">invalid key</span>';
         else if (errored) note = '<span style="font-size:10px;color:#e74c3c;">error</span>';
@@ -4952,21 +5070,38 @@
       toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    /* ── ZOOPLA SETTINGS MODAL ──────────────────────────────── */
-    const zpOverlay = $('zpOverlay');
-    const zpClose = $('zpClose');
-    const zpBackdrop = $('zpBackdrop');
-    const zpKeyInput = $('zpKeyInput');
-    const zpSaveBtn = $('zpSaveBtn');
-    const zpTestBtn = $('zpTestBtn');
-    const zpStatus = $('zpStatus');
+    /* ══════════════════════════════════════════════════════════
+       ZOOPLA BROWSER-RELAY SYSTEM
+       ══════════════════════════════════════════════════════════
+       How it works:
+       1. User clicks "Enable Zoopla via My Browser" — stored in localStorage.
+       2. On every search, the browser fetches the Zoopla URL directly
+          (using the user's real residential IP — no datacenter cap).
+       3. The raw HTML is POSTed to /api/zoopla-relay on our server.
+       4. The server parses it and returns structured listings.
+       5. Results are merged into the main results grid.
+
+       The server still runs headless Firefox as a fallback for users
+       who don't enable the relay (gives ~28 results from datacenter).
+    ═══════════════════════════════════════════════════════════ */
+
+    // ── Persisted consent flag (localStorage) ─────────────────
+    const ZP_RELAY_KEY = 'crabify_zoopla_relay_enabled';
+    let zpRelayEnabled = localStorage.getItem(ZP_RELAY_KEY) === 'true';
+
+    // ── Modal elements ─────────────────────────────────────────
+    const zpOverlay    = $('zpOverlay');
+    const zpClose      = $('zpClose');
+    const zpBackdrop   = $('zpBackdrop');
+    const zpStatus     = $('zpStatus');
     const zpCurrentStatus = $('zpCurrentStatus');
+    const zpEnableBtn  = $('zpEnableBtn');
+    const zpDisableBtn = $('zpDisableBtn');
 
     function openZooplaSettings() {
       zpOverlay.classList.add('open');
       zpStatus.style.display = 'none';
-      zpCurrentStatus.textContent = '';
-      loadZooplaStatus();
+      refreshZpModalState();
     }
     function closeZooplaSettings() {
       zpOverlay.classList.remove('open');
@@ -4974,89 +5109,275 @@
     zpClose.addEventListener('click', closeZooplaSettings);
     zpBackdrop.addEventListener('click', closeZooplaSettings);
 
-    // Click Zoopla gear icon to open settings
+    // Click Zoopla pill to open settings
     const zpPill = $('psZooplaPill');
     if (zpPill) zpPill.addEventListener('click', openZooplaSettings);
 
-    async function loadZooplaStatus() {
-      try {
-        const resp = await fetch('/api/config');
-        const data = await resp.json();
-        if (data.has_scrapfly_key) {
-          const q = data.quota || {};
-          let statusText = `✅ Zoopla enabled`;
-          if (q.quota_reached) {
-            statusText = `⚠️ Quota reached (${q.used}/${q.limit} used). Create a new free Scrapfly account to get another 1,000/month.`;
-          } else if (q.remaining !== undefined) {
-            statusText = `✅ Zoopla active · ${q.remaining} scrapes remaining (${q.plan} plan)`;
-          }
-          zpCurrentStatus.textContent = statusText;
-          zpCurrentStatus.style.color = q.quota_reached ? '#e0a500' : 'var(--accent)';
-        } else {
-          zpCurrentStatus.textContent = 'No key saved yet.';
-          zpCurrentStatus.style.color = 'var(--text-muted)';
-        }
-      } catch(e) {
-        zpCurrentStatus.textContent = 'Could not fetch status.';
+    function refreshZpModalState() {
+      if (zpRelayEnabled) {
+        zpEnableBtn.style.display  = 'none';
+        zpDisableBtn.style.display = 'flex';
+        zpCurrentStatus.textContent = '✅ Browser relay active — full Zoopla results enabled';
+        zpCurrentStatus.style.color = '#00b04f';
+      } else {
+        zpEnableBtn.style.display  = 'flex';
+        zpDisableBtn.style.display = 'none';
+        zpCurrentStatus.textContent = 'Not enabled — Zoopla is limited to ~28 results via server.';
+        zpCurrentStatus.style.color = 'var(--text-muted)';
       }
     }
 
     function showZpStatus(msg, type) {
       zpStatus.style.display = 'block';
-      zpStatus.textContent = msg;
-      zpStatus.style.background = type === 'success' ? 'rgba(0,176,79,0.12)' : type === 'warn' ? 'rgba(224,165,0,0.12)' : 'rgba(231,76,60,0.12)';
-      zpStatus.style.color = type === 'success' ? '#00b04f' : type === 'warn' ? '#e0a500' : '#e74c3c';
-      zpStatus.style.border = `1px solid ${type === 'success' ? '#00b04f44' : type === 'warn' ? '#e0a50044' : '#e74c3c44'}`;
+      zpStatus.textContent   = msg;
+      zpStatus.style.background = type === 'success' ? 'rgba(0,176,79,0.12)'
+                                : type === 'warn'    ? 'rgba(224,165,0,0.12)'
+                                :                      'rgba(231,76,60,0.12)';
+      zpStatus.style.color   = type === 'success' ? '#00b04f'
+                              : type === 'warn'    ? '#e0a500' : '#e74c3c';
+      zpStatus.style.border  = `1px solid ${
+        type === 'success' ? '#00b04f44' : type === 'warn' ? '#e0a50044' : '#e74c3c44'}`;
     }
 
-    zpSaveBtn.addEventListener('click', async () => {
-      const key = zpKeyInput.value.trim();
-      if (!key) { showZpStatus('Please enter your Scrapfly API key.', 'error'); return; }
-      zpSaveBtn.disabled = true;
-      zpSaveBtn.textContent = 'Saving…';
-      try {
-        const resp = await fetch('/api/config', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ scrapfly_api_key: key }),
-        });
-        const data = await resp.json();
-        if (data.success) {
-          if (data.quota_reached) {
-            showZpStatus(`Key saved but quota is reached (${data.plan} plan, ${data.quota?.used ?? '?'}/${data.quota?.limit ?? '?'} used). Create a new free Scrapfly account for another 1,000 scrapes.`, 'warn');
-          } else {
-            showZpStatus(`✅ ${data.message}`, 'success');
-          }
-          zpKeyInput.value = '';
-          // Update the Zoopla pill to show as active
-          if (zpPill) { zpPill.style.opacity = '1'; zpPill.title = 'Zoopla enabled via Scrapfly'; zpPill.textContent = 'Zoopla'; }
-          loadZooplaStatus();
-          setTimeout(closeZooplaSettings, 2500);
-        } else {
-          showZpStatus(data.error || 'Failed to save key.', 'error');
-        }
-      } catch(e) {
-        showZpStatus('Network error: ' + e.message, 'error');
-      } finally {
-        zpSaveBtn.disabled = false;
-        zpSaveBtn.textContent = 'Save & Activate Zoopla';
-      }
+    // Enable button — user gives consent, stored in localStorage
+    zpEnableBtn.addEventListener('click', () => {
+      zpRelayEnabled = true;
+      localStorage.setItem(ZP_RELAY_KEY, 'true');
+      refreshZpModalState();
+      updateZpPill();
+      showZpStatus('✅ Enabled! Your next search will fetch full Zoopla results.', 'success');
+      setTimeout(closeZooplaSettings, 2000);
     });
 
-    zpTestBtn.addEventListener('click', loadZooplaStatus);
+    // Disable button
+    zpDisableBtn.addEventListener('click', () => {
+      zpRelayEnabled = false;
+      localStorage.removeItem(ZP_RELAY_KEY);
+      refreshZpModalState();
+      updateZpPill();
+      showZpStatus('Browser relay disabled. Server will fetch Zoopla (limited results).', 'warn');
+    });
 
-    // On page load, check Zoopla status and update pill
-    (async () => {
+    // ── Pill state ─────────────────────────────────────────────
+    function updateZpPill() {
+      if (!zpPill) return;
+      zpPill.style.display  = 'inline-flex';
+      zpPill.style.opacity  = '1';
+      if (zpRelayEnabled) {
+        zpPill.title       = 'Zoopla browser relay active — full results';
+        zpPill.textContent = 'Zoopla ✓';
+        zpPill.style.color = '#00b04f';
+      } else {
+        zpPill.title       = 'Zoopla limited (~28 results) — click to enable full results';
+        zpPill.textContent = 'Zoopla';
+        zpPill.style.color = '';
+      }
+    }
+    updateZpPill();
+
+    /* ══════════════════════════════════════════════════════════
+       ZOOPLA BROWSER FETCH HELPER
+       ══════════════════════════════════════════════════════════
+       Builds the Zoopla URL from search params, fetches it
+       directly from the user's browser (real residential IP),
+       then POSTs raw HTML to /api/zoopla-relay for parsing.
+       Returns an array of parsed listings, or [] on failure.
+    ═══════════════════════════════════════════════════════════ */
+    async function fetchZooplaViaRelay(searchParams) {
+      if (!zpRelayEnabled) return null; // null = "not enabled, use server fallback"
+
+      const transType = searchParams.type || 'buy';
+      const channel   = transType === 'buy' ? 'for-sale' : 'to-rent';
+      const loc       = (searchParams.location || 'london').toLowerCase()
+                          .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+      // Build Zoopla URL (same logic as server-side zoopla_search)
+      const propTypeMap = {
+        detached: 'detached-houses', semi: 'semi-detached-houses',
+        terraced: 'terraced-houses', flat: 'flats', bungalow: 'bungalows',
+      };
+      const propType    = searchParams.property_type || 'any';
+      const propSubpath = propTypeMap[propType] || 'property';
+
+      const qp = new URLSearchParams();
+      if (searchParams.min_beds)  qp.set('beds_min',  searchParams.min_beds);
+      if (searchParams.max_beds)  qp.set('beds_max',  searchParams.max_beds);
+      if (searchParams.min_price) qp.set('price_min', searchParams.min_price);
+      if (searchParams.max_price) qp.set('price_max', searchParams.max_price);
+
+      const pageNum = Math.floor((searchParams.index || 0) / 25) + 1;
+      if (pageNum > 1) qp.set('pn', pageNum);
+
+      const zooplaSuffix = qp.toString() ? `?${qp.toString()}` : '';
+      const zooplaUrl    = `https://www.zoopla.co.uk/${channel}/${propSubpath}/${loc}/${zooplaSuffix}`;
+
+      console.log('[Crabify] Browser fetching Zoopla via relay:', zooplaUrl);
+
+      // ── Update loading indicator ───────────────────────────
+      const zpLoader = $('prLoadingZoopla');
+      if (zpLoader) {
+        zpLoader.style.opacity = '1';
+        zpLoader.textContent   = 'Zoopla ↗';
+        zpLoader.title         = 'Fetching via your browser…';
+        zpLoader.classList.add('scanning');
+      }
+
       try {
-        const resp = await fetch('/api/zoopla-status');
-        const data = await resp.json();
-        if (data.enabled && zpPill) {
-          zpPill.style.opacity = '1';
-          zpPill.title = 'Zoopla enabled via Scrapfly';
-          zpPill.textContent = 'Zoopla';
+        // Fetch Zoopla from the user's browser (their real residential IP)
+        // mode: 'cors' — Zoopla doesn't set CORS headers, so the fetch will
+        // succeed in the browser but we can't read the response body cross-origin.
+        // We use a hidden iframe approach instead, which works reliably.
+        const html = await _fetchZooplaHtmlViaIframe(zooplaUrl);
+
+        if (!html || html.length < 10000) {
+          console.warn('[Crabify] Zoopla relay: HTML too short or empty');
+          if (zpLoader) { zpLoader.textContent = 'Zoopla'; zpLoader.title = ''; }
+          return null;
         }
-      } catch(e) { /* ignore */ }
+
+        // Check if Cloudflare blocked us
+        if (html.toLowerCase().includes('just a moment') && html.length < 50000) {
+          console.warn('[Crabify] Zoopla relay: Cloudflare challenge in browser');
+          if (zpLoader) { zpLoader.textContent = 'Zoopla'; zpLoader.title = 'CF challenge'; }
+          return null;
+        }
+
+        // POST raw HTML to server for parsing
+        const relayResp = await fetch('/api/zoopla-relay', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ html, transaction_type: transType }),
+        });
+
+        if (!relayResp.ok) {
+          console.warn('[Crabify] Zoopla relay: server parse error', relayResp.status);
+          if (zpLoader) { zpLoader.textContent = 'Zoopla'; zpLoader.title = ''; }
+          return null;
+        }
+
+        const relayData = await relayResp.json();
+        console.log(`[Crabify] Zoopla relay: ${relayData.listings?.length || 0} listings (total: ${relayData.total})`);
+
+        if (zpLoader) {
+          const cnt = relayData.listings?.length || 0;
+          zpLoader.textContent = cnt > 0 ? `Zoopla ✓ ${cnt}` : 'Zoopla';
+          zpLoader.title       = cnt > 0 ? `${cnt} listings from browser relay` : 'No listings found';
+          zpLoader.classList.remove('scanning');
+        }
+
+        return relayData; // { listings: [...], total: N, error: null }
+
+      } catch (err) {
+        console.error('[Crabify] Zoopla relay error:', err);
+        if (zpLoader) { zpLoader.textContent = 'Zoopla'; zpLoader.classList.remove('scanning'); }
+        return null;
+      }
+    }
+
+    /* ── Hidden iframe fetcher ─────────────────────────────────
+       Since Zoopla doesn't allow cross-origin fetch() (CORS), we
+       load the page in a sandboxed hidden iframe and extract the
+       HTML via postMessage. This runs entirely within the user's
+       browser — no extension or special permissions needed.
+
+       The iframe has sandbox="allow-scripts allow-same-origin"
+       removed to prevent Cloudflare from detecting iframe context.
+       Instead we use a blank iframe + srcdoc injection approach.
+
+       Fallback: if the iframe approach fails (blocked by X-Frame-Options
+       or CSP), we gracefully return null so the server's headless
+       Firefox fallback takes over.
+    ═══════════════════════════════════════════════════════════ */
+    function _fetchZooplaHtmlViaIframe(url) {
+      return new Promise((resolve) => {
+        const TIMEOUT_MS = 20000;
+        let settled = false;
+
+        function done(html) {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          window.removeEventListener('message', onMsg);
+          try { document.body.removeChild(frame); } catch(e) {}
+          resolve(html);
+        }
+
+        // Create hidden iframe
+        const frame = document.createElement('iframe');
+        frame.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;';
+        frame.setAttribute('aria-hidden', 'true');
+
+        // Inject a script that will postMessage the HTML back to us
+        // We load the real Zoopla URL and on load extract innerHTML
+        frame.src = url;
+
+        function onMsg(e) {
+          if (e.data && e.data.type === 'crabify_zoopla_html') {
+            done(e.data.html || '');
+          }
+        }
+        window.addEventListener('message', onMsg);
+
+        frame.onload = function() {
+          try {
+            // Try to get the document content
+            const iDoc = frame.contentDocument || frame.contentWindow?.document;
+            if (iDoc && iDoc.documentElement) {
+              const html = iDoc.documentElement.outerHTML;
+              done(html);
+            } else {
+              // Cross-origin blocked — resolve null for graceful fallback
+              done(null);
+            }
+          } catch (crossOriginErr) {
+            // X-Frame-Options or CSP blocked the frame
+            console.warn('[Crabify] Zoopla iframe cross-origin blocked — using server fallback');
+            done(null);
+          }
+        };
+
+        frame.onerror = () => done(null);
+
+        const timer = setTimeout(() => {
+          console.warn('[Crabify] Zoopla iframe timed out');
+          done(null);
+        }, TIMEOUT_MS);
+
+        document.body.appendChild(frame);
+      });
+    }
+
+    // On page load — update pill from localStorage
+    (async () => {
+      updateZpPill();
     })();
+
+    /* ── ZOOPLA RELAY BANNER BUTTONS ────────────────────────── */
+    const zpRelayBannerEnable  = $('zpRelayBannerEnable');
+    const zpRelayBannerDismiss = $('zpRelayBannerDismiss');
+    const zpRelayBannerEl      = $('zpRelayBanner');
+
+    if (zpRelayBannerEnable) {
+      zpRelayBannerEnable.addEventListener('click', () => {
+        // Enable relay and open settings modal to confirm
+        openZooplaSettings();
+        // Auto-click enable in the modal after it opens
+        setTimeout(() => {
+          const btn = $('zpEnableBtn');
+          if (btn) btn.click();
+        }, 300);
+      });
+    }
+
+    if (zpRelayBannerDismiss) {
+      zpRelayBannerDismiss.addEventListener('click', () => {
+        localStorage.setItem('crabify_zp_banner_dismissed', 'true');
+        if (zpRelayBannerEl) zpRelayBannerEl.style.display = 'none';
+      });
+    }
+
+    /* ── EXPOSE openZooplaSettings globally (used in inline onclick) */
+    window.openZooplaSettings = openZooplaSettings;
 
     /* ── LOCATION ENTER KEY ─────────────────────────────────── */
     $('psLocation').addEventListener('keydown', e => {

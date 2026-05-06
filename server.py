@@ -2153,7 +2153,51 @@ class CrabifyHandler(BaseHTTPRequestHandler):
         except Exception:
             body = {}
 
-        if path == "/api/config":
+        if path == "/api/zoopla-relay":
+            # ── Browser-relay endpoint ─────────────────────────────────────────
+            # The user's browser fetches Zoopla directly (real residential IP),
+            # then POSTs the raw HTML here for parsing. This bypasses the
+            # 28-result datacenter cap completely — Zoopla sees a real UK user.
+            #
+            # Expected body: { "html": "<full page html>", "transaction_type": "buy"|"rent" }
+            html = body.get("html", "")
+            transaction_type = body.get("transaction_type", "buy")
+
+            if not html or len(html) < 10000:
+                self.send_json({"error": "html_too_short", "listings": [], "total": 0}, 400)
+                return
+
+            # Check if Cloudflare blocked this request in the browser
+            if "just a moment" in html.lower() and len(html) < 50000:
+                self.send_json({"error": "cf_blocked", "listings": [], "total": 0}, 403)
+                return
+
+            # Parse the RSC payload from the browser-fetched HTML
+            raw_listings = _parse_zoopla_rsc(html)
+            if not raw_listings:
+                self.send_json({"listings": [], "total": 0, "error": None})
+                return
+
+            listings = [_map_zoopla_listing(r, transaction_type) for r in raw_listings]
+
+            # Extract total from RSC metadata
+            total = len(listings)
+            chunks = re.findall(r'self\.__next_f\.push\(\[1,(.*?)\]\s*\)', html, re.DOTALL)
+            all_text = ''
+            for chunk in chunks:
+                try:
+                    all_text += json.loads(chunk)
+                except Exception:
+                    all_text += chunk
+            ni_match = re.search(r'"(?:numberOfItems|totalResults|total)"\s*:\s*(\d+)', all_text)
+            if ni_match:
+                total = int(ni_match.group(1))
+
+            print(f"  [Zoopla-Relay] Parsed {len(listings)} listings from browser HTML (total: {total})")
+            self.send_json({"listings": listings, "total": total, "error": None})
+            return
+
+        elif path == "/api/config":
             # Save Scrapfly API key
             new_key = body.get("scrapfly_api_key", "").strip()
             if not new_key:
