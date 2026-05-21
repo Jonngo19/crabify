@@ -833,6 +833,27 @@ def zoopla_search(location: str, params: dict) -> tuple:
 
     print(f"  [Zoopla] Fetching: {url}")
 
+    # ── Attempt 0: Playwright (headless Firefox) ───────────────────────────
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            browser = p.firefox.launch(headless=True)
+            context = browser.new_context(
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0",
+                locale="en-GB",
+            )
+            page = context.new_page()
+            page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            html = page.content()
+            browser.close()
+        if len(html) > 50000:
+            listings, total, _ = _zoopla_parse_html(html, transaction_type)
+            if listings:
+                print(f"  [Zoopla] ✓ {len(listings)} listings via Playwright")
+                return listings, total, None
+    except Exception as e:
+        print(f"  [Zoopla] Playwright failed: {e}")
+         
     # ── Attempt 1: urllib with browser headers ─────────────────────────────
     listings, total = _zoopla_urllib_fetch(url, transaction_type)
     if listings:
