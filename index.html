@@ -2576,7 +2576,7 @@
     .ib-btn:hover { background: var(--accent-dark); }
     .ib-btn:active { transform: scale(0.98); }
 
-    /* ── HERO SOURCE PILLS (below search bar) ── */
+    /* -- HERO SOURCE PILLS (below search bar) -- */
     .ib-hero-sources {
       width: 100%;
       max-width: 100%;
@@ -2611,7 +2611,7 @@
       min-height: 16px;
     }
 
-    /* ── RESULTS SECTION ── */
+    /* -- RESULTS SECTION -- */
     #ibResultsSection {
       background: #f5f5f5;
       min-height: 60vh;
@@ -2665,7 +2665,7 @@
       align-items: start;
     }
 
-    /* ── SIDEBAR ── */
+    /* -- SIDEBAR -- */
     .ib-sidebar {
       position: sticky;
       top: 80px;
@@ -2718,7 +2718,7 @@
     .ib-filter-group .pr-filter select:focus,
     .ib-filter-group .pr-filter input:focus { border-color: var(--accent); }
 
-    /* ── MAIN RESULTS AREA ── */
+    /* -- MAIN RESULTS AREA -- */
     .ib-main {
       min-width: 0;
       overflow: hidden;
@@ -2737,7 +2737,7 @@
       color: #0f0f0f; font-weight: 700; font-size: 16px;
     }
 
-    /* ── ACTION BUTTONS (Shortlist / Print / Share) ── */
+    /* -- ACTION BUTTONS (Shortlist / Print / Share) -- */
     .ib-action-btns {
       display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
     }
@@ -2806,7 +2806,7 @@
     .ib-show-filters-btn:hover { border-color: var(--accent); color: var(--accent); }
     .ib-show-filters-btn.visible { display: inline-flex; }
 
-    /* ── RESULTS GRID ── */
+    /* -- RESULTS GRID -- */
     .ib-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2830,10 +2830,10 @@
     .ib-grid .pc__tag { font-size:11px; padding:4px 8px; }
     .ib-grid .pc { border-radius:14px; min-width:0; }
 
-    /* ── SOURCES IN SIDEBAR ── */
+    /* -- SOURCES IN SIDEBAR -- */
     .ib-sources-wrap { padding: 0 16px 16px; }
 
-    /* ── SOURCE FILTER PILLS BAR ── */
+    /* -- SOURCE FILTER PILLS BAR -- */
     .ib-source-bar {
       padding: 14px 0 6px;
     }
@@ -2883,15 +2883,15 @@
       color: rgba(241,77,76,0.7);
     }
 
-    /* ── LOADING STATE for inline ── */
+    /* -- LOADING STATE for inline -- */
     #ibLoading {
       padding: 60px 20px;
       text-align: center;
     }
 
-    /* ──────────────────────────────────────────────────────────
+    /* ----------------------------------------------------------
        RESPONSIVE — inline results
-    ────────────────────────────────────────────────────────── */
+    ---------------------------------------------------------- */
 
     /* Large desktop: keep 4 cols with sidebar */
     @media (min-width: 1300px) {
@@ -3317,7 +3317,7 @@
 
       <div class="ib-body">
 
-        <!-- ── FILTER SIDEBAR (desktop left / mobile top) ── -->
+        <!-- -- FILTER SIDEBAR (desktop left / mobile top) -- -->
         <aside class="ib-sidebar visible" id="ibSidebar">
 
           <!-- Source filter pills moved into sidebar header -->
@@ -3325,7 +3325,7 @@
             <div class="ib-source-pills" id="ibSourcePills" style="flex-wrap:wrap;gap:6px;display:flex;"></div>
           </div>
 
-          <!-- ── PROPERTY FILTERS ── -->
+          <!-- -- PROPERTY FILTERS -- -->
           <div id="ibFiltersProperty" class="ib-filter-group">
             <div class="pr-filter">
               <label>Transaction type</label>
@@ -3379,7 +3379,7 @@
             <button class="btn-accent-sm" style="width:100%;justify-content:center;margin-top:4px;" id="ibPrApply">Search &amp; Apply</button>
           </div>
 
-          <!-- ── CARS FILTERS ── -->
+          <!-- -- CARS FILTERS -- -->
           <div id="ibFiltersCars" class="ib-filter-group" style="display:none;">
             <div class="pr-filter">
               <label>Make &amp; Model</label>
@@ -3426,7 +3426,7 @@
             <button class="btn-accent-sm" style="width:100%;justify-content:center;margin-top:4px;" id="ibCarsApply">Search &amp; Apply</button>
           </div>
 
-          <!-- ── JOBS FILTERS ── -->
+          <!-- -- JOBS FILTERS -- -->
           <div id="ibFiltersJobs" class="ib-filter-group" style="display:none;">
             <div class="pr-filter">
               <label>Job title or keywords</label>
@@ -3477,7 +3477,7 @@
 
         </aside>
 
-        <!-- ── RESULTS AREA ── -->
+        <!-- -- RESULTS AREA -- -->
         <main class="ib-main" id="ibMain">
 
           <!-- Source filter pills moved to sidebar header -->
@@ -4442,10 +4442,10 @@
       <!-- Results main area -->
       <main class="pr-main" id="prMain">
 
-        <!-- ── Zoopla browser-relay nudge banner ──────────────────────
+        <!-- -- Zoopla browser-relay nudge banner ----------------------
              Shown after search when relay is NOT enabled.
              Dismissed permanently via close button.
-        ──────────────────────────────────────────────────────────── -->
+        ------------------------------------------------------------ -->
         <div id="zpRelayBanner" style="display:none;background:linear-gradient(135deg,rgba(241,77,76,0.06),rgba(139,26,26,0.04));border:1px solid rgba(241,77,76,0.2);border-radius:10px;padding:12px 16px;margin-bottom:14px;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;gap:10px;">
             <span style="font-size:20px;">🏠</span>
@@ -4735,7 +4735,7 @@
   (function () {
     'use strict';
 
-    /* ── STATE ─────────────────────────────────────────────── */
+    /* -- STATE ----------------------------------------------- */
     const state = {
       searchParams: {},
       allResults: [],
@@ -4749,7 +4749,7 @@
       zooplaStat: '',
     };
 
-    /* ── ELEMENTS ───────────────────────────────────────────── */
+    /* -- ELEMENTS --------------------------------------------- */
     const $ = id => document.getElementById(id);
     const prPage    = $('prPage');
     const prBack    = $('prBack');
@@ -4769,7 +4769,7 @@
     const emSend    = $('emSend');
     const toast     = $('toast');
 
-    /* ── BUY / RENT TABS in sidebar ─────────────────────────── */
+    /* -- BUY / RENT TABS in sidebar --------------------------- */
     document.querySelectorAll('#prTypeBuy, #prTypeRent').forEach(btn => {
       btn.addEventListener('click', () => {
         $('prTypeBuy').style.cssText  = 'flex:1;padding:8px;font-size:13px;border-radius:8px;cursor:pointer;font-weight:500;border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);';
@@ -4792,7 +4792,7 @@
       }
     });
 
-    /* ── SEARCH & APPLY (sidebar button) ────────────────────── */
+    /* -- SEARCH & APPLY (sidebar button) ---------------------- */
     // This is the unified entry point — reads all sidebar fields and searches
     function runPropertySearch() {
       const loc = $('psLocation').value.trim();
@@ -4828,7 +4828,7 @@
       doSearch();
     }
 
-    /* ── RESULTS PAGE ───────────────────────────────────────── */
+    /* -- RESULTS PAGE ----------------------------------------- */
     function openResultsPage() {
       prPage.classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -4853,7 +4853,7 @@
       document.body.style.overflow = '';
     });
 
-    /* ── LOADING MESSAGES ───────────────────────────────────── */
+    /* -- LOADING MESSAGES ------------------------------------- */
     const loadingMessages = [
       'Crabify is crawling property listings…',
       'Scanning Rightmove for matching properties…',
@@ -4883,7 +4883,7 @@
       clearInterval(loadingInterval);
     }
 
-    /* ── FETCH SEARCH RESULTS ───────────────────────────────── */
+    /* -- FETCH SEARCH RESULTS --------------------------------- */
     async function doSearch(page = 1) {
       startLoadingAnimation();
       prLoading.style.display = 'flex';
@@ -4896,7 +4896,7 @@
       Object.entries(params).forEach(([k, v]) => { if (v !== '' && v !== null && v !== undefined) qs.set(k, v); });
 
       try {
-        // ── Run server search + browser Zoopla relay IN PARALLEL ──
+        // -- Run server search + browser Zoopla relay IN PARALLEL --
         // The server handles Rightmove, OnTheMarket, Gumtree, SpareRoom
         // and a headless-Firefox Zoopla fetch (~28 results from datacenter).
         //
@@ -4921,7 +4921,7 @@
           return;
         }
 
-        // ── Merge browser-relay Zoopla results if available ───────
+        // -- Merge browser-relay Zoopla results if available -------
         // relayData = { listings: [...], total: N } or null
         let finalResults  = data.results || [];
         let finalTotal    = data.total   || finalResults.length;
@@ -5048,7 +5048,7 @@
       $('prEmptyMsg').textContent = msg;
     }
 
-    /* ── RENDER RESULTS ─────────────────────────────────────── */
+    /* -- RENDER RESULTS --------------------------------------- */
     function renderResults() {
       prGrid.innerHTML = '';
 
@@ -5161,7 +5161,7 @@
         .replace(/'/g, '&#039;');
     }
 
-    /* ── SELECTION ──────────────────────────────────────────── */
+    /* -- SELECTION -------------------------------------------- */
     function toggleSelect(id) {
       if (state.selectedIds.has(id)) {
         state.selectedIds.delete(id);
@@ -5190,7 +5190,7 @@
       renderResults();
     });
 
-    /* ── LOCAL FILTERS ──────────────────────────────────────── */
+    /* -- LOCAL FILTERS ---------------------------------------- */
     function hasFeature(prop, keyword) {
       const haystack = [
         prop.description || '',
@@ -5265,7 +5265,7 @@
       doSearch(1);
     });
 
-    /* ── PAGINATION ─────────────────────────────────────────── */
+    /* -- PAGINATION ------------------------------------------- */
     function renderPagination() {
       const total = state.totalResults || state.filteredResults.length;
       const pages = Math.ceil(total / 25);
@@ -5308,7 +5308,7 @@
       return [1,'…',cur-1,cur,cur+1,'…',total];
     }
 
-    /* ── SOURCE LIST ────────────────────────────────────────── */
+    /* -- SOURCE LIST ------------------------------------------ */
     function updateSourceList(sources) {
       const list = $('prSourceList');
       list.innerHTML = '';
@@ -5342,7 +5342,7 @@
       });
     }
 
-    /* ── DOWNLOAD CSV ───────────────────────────────────────── */
+    /* -- DOWNLOAD CSV ----------------------------------------- */
     function downloadCSV(properties) {
       const headers = ['Address','Price','Bedrooms','Bathrooms','Type','Agent','Phone','Source','URL'];
       const rows = properties.map(p => [
@@ -5375,7 +5375,7 @@
       downloadCSV(sel);
     });
 
-    /* ── SHARE ──────────────────────────────────────────────── */
+    /* -- SHARE ------------------------------------------------ */
     $('prShare').addEventListener('click', async () => {
       const url = window.location.href;
       const text = `${state.filteredResults.length} properties in ${state.locationLabel} via Crabify`;
@@ -5389,7 +5389,7 @@
       } catch {}
     });
 
-    /* ── EMAIL MODAL ────────────────────────────────────────── */
+    /* -- EMAIL MODAL ------------------------------------------ */
     $('prEmailAgents').addEventListener('click', openEmailModal);
     emClose.addEventListener('click', closeEmailModal);
     emBackdrop.addEventListener('click', closeEmailModal);
@@ -5482,7 +5482,7 @@
       }
     });
 
-    /* ── TOAST ──────────────────────────────────────────────── */
+    /* -- TOAST ------------------------------------------------ */
     let toastTimer;
     function showToast(msg, type = '') {
       clearTimeout(toastTimer);
@@ -5493,9 +5493,9 @@
       toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    /* ══════════════════════════════════════════════════════════
+    /* ==========================================================
        ZOOPLA BROWSER-RELAY SYSTEM
-       ══════════════════════════════════════════════════════════
+       ==========================================================
        How it works:
        1. User clicks "Enable Zoopla via My Browser" — stored in localStorage.
        2. On every search, the browser fetches the Zoopla URL directly
@@ -5506,13 +5506,13 @@
 
        The server also attempts a lightweight urllib fetch (no Firefox).
        If Cloudflare blocks the server fetch, the relay provides the results.
-    ═══════════════════════════════════════════════════════════ */
+    =========================================================== */
 
-    // ── Persisted consent flag (localStorage) ─────────────────
+    // -- Persisted consent flag (localStorage) -----------------
     const ZP_RELAY_KEY = 'crabify_zoopla_relay_enabled';
     let zpRelayEnabled = localStorage.getItem(ZP_RELAY_KEY) === 'true';
 
-    // ── Modal elements ─────────────────────────────────────────
+    // -- Modal elements -----------------------------------------
     const zpOverlay    = $('zpOverlay');
     const zpClose      = $('zpClose');
     const zpBackdrop   = $('zpBackdrop');
@@ -5581,7 +5581,7 @@
       showZpStatus('Browser relay disabled. Server will fetch Zoopla (limited results).', 'warn');
     });
 
-    // ── Pill state ─────────────────────────────────────────────
+    // -- Pill state ---------------------------------------------
     function updateZpPill() {
       if (!zpPill) return;
       zpPill.style.display  = 'inline-flex';
@@ -5598,14 +5598,14 @@
     }
     updateZpPill();
 
-    /* ══════════════════════════════════════════════════════════
+    /* ==========================================================
        ZOOPLA BROWSER FETCH HELPER
-       ══════════════════════════════════════════════════════════
+       ==========================================================
        Builds the Zoopla URL from search params, fetches it
        directly from the user's browser (real residential IP),
        then POSTs raw HTML to /api/zoopla-relay for parsing.
        Returns an array of parsed listings, or [] on failure.
-    ═══════════════════════════════════════════════════════════ */
+    =========================================================== */
     async function fetchZooplaViaRelay(searchParams) {
       if (!zpRelayEnabled) return null; // null = "relay not enabled, server will try urllib"
 
@@ -5636,7 +5636,7 @@
 
       console.log('[Crabify] Browser fetching Zoopla via relay:', zooplaUrl);
 
-      // ── Update loading indicator ───────────────────────────
+      // -- Update loading indicator ---------------------------
       const zpLoader = $('prLoadingZoopla');
       if (zpLoader) {
         zpLoader.style.opacity = '1';
@@ -5697,7 +5697,7 @@
       }
     }
 
-    /* ── Hidden iframe fetcher ─────────────────────────────────
+    /* -- Hidden iframe fetcher ---------------------------------
        Since Zoopla doesn't allow cross-origin fetch() (CORS), we
        load the page in a sandboxed hidden iframe and extract the
        HTML via postMessage. This runs entirely within the user's
@@ -5710,7 +5710,7 @@
        Fallback: if the iframe approach fails (blocked by X-Frame-Options
        or CSP), we gracefully return null. The server will have already
        attempted a urllib fetch in parallel — relay augments those results.
-    ═══════════════════════════════════════════════════════════ */
+    =========================================================== */
     function _fetchZooplaHtmlViaIframe(url) {
       return new Promise((resolve) => {
         const TIMEOUT_MS = 20000;
@@ -5775,7 +5775,7 @@
       updateZpPill();
     })();
 
-    /* ── ZOOPLA RELAY BANNER BUTTONS ────────────────────────── */
+    /* -- ZOOPLA RELAY BANNER BUTTONS -------------------------- */
     const zpRelayBannerEnable  = $('zpRelayBannerEnable');
     const zpRelayBannerDismiss = $('zpRelayBannerDismiss');
     const zpRelayBannerEl      = $('zpRelayBanner');
@@ -5799,10 +5799,10 @@
       });
     }
 
-    /* ── EXPOSE openZooplaSettings globally (used in inline onclick) */
+    /* -- EXPOSE openZooplaSettings globally (used in inline onclick) */
     window.openZooplaSettings = openZooplaSettings;
 
-    /* ── LOCATION ENTER KEY ─────────────────────────────────── */
+    /* -- LOCATION ENTER KEY ----------------------------------- */
     $('psLocation').addEventListener('keydown', e => {
       if (e.key === 'Enter') runPropertySearch();
     });
@@ -6150,7 +6150,7 @@
        CARS + JOBS JAVASCRIPT
   ============================================================ -->
   <script>
-  /* ── CARS SEARCH ─────────────────────────────────────────── */
+  /* -- CARS SEARCH ------------------------------------------- */
   (function() {
     'use strict';
     const $ = id => document.getElementById(id);
@@ -6419,7 +6419,7 @@
 
   })();
 
-  /* ── JOBS SEARCH ─────────────────────────────────────────── */
+  /* -- JOBS SEARCH ------------------------------------------- */
   (function() {
     'use strict';
     const $ = id => document.getElementById(id);
@@ -6689,11 +6689,11 @@
   (function () {
     'use strict';
 
-    /* ─── HELPERS ─────────────────────────────────────────── */
+    /* --- HELPERS ------------------------------------------- */
     const $  = id => document.getElementById(id);
     const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-    /* ─── STATE ───────────────────────────────────────────── */
+    /* --- STATE --------------------------------------------- */
     const LAST_CAT_KEY = 'crabify_last_cat';
     let ibState = window.ibState = {
       activeCat: localStorage.getItem(LAST_CAT_KEY) || 'property',
@@ -6708,7 +6708,7 @@
       sourceTotals: {},         // { Rightmove: 120, Zoopla: 80, … }
     };
 
-    /* ─── ELEMENT REFS ────────────────────────────────────── */
+    /* --- ELEMENT REFS -------------------------------------- */
     const ibSearchBtn      = $('ibSearchBtn');
     const ibLocation       = $('ibLocation');
     const ibGeoStatus      = $('ibGeoStatus');
@@ -6729,7 +6729,7 @@
     const ibShowFiltersBtn = $('ibShowFiltersBtn');
     const ibLoadingText    = $('ibLoadingText');
 
-    /* ─── TAB INIT (default: property or last used) ────────── */
+    /* --- TAB INIT (default: property or last used) ---------- */
     const ibTabs = document.querySelectorAll('.ib-tab');
     function setActiveTab(cat) {
       ibState.activeCat = cat;
@@ -6750,12 +6750,12 @@
     }
     setActiveTab(ibState.activeCat);
 
-    /* ─── HERO SOURCE PILLS ───────────────────────────────────
+    /* --- HERO SOURCE PILLS -----------------------------------
        Show the website names below the search bar for the
        active category. Pills are interactive: clicking one
        filters results to that source (same logic as the
        in-results source bar).
-    ─────────────────────────────────────────────────────────── */
+    ----------------------------------------------------------- */
     const HERO_SOURCES = {
       property: ['Rightmove','Zoopla','OnTheMarket','Gumtree','SpareRoom'],
       cars:     ['AutoTrader','Exchange&Mart','Motors'],
@@ -6821,7 +6821,7 @@
       });
     });
 
-    /* ─── GEOLOCATION ─────────────────────────────────────── */
+    /* --- GEOLOCATION --------------------------------------- */
     function requestGeolocation() {
       if (!navigator.geolocation) return;
       // Silently try to get location in background — don't show "detecting" text
@@ -6852,7 +6852,7 @@
       );
     }
 
-    /* ─── PAGE LOAD: show results + filters immediately ─────── */
+    /* --- PAGE LOAD: show results + filters immediately ------- */
     function runDefaultSearch() {
       ibResultsSection.style.display = 'block';
       // Open sidebar/filters immediately — same state as after clicking Search
@@ -6874,7 +6874,7 @@
       runDefaultSearch();
     }
 
-    /* ─── SHOW / HIDE FILTERS ─────────────────────────────── */
+    /* --- SHOW / HIDE FILTERS ------------------------------- */
     function showFilters() {
       ibState.filtersVisible = true;
       ibSidebar.classList.add('visible');
@@ -6898,7 +6898,7 @@
     });
     if (ibShowFiltersBtn) ibShowFiltersBtn.addEventListener('click', showFilters);
 
-    /* ─── SEARCH BUTTON ───────────────────────────────────── */
+    /* --- SEARCH BUTTON ------------------------------------- */
     if (ibSearchBtn) {
       ibSearchBtn.addEventListener('click', () => runIbSearch(false));
     }
@@ -6908,17 +6908,17 @@
       });
     }
 
-    /* ─── APPLY BUTTONS IN SIDEBAR ────────────────────────── */
+    /* --- APPLY BUTTONS IN SIDEBAR -------------------------- */
     if ($('ibPrApply'))    $('ibPrApply').addEventListener('click',   () => runIbSearch(false));
     if ($('ibCarsApply'))  $('ibCarsApply').addEventListener('click', () => runIbSearch(false));
     if ($('ibJobsApply'))  $('ibJobsApply').addEventListener('click', () => runIbSearch(false));
 
-    /* ─── SORT CHANGE (re-filter without new fetch) ────────── */
+    /* --- SORT CHANGE (re-filter without new fetch) ---------- */
     if ($('ibPrSort'))    $('ibPrSort').addEventListener('change',    () => { applyIbFilters(); renderIbResults(); });
     if ($('ibCarsSort'))  $('ibCarsSort').addEventListener('change',  () => { applyIbFilters(); renderIbResults(); });
     if ($('ibJobsSort'))  $('ibJobsSort').addEventListener('change',  () => { applyIbFilters(); renderIbResults(); });
 
-    /* ─── MAIN SEARCH RUNNER ──────────────────────────────── */
+    /* --- MAIN SEARCH RUNNER -------------------------------- */
     function runIbSearch(autoRun) {
       const loc = ibLocation.value.trim();
       ibState.location = loc;
@@ -6944,7 +6944,7 @@
       doIbFetch();
     }
 
-    /* ─── FETCH ───────────────────────────────────────────── */
+    /* --- FETCH --------------------------------------------- */
     const loadingMsgsByCategory = {
       property: ['Crabify is crawling property listings…','Scanning Rightmove…','Scanning OnTheMarket…','Scanning Gumtree…','Comparing prices across the market…'],
       cars:     ['Crabify is searching for cars…','Scanning AutoTrader…','Scanning Exchange & Mart…','Comparing prices…','Gathering results…'],
@@ -7096,7 +7096,7 @@
       }
     }
 
-    /* ─── HELPERS FOR GETTING FILTER VALUES ────────────────── */
+    /* --- HELPERS FOR GETTING FILTER VALUES ------------------ */
     function getVal(id) {
       const el = $(id);
       if (!el) return '';
@@ -7119,7 +7119,7 @@
       });
     });
 
-    /* ─── APPLY CLIENT-SIDE FILTERS ───────────────────────── */
+    /* --- APPLY CLIENT-SIDE FILTERS ------------------------- */
     function applyIbFilters() {
       let results = [...ibState.allResults];
       const cat = ibState.activeCat;
@@ -7215,7 +7215,7 @@
       ibState.filteredResults = results;
     }
 
-    /* ─── SOURCE PILLS ────────────────────────────────────── */
+    /* --- SOURCE PILLS -------------------------------------- */
     const SOURCE_COLORS = {
       Rightmove:'#007a37', Zoopla:'#e05b00', OnTheMarket:'#6c3dab',
       Gumtree:'#72ac00',   SpareRoom:'#e8003d',
@@ -7269,7 +7269,7 @@
       return [prop.description||'', prop.address||'', prop.property_type||''].join(' ').toLowerCase().includes(keyword);
     }
 
-    /* ─── RENDER RESULTS ──────────────────────────────────── */
+    /* --- RENDER RESULTS ------------------------------------ */
     function renderIbResults() {
       ibGrid.innerHTML = '';
       const results = ibState.filteredResults;
@@ -7311,7 +7311,7 @@
       renderIbPagination();
     }
 
-    /* ─── CARD BUILDERS ───────────────────────────────────── */
+    /* --- CARD BUILDERS ------------------------------------- */
     function buildIbPropertyCard(prop) {
       const card = document.createElement('div');
       card.className = 'pc';
@@ -7422,7 +7422,7 @@
       return card;
     }
 
-    /* ─── PAGINATION ──────────────────────────────────────── */
+    /* --- PAGINATION ---------------------------------------- */
     function renderIbPagination() {
       const total = ibState.totalResults;
       const pages = Math.min(Math.ceil(total / ibState.perPage), 10);
@@ -7452,7 +7452,7 @@
   })();
   </script>
 
-  <!-- ── SHORTLIST PANEL ── -->
+  <!-- -- SHORTLIST PANEL -- -->
   <div class="ib-sl-overlay" id="ibSlOverlay"></div>
   <div class="ib-sl-panel" id="ibSlPanel">
     <div class="ib-sl-header">
@@ -7485,7 +7485,7 @@
     function $i(id) { return document.getElementById(id); }
     function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-    /* ── SHORTLIST STATE ── */
+    /* -- SHORTLIST STATE -- */
     const SL_KEY = 'crabify_shortlist';
     let slItems = [];
     function slLoad()  { try { slItems = JSON.parse(localStorage.getItem(SL_KEY)||'[]'); } catch(e){ slItems=[]; } }
@@ -7502,7 +7502,7 @@
     }
     updateBadge();
 
-    /* ── PANEL OPEN/CLOSE ── */
+    /* -- PANEL OPEN/CLOSE -- */
     const slPanel   = $i('ibSlPanel');
     const slOverlay = $i('ibSlOverlay');
     const slClose   = $i('ibSlClose');
@@ -7517,7 +7517,7 @@
     if (slClose)  slClose.addEventListener('click', closePanel);
     if (slOverlay)slOverlay.addEventListener('click', closePanel);
 
-    /* ── RENDER PANEL ── */
+    /* -- RENDER PANEL -- */
     function renderPanel() {
       slLoad(); updateBadge();
       Array.from(slBody.querySelectorAll('.ib-sl-item')).forEach(el => el.remove());
@@ -7543,7 +7543,7 @@
       });
     }
 
-    /* ── HEART BUTTONS ON CARDS ── */
+    /* -- HEART BUTTONS ON CARDS -- */
     function addHearts(container) {
       container.querySelectorAll('.pc').forEach(card => {
         if (card.querySelector('.ib-heart-btn')) return;
@@ -7587,7 +7587,7 @@
       addHearts(ibGrid);
     }
 
-    /* ── SHORTLIST PANEL FOOTER BUTTONS ── */
+    /* -- SHORTLIST PANEL FOOTER BUTTONS -- */
     $i('ibSlPrintBtn')?.addEventListener('click', () => {
       if (!slItems.length) { showToast('Nothing on your shortlist yet!'); return; }
       const win = window.open('', '_blank');
@@ -7605,7 +7605,7 @@
       document.querySelectorAll('.ib-heart-btn.saved').forEach(b => b.classList.remove('saved'));
     });
 
-    /* ── PRINT RESULTS ── */
+    /* -- PRINT RESULTS -- */
     $i('ibPrintBtn')?.addEventListener('click', () => {
       const state = window.ibState;
       const items = state?.filteredResults || [];
@@ -7622,7 +7622,7 @@
       win.document.close(); win.print();
     });
 
-    /* ── SHARE SEARCH ── */
+    /* -- SHARE SEARCH -- */
     $i('ibShareBtn')?.addEventListener('click', () => {
       const state = window.ibState;
       const url = new URL(location.href);
@@ -7636,7 +7636,7 @@
       }
     });
 
-    /* ── HELPERS ── */
+    /* -- HELPERS -- */
     function copyAndToast(text, msg) {
       navigator.clipboard?.writeText(text).catch(()=>{
         const ta = Object.assign(document.createElement('textarea'),{value:text,style:'position:fixed;opacity:0'});
@@ -7661,12 +7661,12 @@
   (function () {
     'use strict';
 
-    /* ── Storage keys ─────────────────────────────────────────── */
+    /* -- Storage keys ------------------------------------------- */
     const IP_CONSENT_KEY  = 'crabify_ip_consent';   // 'granted' | 'denied'
     const IP_DATA_KEY     = 'crabify_ip_data';       // cached JSON string
     const GPS_CONSENT_KEY = 'crabify_gps_consent';  // 'granted' | 'denied'
 
-    /* ── DOM refs ─────────────────────────────────────────────── */
+    /* -- DOM refs ----------------------------------------------- */
     const banner      = document.getElementById('ipBanner');
     const backdrop    = document.getElementById('ipBannerBackdrop');
     const closeBtn    = document.getElementById('ipBannerClose');
@@ -7684,7 +7684,7 @@
 
     if (!banner) return; // safety guard
 
-    /* ── Open / close helpers ────────────────────────────────── */
+    /* -- Open / close helpers ---------------------------------- */
     function openBanner()  { banner.classList.add('open');  }
     function closeBanner() { banner.classList.remove('open'); }
 
@@ -7697,7 +7697,7 @@
       closeBanner();
     }
 
-    /* ── Status helper ───────────────────────────────────────── */
+    /* -- Status helper ----------------------------------------- */
     function showStatus(msg, type /* success | error | info */) {
       if (!statusEl) return;
       statusEl.style.display = 'block';
@@ -7715,7 +7715,7 @@
       statusEl.style.padding    = '10px 14px';
     }
 
-    /* ── Render IP data into the info-box ─────────────────────── */
+    /* -- Render IP data into the info-box ----------------------- */
     function renderIpData(data) {
       if (!data || !infoBox) return;
 
@@ -7738,7 +7738,7 @@
       if (navChip)     navChip.style.display   = 'inline-flex';
     }
 
-    /* ── Fetch IP data from our server endpoint ──────────────── */
+    /* -- Fetch IP data from our server endpoint ---------------- */
     async function fetchIpInfo() {
       allowBtn.disabled    = true;
       allowBtn.textContent = '⏳ Detecting…';
@@ -7779,7 +7779,7 @@
     /* Allow button — primary action */
     allowBtn.addEventListener('click', fetchIpInfo);
 
-    /* ── GPS precise location ────────────────────────────────── */
+    /* -- GPS precise location ---------------------------------- */
     if (gpsBtn) {
       gpsBtn.addEventListener('click', () => {
         if (!navigator.geolocation) {
@@ -7836,7 +7836,7 @@
       });
     }
 
-    /* ── Prefill search location in ALL search inputs ─────────── */
+    /* -- Prefill search location in ALL search inputs ----------- */
     function prefillSearchLocation(city) {
       /* Inline browse search box */
       const ibLocation = document.getElementById('ibLocation');
@@ -7865,7 +7865,7 @@
       }
     }
 
-    /* ── Nav chip click — re-open banner with cached data ──────── */
+    /* -- Nav chip click — re-open banner with cached data -------- */
     if (navChip) {
       navChip.addEventListener('click', () => {
         /* Show cached data if available */
@@ -7877,7 +7877,7 @@
       });
     }
 
-    /* ── Decide on page load ─────────────────────────────────── */
+    /* -- Decide on page load ----------------------------------- */
     function init() {
       const consent = localStorage.getItem(IP_CONSENT_KEY);
 
