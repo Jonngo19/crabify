@@ -4907,7 +4907,7 @@
         //
         // Whichever Zoopla result is better (relay > server) wins.
         const [serverData, relayData] = await Promise.all([
-          fetch(`/api/search?${qs.toString()}`).then(r => r.json()),
+          fetch(`https://crabify-api.onrender.com/api/search?${qs.toString()}`).then(r => r.json()),
           fetchZooplaViaRelay(params),   // returns null if relay disabled
         ]);
 
@@ -5443,7 +5443,7 @@
       const selectedProps = state.filteredResults.filter(p => state.selectedIds.has(p.id));
 
       try {
-        const resp = await fetch('/api/email', {
+        const resp = await fetch('https://crabify-api.onrender.com/api/email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user: { name, email, phone, message: msg }, properties: selectedProps }),
@@ -5666,7 +5666,7 @@
         }
 
         // POST raw HTML to server for parsing
-        const relayResp = await fetch('/api/zoopla-relay', {
+        const relayResp = await fetch('https://crabify-api.onrender.com/api/zoopla-relay', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({ html, transaction_type: transType }),
@@ -6244,7 +6244,7 @@
       Object.entries(params).forEach(([k, v]) => { if (v !== '' && v !== null && v !== undefined && v !== false) qs.set(k, v); });
 
       try {
-        const resp = await fetch(`/api/cars?${qs.toString()}`);
+        const resp = await fetch(`https://crabify-api.onrender.com/api/cars?${qs.toString()}`);
         const data = await resp.json();
         stopCarsLoading();
         $('carsLoading').style.display = 'none';
@@ -6514,7 +6514,7 @@
       Object.entries(params).forEach(([k, v]) => { if (v !== '' && v !== null && v !== undefined && v !== false && v !== 'any') qs.set(k, v); });
 
       try {
-        const resp = await fetch(`/api/jobs?${qs.toString()}`);
+        const resp = await fetch(`https://crabify-api.onrender.com/api/jobs?${qs.toString()}`);
         const data = await resp.json();
         stopJobsLoading();
         $('jobsLoading').style.display = 'none';
@@ -6978,7 +6978,7 @@
       let params = {};
 
       if (cat === 'property') {
-        endpoint = '/api/search';
+        endpoint = 'https://crabify-api.onrender.com/api/search';
         params = {
           location: loc || 'London',
           type: getTabType(),
@@ -6994,7 +6994,7 @@
           index: (page - 1) * ibState.perPage,
         };
       } else if (cat === 'cars') {
-        endpoint = '/api/cars';
+        endpoint = 'https://crabify-api.onrender.com/api/cars';
         params = {
           location: loc || 'London',
           make:    getVal('ibCarsMake') || '',
@@ -7024,7 +7024,7 @@
           showFilters();
           return;
         }
-        endpoint = '/api/jobs';
+        endpoint = 'https://crabify-api.onrender.com/api/jobs';
         params = {
           query:    jobsQuery,
           location: loc || '',
@@ -7745,7 +7745,7 @@
       showStatus('Looking up your IP address…', 'info');
 
       try {
-        const resp = await fetch('/api/ip-info', { cache: 'no-store' });
+        const resp = await fetch('https://crabify-api.onrender.com/api/ip-info', { cache: 'no-store' });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
         if (data.error) throw new Error(data.error);
@@ -7895,7 +7895,7 @@
             const data = JSON.parse(cached);
             renderIpData(data);
             /* Refresh data in the background (don't show banner) */
-            fetch('/api/ip-info', { cache: 'no-store' })
+            fetch('https://crabify-api.onrender.com/api/ip-info', { cache: 'no-store' })
               .then(r => r.ok ? r.json() : null)
               .then(fresh => {
                 if (fresh && !fresh.error) {
