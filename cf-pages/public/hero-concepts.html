@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crabify — Hero Concepts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #F14D4C;
+      --accent-light: #f96160;
+      --text-primary: #0f0f0f;
+      --text-secondary: #6b6b6b;
+      --text-muted: #a0a0a0;
+      --border: rgba(0,0,0,0.08);
+      --font: 'Inter', sans-serif;
+    }
+    body { font-family: var(--font); background: #eeeeed; color: var(--text-primary); padding: 40px 24px 100px; }
+
+    .page-title { text-align:center; font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:800; letter-spacing:-0.03em; margin-bottom:6px; }
+    .page-sub { text-align:center; font-size:13px; color:var(--text-secondary); margin-bottom:60px; }
+
+    .concept { max-width:900px; margin:0 auto 80px; }
+    .concept-label { display:flex; align-items:flex-start; gap:14px; margin-bottom:18px; }
+    .concept-num { width:30px; height:30px; background:var(--text-primary); color:#fff; border-radius:50%; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+    .concept-name { font-size:16px; font-weight:700; letter-spacing:-0.01em; margin-bottom:3px; }
+    .concept-desc { font-size:12px; color:var(--text-secondary); line-height:1.5; max-width:560px; }
+    .stage { border-radius:20px; overflow:hidden; box-shadow:0 4px 40px rgba(0,0,0,0.10); }
+    hr.div { max-width:900px; margin:0 auto 80px; border:none; border-top:1px solid rgba(0,0,0,0.09); }
+
+    /* ── MOCK RESULTS (shared) ─────────────────────────── */
+    .mock-results { background:#f7f7f7; padding:16px; display:flex; flex-direction:column; gap:10px; }
+    .mock-card { background:#fff; border-radius:10px; padding:14px 16px; display:flex; gap:12px; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+    .mock-img { width:56px; height:56px; border-radius:8px; flex-shrink:0; object-fit:cover; }
+    .mock-img-ph { width:56px; height:56px; border-radius:8px; flex-shrink:0; background:#e8e8e8; }
+    .mock-info { flex:1; min-width:0; }
+    .mock-title { font-size:13px; font-weight:600; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mock-sub { font-size:11px; color:var(--text-secondary); }
+    .mock-price { font-size:13px; font-weight:700; color:var(--accent); white-space:nowrap; }
+    .mock-badge { font-size:10px; font-weight:600; background:#f14d4c18; color:var(--accent); padding:2px 7px; border-radius:4px; white-space:nowrap; }
+    .mock-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:16px; background:#f7f7f7; }
+    .mock-grid-card { background:#fff; border-radius:10px; padding:14px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+    .mock-grid-img { width:100%; height:80px; background:#e8e8e8; border-radius:6px; margin-bottom:8px; }
+    .mock-grid-title { font-size:12px; font-weight:600; margin-bottom:2px; }
+    .mock-grid-sub { font-size:11px; color:var(--text-secondary); }
+    .mock-grid-price { font-size:13px; font-weight:700; color:var(--accent); margin-top:4px; }
+    .mock-sources { display:flex; gap:6px; padding:10px 16px 4px; flex-wrap:wrap; }
+    .mock-source { font-size:10px; font-weight:600; padding:3px 8px; border-radius:4px; background:#fff; border:1px solid var(--border); color:var(--text-secondary); }
+    .mock-source.active { background:rgba(241,77,76,0.08); border-color:rgba(241,77,76,0.2); color:var(--accent); }
+    .mock-stats { font-size:11px; color:var(--text-secondary); padding:8px 16px 4px; }
+    .mock-stats strong { color:var(--text-primary); }
+
+
+    /* ══════════════════════════════════════════════════
+       CONCEPT A — Big 3 Cards (No search bar at all)
+    ══════════════════════════════════════════════════ */
+    .a-stage { background:#fff; }
+    .a-hero { padding:56px 40px 40px; text-align:center; }
+    .a-tag { font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); margin-bottom:16px; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .a-tag::before,.a-tag::after { content:''; display:block; width:24px; height:1px; background:var(--text-muted); }
+    .a-headline { font-family:'Space Grotesk',sans-serif; font-size:clamp(26px,3.8vw,42px); font-weight:800; letter-spacing:-0.03em; margin-bottom:12px; line-height:1.1; }
+    .a-headline em { font-style:normal; color:var(--accent); }
+    .a-sub { font-size:14px; color:var(--text-secondary); margin-bottom:40px; }
+    .a-cards { display:flex; gap:14px; justify-content:center; }
+    .a-card { flex:1; max-width:200px; border:1.5px solid var(--border); border-radius:16px; padding:28px 16px 22px; cursor:pointer; transition:all 0.2s; text-align:center; background:#fff; }
+    .a-card:hover { border-color:var(--accent); box-shadow:0 8px 32px rgba(241,77,76,0.12); transform:translateY(-3px); }
+    .a-card-icon { font-size:36px; margin-bottom:10px; }
+    .a-card-name { font-size:15px; font-weight:700; margin-bottom:4px; }
+    .a-card-sub { font-size:11px; color:var(--text-muted); line-height:1.4; }
+    .a-card-arrow { display:inline-block; margin-top:14px; font-size:18px; color:var(--accent); opacity:0; transition:opacity 0.15s; }
+    .a-card:hover .a-card-arrow { opacity:1; }
+
+    /* ══════════════════════════════════════════════════
+       CONCEPT B — Inline hero + instant results below
+       (Tabs select category, results load in-page)
+    ══════════════════════════════════════════════════ */
+    .b-stage { background:#fff; }
+    .b-hero { padding:44px 32px 0; }
+    .b-top { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:20px; gap:16px; flex-wrap:wrap; }
+    .b-headline { font-family:'Space Grotesk',sans-serif; font-size:clamp(22px,3vw,36px); font-weight:800; letter-spacing:-0.03em; line-height:1.1; }
+    .b-headline em { font-style:normal; color:var(--accent); }
+    .b-tabs { display:flex; gap:6px; }
+    .b-tab { padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600; border:1.5px solid var(--border); background:#fff; color:var(--text-secondary); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.15s; }
+    .b-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .b-search { display:flex; gap:8px; margin-bottom:0; }
+    .b-input-wrap { flex:1; display:flex; align-items:center; background:#f5f5f5; border-radius:10px; padding:0 14px; gap:8px; }
+    .b-input { flex:1; border:none; outline:none; background:transparent; font-size:14px; padding:12px 0; font-family:var(--font); color:var(--text-primary); }
+    .b-input::placeholder { color:#ccc; }
+    .b-btn { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:12px 22px; font-size:13px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+    .b-divider { height:1px; background:var(--border); margin:0 32px; }
+
+    /* ══════════════════════════════════════════════════
+       CONCEPT C — Split layout (left: headline+cats, right: live results preview)
+    ══════════════════════════════════════════════════ */
+    .c-stage { background:#fff; }
+    .c-inner { display:grid; grid-template-columns:1fr 1fr; min-height:420px; }
+    .c-left { padding:48px 36px; display:flex; flex-direction:column; justify-content:center; border-right:1px solid var(--border); }
+    .c-tag { font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); margin-bottom:14px; }
+    .c-headline { font-family:'Space Grotesk',sans-serif; font-size:clamp(22px,2.6vw,34px); font-weight:800; letter-spacing:-0.03em; line-height:1.15; margin-bottom:10px; }
+    .c-headline em { font-style:normal; color:var(--accent); }
+    .c-sub { font-size:13px; color:var(--text-secondary); margin-bottom:28px; line-height:1.6; }
+    .c-cats { display:flex; flex-direction:column; gap:10px; }
+    .c-cat { display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:12px; border:1.5px solid var(--border); cursor:pointer; transition:all 0.15s; background:#fff; }
+    .c-cat:hover,.c-cat.active { border-color:var(--accent); background:rgba(241,77,76,0.04); }
+    .c-cat-icon { font-size:22px; }
+    .c-cat-info { flex:1; }
+    .c-cat-name { font-size:14px; font-weight:700; margin-bottom:1px; }
+    .c-cat-sub { font-size:11px; color:var(--text-muted); }
+    .c-cat-arrow { color:var(--accent); font-size:16px; opacity:0; transition:opacity 0.15s; }
+    .c-cat:hover .c-cat-arrow,.c-cat.active .c-cat-arrow { opacity:1; }
+    .c-right { background:#fafafa; display:flex; flex-direction:column; }
+    .c-right-header { padding:16px 20px 10px; border-bottom:1px solid var(--border); font-size:12px; font-weight:600; color:var(--text-secondary); display:flex; align-items:center; justify-content:space-between; }
+    .c-live-dot { width:7px; height:7px; border-radius:50%; background:#22c55e; display:inline-block; margin-right:5px; animation:pulse2 1.5s infinite; }
+    @keyframes pulse2 { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* ══════════════════════════════════════════════════
+       CONCEPT D — Full-width tab bar, results below fold
+       (like a proper product, e.g. Skyscanner)
+    ══════════════════════════════════════════════════ */
+    .d-stage { background:#0f0f0f; }
+    .d-hero { padding:52px 40px 0; text-align:center; }
+    .d-headline { font-family:'Space Grotesk',sans-serif; font-size:clamp(26px,3.8vw,44px); font-weight:800; letter-spacing:-0.03em; line-height:1.1; color:#fff; margin-bottom:8px; }
+    .d-headline em { font-style:normal; color:var(--accent); }
+    .d-sub { font-size:14px; color:rgba(255,255,255,0.45); margin-bottom:36px; }
+    .d-tabs { display:inline-flex; background:rgba(255,255,255,0.07); border-radius:12px; padding:5px; gap:4px; margin-bottom:0; }
+    .d-tab { padding:10px 28px; border-radius:8px; font-size:14px; font-weight:600; color:rgba(255,255,255,0.45); border:none; background:transparent; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.15s; display:flex; align-items:center; gap:7px; }
+    .d-tab.active { background:#fff; color:var(--text-primary); }
+    .d-results-wrap { background:#f7f7f7; margin-top:24px; border-radius:16px 16px 0 0; padding:20px; }
+    .d-search-bar { display:flex; gap:8px; margin-bottom:16px; }
+    .d-input-wrap { flex:1; display:flex; align-items:center; background:#fff; border-radius:8px; padding:0 14px; gap:8px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+    .d-input { flex:1; border:none; outline:none; background:transparent; font-size:13px; padding:11px 0; font-family:var(--font); }
+    .d-input::placeholder { color:#ccc; }
+    .d-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:11px 20px; font-size:13px; font-weight:600; cursor:pointer; }
+
+    /* ══════════════════════════════════════════════════
+       CONCEPT E — Hero IS the results page
+       (headline + category tabs + filter bar + results, all on one screen)
+    ══════════════════════════════════════════════════ */
+    .e-stage { background:#fff; }
+    .e-nav { padding:14px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .e-logo { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:16px; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
+    .e-logo-crab { font-size:20px; }
+    .e-hero { padding:28px 24px 0; }
+    .e-headline { font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:800; letter-spacing:-0.03em; margin-bottom:16px; }
+    .e-headline em { font-style:normal; color:var(--accent); }
+    .e-tabs { display:flex; gap:6px; margin-bottom:14px; }
+    .e-tab { padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; border:none; background:#f2f2f2; color:var(--text-secondary); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.15s; }
+    .e-tab.active { background:var(--accent); color:#fff; }
+    .e-filters { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+    .e-filter { padding:7px 14px; border-radius:20px; font-size:12px; font-weight:500; border:1.5px solid var(--border); background:#fff; color:var(--text-secondary); cursor:pointer; white-space:nowrap; }
+    .e-filter.set { border-color:var(--accent); color:var(--accent); background:rgba(241,77,76,0.06); }
+    .e-search-row { display:flex; gap:8px; margin-bottom:0; }
+    .e-input-wrap { flex:1; display:flex; align-items:center; background:#f5f5f5; border-radius:8px; padding:0 12px; gap:8px; }
+    .e-input { flex:1; border:none; outline:none; background:transparent; font-size:13px; padding:10px 0; font-family:var(--font); }
+    .e-input::placeholder { color:#ccc; }
+    .e-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:10px 18px; font-size:13px; font-weight:600; cursor:pointer; }
+    .e-divider { height:1px; background:var(--border); margin:14px 0 0; }
+  </style>
+</head>
+<body>
+
+  <p class="page-title">Hero & Journey Concepts</p>
+  <p class="page-sub">Five ways to make the user journey more direct — no wasted steps</p>
+
+
+  <!-- ═══ CONCEPT A ════════════════════════════════════════ -->
+  <div class="concept">
+    <div class="concept-label">
+      <div class="concept-num">A</div>
+      <div>
+        <div class="concept-name">Three Big Cards — Pick &amp; Go</div>
+        <div class="concept-desc">No search bar. Three large clickable cards — Property, Cars, Jobs. One click opens the relevant results page with its full filter sidebar. Clean, obvious, zero friction. The user's first decision IS the navigation.</div>
+      </div>
+    </div>
+    <div class="stage a-stage">
+      <div class="a-hero">
+        <div class="a-tag">Crabify</div>
+        <h1 class="a-headline">Multiple Websites. All in <em>ONE Search.</em></h1>
+        <p class="a-sub">Pick a category to start — we'll search every major UK site instantly.</p>
+        <div class="a-cards">
+          <div class="a-card">
+            <div class="a-card-icon">🏠</div>
+            <div class="a-card-name">Property</div>
+            <div class="a-card-sub">Rightmove, Zoopla, OnTheMarket, Gumtree + more</div>
+            <div class="a-card-arrow">→</div>
+          </div>
+          <div class="a-card">
+            <div class="a-card-icon">🚗</div>
+            <div class="a-card-name">Cars</div>
+            <div class="a-card-sub">AutoTrader, Motors.co.uk, Gumtree + more</div>
+            <div class="a-card-arrow">→</div>
+          </div>
+          <div class="a-card">
+            <div class="a-card-icon">💼</div>
+            <div class="a-card-name">Jobs</div>
+            <div class="a-card-sub">Reed, Indeed, Glassdoor + more</div>
+            <div class="a-card-arrow">→</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- ═══ CONCEPT B ════════════════════════════════════════ -->
+  <div class="concept">
+    <div class="concept-label">
+      <div class="concept-num">B</div>
+      <div>
+        <div class="concept-name">Inline Hero + Instant Results Below</div>
+        <div class="concept-desc">Headline + category tabs at the top. One search bar below. Results load directly beneath — no full-screen overlay, no page change. The user never leaves the page. Feels like a real search engine.</div>
+      </div>
+    </div>
+    <div class="stage b-stage">
+      <div class="b-hero">
+        <div class="b-top">
+          <h1 class="b-headline">Multiple Websites.<br />All in <em>ONE Search.</em></h1>
+          <div class="b-tabs">
+            <button class="b-tab active" onclick="setActive(this,'b-tab')">🏠 Property</button>
+            <button class="b-tab" onclick="setActive(this,'b-tab')">🚗 Cars</button>
+            <button class="b-tab" onclick="setActive(this,'b-tab')">💼 Jobs</button>
+          </div>
+        </div>
+        <div class="b-search">
+          <div class="b-input-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input class="b-input" placeholder="Town, city or postcode…" />
+          </div>
+          <button class="b-btn">Search</button>
+        </div>
+      </div>
+      <div class="b-divider" style="margin-top:20px;"></div>
+      <div class="mock-sources">
+        <span class="mock-source active">Rightmove</span>
+        <span class="mock-source active">Zoopla</span>
+        <span class="mock-source active">OnTheMarket</span>
+        <span class="mock-source">Gumtree</span>
+        <span class="mock-source">SpareRoom</span>
+      </div>
+      <div class="mock-stats"><strong>847</strong> properties found in London · 5 miles</div>
+      <div class="mock-results">
+        <div class="mock-card">
+          <div class="mock-img-ph"></div>
+          <div class="mock-info"><div class="mock-title">3 bed semi-detached · Clapham SW4</div><div class="mock-sub">Rightmove · 0.4 miles</div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><div class="mock-price">£485,000</div><div class="mock-badge">Rightmove</div></div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-img-ph"></div>
+          <div class="mock-info"><div class="mock-title">2 bed flat · Brixton SW9</div><div class="mock-sub">Zoopla · 0.8 miles</div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><div class="mock-price">£375,000</div><div class="mock-badge">Zoopla</div></div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-img-ph"></div>
+          <div class="mock-info"><div class="mock-title">4 bed terrace · Stockwell SW8</div><div class="mock-sub">OnTheMarket · 1.1 miles</div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><div class="mock-price">£620,000</div><div class="mock-badge">OnTheMarket</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- ═══ CONCEPT C ════════════════════════════════════════ -->
+  <div class="concept">
+    <div class="concept-label">
+      <div class="concept-num">C</div>
+      <div>
+        <div class="concept-name">Split — Category Left, Live Results Right</div>
+        <div class="concept-desc">Left panel: headline + three category rows to click. Right panel: results preview loads instantly when you pick a category. No search bar needed on the hero — the filter sidebar handles refinement. Very clean, very product-like.</div>
+      </div>
+    </div>
+    <div class="stage c-stage">
+      <div class="c-inner">
+        <div class="c-left">
+          <div class="c-tag">Crabify — Multiple Websites. ONE Search.</div>
+          <h2 class="c-headline">What are you<br />searching for?</h2>
+          <p class="c-sub">Pick a category. We'll search every major UK site and show results instantly.</p>
+          <div class="c-cats">
+            <div class="c-cat active" onclick="setActive(this,'c-cat')">
+              <div class="c-cat-icon">🏠</div>
+              <div class="c-cat-info">
+                <div class="c-cat-name">Property</div>
+                <div class="c-cat-sub">Rightmove, Zoopla, OnTheMarket + 3 more</div>
+              </div>
+              <div class="c-cat-arrow">→</div>
+            </div>
+            <div class="c-cat" onclick="setActive(this,'c-cat')">
+              <div class="c-cat-icon">🚗</div>
+              <div class="c-cat-info">
+                <div class="c-cat-name">Cars</div>
+                <div class="c-cat-sub">AutoTrader, Motors.co.uk + 2 more</div>
+              </div>
+              <div class="c-cat-arrow">→</div>
+            </div>
+            <div class="c-cat" onclick="setActive(this,'c-cat')">
+              <div class="c-cat-icon">💼</div>
+              <div class="c-cat-info">
+                <div class="c-cat-name">Jobs</div>
+                <div class="c-cat-sub">Reed, Indeed, Glassdoor + more</div>
+              </div>
+              <div class="c-cat-arrow">→</div>
+            </div>
+          </div>
+        </div>
+        <div class="c-right">
+          <div class="c-right-header">
+            <span><span class="c-live-dot"></span>847 properties · London</span>
+            <span style="font-size:11px;color:var(--text-muted);">Rightmove · Zoopla · OnTheMarket</span>
+          </div>
+          <div class="mock-results" style="flex:1;">
+            <div class="mock-card">
+              <div class="mock-img-ph"></div>
+              <div class="mock-info"><div class="mock-title">3 bed semi · Clapham SW4</div><div class="mock-sub">Rightmove · 0.4 miles</div></div>
+              <div class="mock-price">£485k</div>
+            </div>
+            <div class="mock-card">
+              <div class="mock-img-ph"></div>
+              <div class="mock-info"><div class="mock-title">2 bed flat · Brixton SW9</div><div class="mock-sub">Zoopla · 0.8 miles</div></div>
+              <div class="mock-price">£375k</div>
+            </div>
+            <div class="mock-card">
+              <div class="mock-img-ph"></div>
+              <div class="mock-info"><div class="mock-title">4 bed terrace · Stockwell</div><div class="mock-sub">OnTheMarket · 1.1 mi</div></div>
+              <div class="mock-price">£620k</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- ═══ CONCEPT D ════════════════════════════════════════ -->
+  <div class="concept">
+    <div class="concept-label">
+      <div class="concept-num">D</div>
+      <div>
+        <div class="concept-name">Dark Hero + Tabs + Results Slide Up</div>
+        <div class="concept-desc">Bold dark hero with large headline. Three tabs (Property / Cars / Jobs). On tab click, a white results panel slides up from below — with its own search input and results. Like Skyscanner or Google Flights. Premium feel.</div>
+      </div>
+    </div>
+    <div class="stage d-stage">
+      <div class="d-hero">
+        <h1 class="d-headline">Multiple Websites.<br />All in <em>ONE Search.</em></h1>
+        <p class="d-sub">Search Rightmove, AutoTrader, Reed and more — all at once.</p>
+        <div class="d-tabs">
+          <button class="d-tab active" onclick="setActive(this,'d-tab')">🏠 Property</button>
+          <button class="d-tab" onclick="setActive(this,'d-tab')">🚗 Cars</button>
+          <button class="d-tab" onclick="setActive(this,'d-tab')">💼 Jobs</button>
+        </div>
+        <div class="d-results-wrap">
+          <div class="d-search-bar">
+            <div class="d-input-wrap">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input class="d-input" placeholder="Town, city or postcode…" />
+            </div>
+            <button class="d-btn">Search</button>
+          </div>
+          <div class="mock-stats" style="padding:0 0 10px;"><strong>847</strong> properties found in London · sorted by newest</div>
+          <div class="mock-card" style="margin-bottom:8px;border-radius:10px;padding:14px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+            <div class="mock-img-ph"></div>
+            <div class="mock-info"><div class="mock-title">3 bed semi-detached · Clapham SW4</div><div class="mock-sub">Rightmove · 0.4 miles</div></div>
+            <div class="mock-price">£485,000</div>
+          </div>
+          <div class="mock-card" style="border-radius:10px;padding:14px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+            <div class="mock-img-ph"></div>
+            <div class="mock-info"><div class="mock-title">2 bed flat · Brixton SW9</div><div class="mock-sub">Zoopla · 0.8 miles</div></div>
+            <div class="mock-price">£375,000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- ═══ CONCEPT E ════════════════════════════════════════ -->
+  <div class="concept">
+    <div class="concept-label">
+      <div class="concept-num">E</div>
+      <div>
+        <div class="concept-name">The Homepage IS the App</div>
+        <div class="concept-desc">No separate "results page". The homepage loads with results already visible. Tabs switch category. Filter chips sit above results. The user arrives and immediately sees live listings — the most direct journey possible. Think Google, not a landing page.</div>
+      </div>
+    </div>
+    <div class="stage e-stage">
+      <div class="e-nav">
+        <div class="e-logo"><img src="/public/crab-logo.png" width="28" height="28" style="object-fit:contain;" /> Crabify</div>
+        <div style="font-size:12px;color:var(--text-muted);">Multiple Websites. ONE Search.</div>
+      </div>
+      <div class="e-hero">
+        <div class="e-tabs">
+          <button class="e-tab active" onclick="setActive(this,'e-tab')">🏠 Property</button>
+          <button class="e-tab" onclick="setActive(this,'e-tab')">🚗 Cars</button>
+          <button class="e-tab" onclick="setActive(this,'e-tab')">💼 Jobs</button>
+        </div>
+        <div class="e-search-row">
+          <div class="e-input-wrap">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input class="e-input" placeholder="Town, city or postcode…" />
+          </div>
+          <button class="e-btn">Search</button>
+        </div>
+        <div class="e-filters">
+          <span class="e-filter set">Buy</span>
+          <span class="e-filter">Rent</span>
+          <span class="e-filter set">London · 5 mi</span>
+          <span class="e-filter">Bedrooms</span>
+          <span class="e-filter">Max price</span>
+          <span class="e-filter">Property type</span>
+        </div>
+        <div class="e-divider"></div>
+      </div>
+      <div class="mock-stats" style="padding:12px 24px 6px;"><strong>847 properties</strong> found · Rightmove, Zoopla, OnTheMarket</div>
+      <div class="mock-grid">
+        <div class="mock-grid-card"><div class="mock-grid-img"></div><div class="mock-grid-title">3 bed semi · Clapham SW4</div><div class="mock-grid-sub">Rightmove · 0.4 mi</div><div class="mock-grid-price">£485,000</div></div>
+        <div class="mock-grid-card"><div class="mock-grid-img"></div><div class="mock-grid-title">2 bed flat · Brixton SW9</div><div class="mock-grid-sub">Zoopla · 0.8 mi</div><div class="mock-grid-price">£375,000</div></div>
+        <div class="mock-grid-card"><div class="mock-grid-img"></div><div class="mock-grid-title">4 bed terrace · Stockwell</div><div class="mock-grid-sub">OnTheMarket · 1.1 mi</div><div class="mock-grid-price">£620,000</div></div>
+        <div class="mock-grid-card"><div class="mock-grid-img"></div><div class="mock-grid-title">1 bed flat · Oval SE11</div><div class="mock-grid-sub">Gumtree · 1.4 mi</div><div class="mock-grid-price">£280,000</div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setActive(el, cls) {
+      const parent = el.closest('.stage') || el.closest('.concept');
+      parent.querySelectorAll('.' + cls).forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

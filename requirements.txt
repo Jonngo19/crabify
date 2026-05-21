@@ -1,0 +1,2 @@
+# No third-party dependencies — server.py uses Python stdlib only
+# Render still needs this file to detect it's a Python app

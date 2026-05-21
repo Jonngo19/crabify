@@ -2443,4 +2443,5 @@ def run(port=3000):
 
 
 if __name__ == "__main__":
-    run()
+    port = int(os.environ.get("PORT", 3000))
+    run(port=port)

@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: crabify-api
+    runtime: python
+    buildCommand: echo "No build needed"
+    startCommand: python server.py
+    envVars:
+      - key: PORT
+        value: 3000
+    plan: free
