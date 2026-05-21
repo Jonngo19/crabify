@@ -123,6 +123,17 @@ def rm_typeahead(query: str) -> tuple:
     )
     if not m:
         print(f"  [RM] No __NEXT_DATA__ while resolving '{query}'")
+        # Retry: strip common UK geo prefixes that Rightmove doesn't recognise
+        # e.g. "Greater London" → "London", "Greater Manchester" → "Manchester"
+        prefixes = ['Greater ', 'City of ', 'Royal Borough of ', 'London Borough of ', 'Borough of ']
+        simplified = query
+        for pfx in prefixes:
+            if simplified.startswith(pfx):
+                simplified = simplified[len(pfx):]
+                break
+        if simplified != query:
+            print(f"  [RM] Retrying with simplified name: '{simplified}'")
+            return rm_typeahead(simplified)
         return "", query
 
     try:
@@ -146,6 +157,16 @@ def rm_typeahead(query: str) -> tuple:
         print(f"  [RM] No locationIdentifier but got {len(props)} props for '{query}' — using slug")
         return "DIRECT:" + slug, query
 
+    # Last resort: try simplified name if we haven't already
+    prefixes = ['Greater ', 'City of ', 'Royal Borough of ', 'London Borough of ', 'Borough of ']
+    simplified = query
+    for pfx in prefixes:
+        if simplified.startswith(pfx):
+            simplified = simplified[len(pfx):]
+            break
+    if simplified != query:
+        print(f"  [RM] Last resort retry with '{simplified}'")
+        return rm_typeahead(simplified)
     print(f"  [RM] Could not resolve '{query}'")
     return "", query
 
@@ -834,6 +855,22 @@ def zoopla_search(location: str, params: dict) -> tuple:
     # ── Attempt 2: Scrapfly residential proxy fallback ─────────────────────
     api_key = get_scrapfly_key()
     if api_key:
+        # Guard: check remaining quota before spending a credit
+        # Zoopla 403 from London is consistent — don't burn credits on it
+        try:
+            acct_req = urllib.request.Request(
+                f"https://api.scrapfly.io/account?key={api_key}",
+                headers={"Accept": "application/json"}
+            )
+            with urllib.request.urlopen(acct_req, timeout=8) as r_acct:
+                acct = json.loads(r_acct.read())
+            remaining = acct.get("subscription", {}).get("usage", {}).get("scrape", {}).get("remaining", 0)
+            quota_reached = acct.get("project", {}).get("quota_reached", False)
+            if quota_reached or remaining < 20:
+                print(f"  [Zoopla] Scrapfly quota low ({remaining} remaining) — skipping, relay will handle")
+                return [], 0, "relay_mode"
+        except Exception:
+            pass  # If quota check fails, still try the fetch
         print("  [Zoopla] urllib blocked, trying Scrapfly fallback…")
         scrapfly_params = urllib.parse.urlencode({
             "key": api_key, "url": url,
@@ -1184,11 +1221,52 @@ def _parse_spareroom_listing(article: str) -> dict:
 # COMBINED SEARCH (runs RM + OTM in parallel)
 # ─────────────────────────────────────────────
 
+def _normalise_location(location: str) -> str:
+    """
+    Clean up location strings that come from Nominatim / browser geolocation.
+    Rightmove and other sites don't accept prefixed forms like "Greater London".
+    Maps to the most useful search term for all scrapers.
+    """
+    loc = location.strip()
+    # Direct mappings for known Nominatim outputs
+    LOCATION_MAP = {
+        "greater london":    "London",
+        "greater manchester": "Manchester",
+        "greater birmingham": "Birmingham",
+        "city of westminster": "Westminster",
+        "royal borough of kensington and chelsea": "Kensington",
+        "london borough of hackney": "Hackney",
+        "london borough of islington": "Islington",
+        "london borough of southwark": "Southwark",
+        "london borough of lambeth": "Lambeth",
+        "london borough of camden": "Camden",
+        "london borough of tower hamlets": "Tower Hamlets",
+        "london borough of wandsworth": "Wandsworth",
+        "london borough of hammersmith and fulham": "Hammersmith",
+        "london borough of lewisham": "Lewisham",
+        "london borough of greenwich": "Greenwich",
+    }
+    mapped = LOCATION_MAP.get(loc.lower())
+    if mapped:
+        print(f"  [Location] Normalised '{loc}' → '{mapped}'")
+        return mapped
+    # Strip common prefixes that confuse Rightmove typeahead
+    for pfx in ['Greater ', 'City of ', 'Royal Borough of ', 'London Borough of ', 'Borough of ']:
+        if loc.startswith(pfx):
+            stripped = loc[len(pfx):]
+            print(f"  [Location] Stripped prefix '{pfx}' → '{stripped}'")
+            return stripped
+    return loc
+
+
 def combined_search(location: str, params: dict) -> dict:
     """
     Run Rightmove, OnTheMarket, Zoopla, Gumtree and SpareRoom searches in parallel threads.
     Returns merged, deduplicated results.
     """
+    # Normalise location string (handle Nominatim outputs like "Greater London")
+    location = _normalise_location(location)
+
     rm_results = []
     rm_total = 0
     otm_results = []
