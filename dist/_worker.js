@@ -1,7 +1,7 @@
 // Crabify — Cloudflare Pages Advanced Mode Worker
 // Proxies /api/* to the Python backend, serves static files for everything else
 
-const BACKEND = 'https://3000-i8iktmfokg8w5lafzenkk-b32ec7bb.sandbox.novita.ai';
+const BACKEND = 'https://crabify-api.onrender.com';
 
 export default {
   async fetch(request, env) {
