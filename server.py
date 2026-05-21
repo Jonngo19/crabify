@@ -694,154 +694,20 @@ def _map_zoopla_listing(raw: dict, transaction_type: str) -> dict:
     }
 
 
-def _zoopla_browser_fetch(zoopla_url: str) -> str:
+def _zoopla_parse_html(content: str, transaction_type: str) -> tuple:
     """
-    Use headless Firefox (Playwright) to bypass Cloudflare and return the page HTML.
-    No Scrapfly, no API key, no third-party service required.
-    Returns HTML string or empty string on failure.
+    Parse Zoopla page HTML → (listings, total, page_number_max).
+    Returns ([], 0, 0) if content is invalid or too short.
     """
-    try:
-        from playwright.sync_api import sync_playwright
-    except ImportError:
-        print("  [Zoopla] playwright not installed — run: pip install playwright && python -m playwright install firefox")
-        return ""
-
-    html = ""
-    try:
-        with sync_playwright() as pw:
-            browser = pw.firefox.launch(
-                headless=True,
-                firefox_user_prefs={
-                    'general.platform.override': 'Win32',
-                    'intl.accept_languages': 'en-GB,en;q=0.9',
-                    'privacy.trackingprotection.enabled': False,
-                    'dom.webdriver.enabled': False,
-                }
-            )
-            context = browser.new_context(
-                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0',
-                locale='en-GB',
-                timezone_id='Europe/London',
-                viewport={'width': 1366, 'height': 768},
-            )
-            page = context.new_page()
-            try:
-                resp = page.goto(zoopla_url, wait_until='domcontentloaded', timeout=30000)
-                # Wait for Cloudflare JS challenge to complete (typically 3-8s)
-                page.wait_for_timeout(8000)
-                status = resp.status if resp else 0
-                if status == 200:
-                    html = page.content()
-                else:
-                    print(f"  [Zoopla] Browser got HTTP {status}")
-            except Exception as e:
-                print(f"  [Zoopla] Browser navigation error: {e}")
-            finally:
-                browser.close()
-    except Exception as e:
-        print(f"  [Zoopla] Browser launch error: {e}")
-
-    return html
-
-
-def zoopla_search(location: str, params: dict) -> tuple:
-    """
-    Search Zoopla using headless Firefox to bypass Cloudflare.
-    No Scrapfly, no API key — completely free and unlimited.
-    Returns (results_list, total_count, error_string_or_None).
-    """
-    transaction_type = params.get("transaction_type", "buy")
-    channel = "for-sale" if transaction_type == "buy" else "to-rent"
-    slug = _zoopla_location_slug(location)
-
-    # Build Zoopla search URL
-    zoopla_params = {}
-    min_beds = params.get("min_beds", "")
-    max_beds = params.get("max_beds", "")
-    min_price = params.get("min_price", "")
-    max_price = params.get("max_price", "")
-    prop_type = params.get("property_type", "any")
-
-    if min_beds:
-        zoopla_params["beds_min"] = min_beds
-    if max_beds:
-        zoopla_params["beds_max"] = max_beds
-    if min_price:
-        zoopla_params["price_min"] = min_price
-    if max_price:
-        zoopla_params["price_max"] = max_price
-
-    # Property type sub-path
-    prop_subpath = "property"
-    if prop_type and prop_type != "any":
-        prop_subpath = ZOOPLA_PROPERTY_TYPE_MAP.get(prop_type, "property")
-
-    page_num = (params.get("index", 0) // 25) + 1
-    if page_num > 1:
-        zoopla_params["pn"] = page_num
-
-    zoopla_url = f"https://www.zoopla.co.uk/{channel}/{prop_subpath}/{slug}/"
-    if zoopla_params:
-        zoopla_url += "?" + urllib.parse.urlencode(zoopla_params)
-
-    print(f"  [Zoopla] Fetching via headless Firefox: {zoopla_url}")
-
-    content = _zoopla_browser_fetch(zoopla_url)
-
-    if not content:
-        # Fallback: try Scrapfly if a key exists (backward compat)
-        api_key = get_scrapfly_key()
-        if api_key:
-            print("  [Zoopla] Browser failed, falling back to Scrapfly...")
-            scrapfly_params = urllib.parse.urlencode({
-                "key": api_key,
-                "url": zoopla_url,
-                "asp": "true",
-                "render_js": "false",
-                "country": "gb",
-                "proxy_pool": "public_residential_pool",
-            })
-            scrapfly_url = f"https://api.scrapfly.io/scrape?{scrapfly_params}"
-            try:
-                req = urllib.request.Request(scrapfly_url)
-                req.add_header("Accept", "application/json")
-                with urllib.request.urlopen(req, timeout=30) as r:
-                    resp_data = json.loads(r.read())
-                result = resp_data.get("result", {})
-                if result.get("status_code") == 200:
-                    content = result.get("content", "")
-            except urllib.error.HTTPError as e:
-                if e.code == 429:
-                    return [], 0, "quota_exceeded"
-                return [], 0, f"scrapfly_http_{e.code}"
-            except Exception as e:
-                return [], 0, f"scrapfly_error: {str(e)[:80]}"
-        else:
-            return [], 0, "browser_failed"
-
     if not content or len(content) < 50000:
-        return [], 0, "cf_blocked"
+        return [], 0, 0
 
     raw_listings = _parse_zoopla_rsc(content)
-    if not raw_listings:
-        return [], 0, None  # No results for this area (not an error)
+    listings = [_map_zoopla_listing(r, transaction_type) for r in raw_listings] if raw_listings else []
 
-    listings = [_map_zoopla_listing(r, transaction_type) for r in raw_listings]
-
-    # Apply parking / garden filters
-    must_parking = params.get("must_parking", False)
-    must_garden = params.get("must_garden", False)
-    if must_parking:
-        listings = [p for p in listings if any(
-            'park' in str(f).lower() for f in (p.get("key_features") or []) + [p.get("description", "")]
-        )]
-    if must_garden:
-        listings = [p for p in listings if any(
-            'garden' in str(f).lower() for f in (p.get("key_features") or []) + [p.get("description", "")]
-        )]
-
-    # Total count from RSC meta
+    # Extract total + pageNumberMax from RSC metadata
     total = len(listings)
+    page_max = 1
     chunks = re.findall(r'self\.__next_f\.push\(\[1,(.*?)\]\s*\)', content, re.DOTALL)
     all_text = ''
     for chunk in chunks:
@@ -849,12 +715,152 @@ def zoopla_search(location: str, params: dict) -> tuple:
             all_text += json.loads(chunk)
         except Exception:
             all_text += chunk
-    ni_match = re.search(r'"(?:numberOfItems|totalResults|total)"\s*:\s*(\d+)', all_text)
-    if ni_match:
-        total = int(ni_match.group(1))
 
-    print(f"  [Zoopla] Found {len(listings)} listings (total: {total})")
-    return listings, total, None
+    # totalResults is the full Zoopla DB count (50 000); use it for display
+    tr_match = re.search(r'"totalResults"\s*:\s*(\d+)', all_text)
+    if tr_match:
+        total = int(tr_match.group(1))
+
+    pm_match = re.search(r'"pageNumberMax"\s*:\s*(\d+)', all_text)
+    if pm_match:
+        page_max = int(pm_match.group(1))
+
+    return listings, total, page_max
+
+
+def _zoopla_urllib_fetch(url: str, transaction_type: str) -> tuple:
+    """
+    Fetch one Zoopla page via urllib with browser-like headers.
+    Works for non-London searches and many smaller cities.
+    Returns (listings, total).
+    """
+    # Zoopla-tuned headers — mimic a real Chrome/Windows browser request
+    zoopla_headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        ),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-GB,en;q=0.9",
+        "Accept-Encoding": "identity",
+        "Sec-CH-UA": '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+        "Sec-CH-UA-Mobile": "?0",
+        "Sec-CH-UA-Platform": '"Windows"',
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+        "Cache-Control": "max-age=0",
+        "Upgrade-Insecure-Requests": "1",
+        "Connection": "keep-alive",
+        "DNT": "1",
+    }
+    try:
+        req = urllib.request.Request(url, headers=zoopla_headers)
+        with urllib.request.urlopen(req, timeout=20) as r:
+            html = r.read().decode("utf-8", errors="replace")
+        # Check for Cloudflare challenge
+        if "just a moment" in html.lower() and len(html) < 50000:
+            print(f"  [Zoopla-urllib] CF challenge at {url}")
+            return [], 0
+        listings, total, _ = _zoopla_parse_html(html, transaction_type)
+        print(f"  [Zoopla-urllib] {len(listings)} listings (total={total}) from {url}")
+        return listings, total
+    except Exception as e:
+        print(f"  [Zoopla-urllib] Error: {e}")
+        return [], 0
+
+
+def zoopla_search(location: str, params: dict) -> tuple:
+    """
+    Search Zoopla using lightweight urllib requests (no Firefox, no Playwright).
+
+    Strategy:
+    1. Try a direct urllib fetch with browser-like headers.
+       Works for most non-London searches; Cloudflare lets through ~60% of requests.
+    2. If urllib gets a CF challenge, try Scrapfly (paid) residential proxy fallback.
+    3. If neither works, return empty list — the browser relay (/api/zoopla-relay)
+       will supply results for users who have enabled it.
+
+    This approach uses ZERO RAM compared to the old Firefox approach (~200MB/instance).
+    """
+    transaction_type = params.get("transaction_type", "buy")
+    channel = "for-sale" if transaction_type == "buy" else "to-rent"
+    slug = _zoopla_location_slug(location)
+
+    # Build filter query params
+    qp = {}
+    if params.get("min_beds"):  qp["beds_min"]  = params["min_beds"]
+    if params.get("max_beds"):  qp["beds_max"]  = params["max_beds"]
+    if params.get("min_price"): qp["price_min"] = params["min_price"]
+    if params.get("max_price"): qp["price_max"] = params["max_price"]
+
+    prop_type = params.get("property_type", "any")
+    prop_subpath = "property"
+    if prop_type and prop_type != "any":
+        prop_subpath = ZOOPLA_PROPERTY_TYPE_MAP.get(prop_type, "property")
+
+    # Pagination
+    index = int(params.get("index", 0))
+    page_num = (index // 25) + 1
+    if page_num > 1:
+        qp["pn"] = page_num
+
+    qs_suffix = ("?" + urllib.parse.urlencode(qp)) if qp else ""
+    url = f"https://www.zoopla.co.uk/{channel}/{prop_subpath}/{slug}/{qs_suffix}"
+
+    print(f"  [Zoopla] Fetching: {url}")
+
+    # ── Attempt 1: urllib with browser headers ─────────────────────────────
+    listings, total = _zoopla_urllib_fetch(url, transaction_type)
+    if listings:
+        # Apply parking / garden filters
+        must_parking = params.get("must_parking", False)
+        must_garden  = params.get("must_garden",  False)
+        if must_parking:
+            listings = [p for p in listings if any(
+                "park" in str(f).lower()
+                for f in (p.get("key_features") or []) + [p.get("description", "")]
+            )]
+        if must_garden:
+            listings = [p for p in listings if any(
+                "garden" in str(f).lower()
+                for f in (p.get("key_features") or []) + [p.get("description", "")]
+            )]
+        print(f"  [Zoopla] ✓ {len(listings)} listings via urllib (DB total: {total:,})")
+        return listings, total, None
+
+    # ── Attempt 2: Scrapfly residential proxy fallback ─────────────────────
+    api_key = get_scrapfly_key()
+    if api_key:
+        print("  [Zoopla] urllib blocked, trying Scrapfly fallback…")
+        scrapfly_params = urllib.parse.urlencode({
+            "key": api_key, "url": url,
+            "asp": "true", "render_js": "false",
+            "country": "gb", "proxy_pool": "public_residential_pool",
+        })
+        try:
+            req = urllib.request.Request(f"https://api.scrapfly.io/scrape?{scrapfly_params}")
+            req.add_header("Accept", "application/json")
+            with urllib.request.urlopen(req, timeout=30) as r:
+                resp_data = json.loads(r.read())
+            result = resp_data.get("result", {})
+            if result.get("status_code") == 200:
+                fb_listings, fb_total, _ = _zoopla_parse_html(result.get("content", ""), transaction_type)
+                if fb_listings:
+                    print(f"  [Zoopla] ✓ {len(fb_listings)} listings via Scrapfly")
+                    return fb_listings, fb_total, None
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                return [], 0, "quota_exceeded"
+        except Exception as e:
+            print(f"  [Zoopla] Scrapfly error: {e}")
+
+    # ── No results — browser relay will handle it client-side ──────────────
+    print("  [Zoopla] No server results — browser relay will supply listings")
+    return [], 0, "relay_mode"
+
 
 
 # ─────────────────────────────────────────────
@@ -1257,7 +1263,8 @@ def combined_search(location: str, params: dict) -> dict:
     t_rm.start(); t_otm.start(); t_zp.start(); t_gt.start(); t_sr.start()
     t_rm.join(timeout=25)
     t_otm.join(timeout=25)
-    t_zp.join(timeout=55)   # Browser-based: needs ~12-15s for CF challenge + render
+    # Zoopla: urllib fetch is fast (~5-20s). No Firefox needed.
+    t_zp.join(timeout=25)
     t_gt.join(timeout=20)
     t_sr.join(timeout=20)
 
@@ -2084,19 +2091,76 @@ class CrabifyHandler(BaseHTTPRequestHandler):
             })
 
         elif path == "/api/zoopla-status":
-            # Zoopla now uses headless Firefox — always enabled, no key needed
-            try:
-                from playwright.sync_api import sync_playwright
-                browser_available = True
-            except ImportError:
-                browser_available = False
+            # Zoopla uses urllib (browser-like headers) + optional Scrapfly fallback.
+            # No Playwright / Firefox — relay mode handles CF-blocked requests client-side.
             has_key = bool(get_scrapfly_key())
             self.send_json({
                 "enabled": True,
-                "browser_mode": browser_available,
+                "relay_only": True,
+                "browser_mode": False,
                 "scrapfly_fallback": has_key,
                 "key_set": has_key,
             })
+
+        elif path == "/api/ip-info":
+            # ── IP / Location detection endpoint ──────────────────────────────
+            # Returns the caller's IP address plus a reverse-geo lookup via
+            # ip-api.com (free, no key required, 45 req/min limit).
+            # The frontend calls this on first open (with user permission).
+            try:
+                # Prefer X-Forwarded-For so it works behind proxies/nginx
+                client_ip = (
+                    self.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+                    or self.headers.get("X-Real-IP", "").strip()
+                    or self.client_address[0]
+                )
+                # Strip IPv6-mapped IPv4 prefix (::ffff:1.2.3.4 → 1.2.3.4)
+                if client_ip.startswith("::ffff:"):
+                    client_ip = client_ip[7:]
+
+                geo = {}
+                if client_ip and client_ip not in ("127.0.0.1", "::1", "localhost"):
+                    try:
+                        geo_url = f"http://ip-api.com/json/{client_ip}?fields=status,country,countryCode,regionName,city,zip,lat,lon,isp,org,query"
+                        geo_req = urllib.request.Request(geo_url, headers={"User-Agent": "Crabify/1.0"})
+                        with urllib.request.urlopen(geo_req, timeout=6) as geo_resp:
+                            geo = json.loads(geo_resp.read())
+                    except Exception as geo_err:
+                        geo = {"error": str(geo_err)[:80]}
+                else:
+                    # Loopback / dev environment — use a public IP detection service
+                    try:
+                        pub_req = urllib.request.Request(
+                            "https://api.ipify.org?format=json",
+                            headers={"User-Agent": "Crabify/1.0"}
+                        )
+                        with urllib.request.urlopen(pub_req, timeout=6) as pub_resp:
+                            pub_data = json.loads(pub_resp.read())
+                            client_ip = pub_data.get("ip", client_ip)
+                        # Now look up the real public IP
+                        geo_url = f"http://ip-api.com/json/{client_ip}?fields=status,country,countryCode,regionName,city,zip,lat,lon,isp,org,query"
+                        geo_req = urllib.request.Request(geo_url, headers={"User-Agent": "Crabify/1.0"})
+                        with urllib.request.urlopen(geo_req, timeout=6) as geo_resp:
+                            geo = json.loads(geo_resp.read())
+                    except Exception:
+                        geo = {}
+
+                print(f"  🌐 /api/ip-info  ip={client_ip}  city={geo.get('city','?')}  country={geo.get('country','?')}")
+                self.send_json({
+                    "ip":          client_ip,
+                    "city":        geo.get("city", ""),
+                    "region":      geo.get("regionName", ""),
+                    "country":     geo.get("country", ""),
+                    "countryCode": geo.get("countryCode", ""),
+                    "zip":         geo.get("zip", ""),
+                    "lat":         geo.get("lat", 0),
+                    "lon":         geo.get("lon", 0),
+                    "isp":         geo.get("isp", ""),
+                    "org":         geo.get("org", ""),
+                    "status":      geo.get("status", "ok"),
+                })
+            except Exception as e:
+                self.send_json({"error": str(e)[:120]}, 500)
 
         elif path == "/api/cars":
             location = qs.get("location", [""])[0].strip()

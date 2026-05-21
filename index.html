@@ -19,30 +19,36 @@
     :root {
       --bg:           #ffffff;
       --bg-card:      #ffffff;
+      --bg-alt:       #f7f7f7;
       --bg-card2:     #f7f7f7;
-      --border:       rgba(0,0,0,0.08);
-      --border-hover: rgba(0,0,0,0.16);
+      --border:       #e8e8e8;
+      --border-hover: #cccccc;
       --text-primary: #0f0f0f;
-      --text-secondary:#6b6b6b;
-      --text-muted:   #a0a0a0;
+      --text-secondary:#555555;
+      --text-muted:   #888888;
       --accent:       #F14D4C;
       --accent-light: #f96160;
-      --accent-glow:  rgba(241,77,76,0.12);
+      --accent-dark:  #d93b3a;
+      --accent-glow:  rgba(241,77,76,0.10);
       --accent2:      #8B1A1A;
-      --accent2-glow: rgba(139,26,26,0.08);
+      --accent2-glow: rgba(139,26,26,0.06);
       --green:        #16a34a;
       --blue:         #2563eb;
-      --radius-sm:    8px;
-      --radius-md:    12px;
-      --radius-lg:    16px;
-      --radius-xl:    24px;
-      --shadow-card:  0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+      /* ScrapingBee-inspired flat radius system */
+      --radius-sm:    4px;
+      --radius-md:    6px;
+      --radius-lg:    8px;
+      --radius-xl:    10px;
+      --radius-pill:  4px;
+      /* Minimal shadows — flat design */
+      --shadow-card:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-hover: 0 4px 16px rgba(0,0,0,0.10);
       --shadow-glow:  none;
-      --transition:   0.2s cubic-bezier(0.4,0,0.2,1);
-      --transition-spring: 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      --transition:   0.18s ease;
+      --transition-spring: 0.3s cubic-bezier(0.34,1.3,0.64,1);
       --font: 'Share Tech Mono', monospace;
       --font-heading: 'Orbitron', monospace;
-      --max-w: 1400px;
+      --max-w: 1200px;
     }
 
     html { scroll-behavior: smooth; }
@@ -69,9 +75,11 @@
     /* ============================================================
        LAYOUT UTILITIES
     ============================================================ */
-    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 48px; }
-    .section { padding: 120px 0; }
-    .section-sm { padding: 80px 0; }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 40px; }
+    .section { padding: 96px 0; }
+    .section-sm { padding: 64px 0; }
+    /* Alternating section backgrounds — ScrapingBee pattern */
+    .section--alt { background: var(--bg-alt); }
 
     /* ============================================================
        TYPOGRAPHY
@@ -100,84 +108,104 @@
     h1, h2, h3, h4 { line-height: 1.15; font-weight: 800; font-family: var(--font-heading); }
 
     .display {
-      font-size: clamp(36px, 5vw, 60px);
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      line-height: 1.1;
+      font-size: clamp(42px, 5.5vw, 68px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
       font-family: var(--font-heading);
     }
     .display em { font-style: normal; color: var(--accent); }
 
     .h2 {
-      font-size: clamp(28px, 4vw, 42px);
-      font-weight: 700;
+      font-size: clamp(28px, 3.5vw, 46px);
+      font-weight: 800;
       letter-spacing: -0.02em;
       font-family: var(--font-heading);
-      line-height: 1.2;
+      line-height: 1.15;
     }
-    .h3 { font-size: clamp(24px, 2.5vw, 32px); font-weight: 700; letter-spacing: -0.02em; font-family: var(--font-heading); }
+    .h3 { font-size: clamp(20px, 2vw, 28px); font-weight: 700; letter-spacing: -0.01em; font-family: var(--font-heading); }
 
-    .body-lg { font-size: 18px; line-height: 1.7; color: var(--text-secondary); }
-    .body-md { font-size: 15px; line-height: 1.65; color: var(--text-secondary); }
-    .body-sm { font-size: 13px; line-height: 1.6; color: var(--text-secondary); }
+    .body-lg { font-size: 18px; line-height: 1.65; color: var(--text-secondary); }
+    .body-md { font-size: 16px; line-height: 1.6; color: var(--text-secondary); }
+    .body-sm { font-size: 14px; line-height: 1.55; color: var(--text-secondary); }
 
     /* ============================================================
-       BUTTONS
+       BUTTONS — ScrapingBee flat/square style
     ============================================================ */
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 14px 28px;
-      border-radius: 8px;
+      padding: 13px 26px;
+      border-radius: var(--radius-sm);
       font-family: var(--font);
       font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
+      font-weight: 700;
+      letter-spacing: 0.02em;
       cursor: pointer;
       text-decoration: none;
-      border: none;
+      border: 2px solid transparent;
       outline: none;
       transition: var(--transition);
-      position: relative;
-      overflow: hidden;
       white-space: nowrap;
     }
-    .btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      background: rgba(0,0,0,0.08);
-      transition: opacity 0.2s;
-    }
-    .btn:hover::after { opacity: 1; }
-    .btn:active { transform: scale(0.97); }
+    .btn:active { transform: scale(0.98); }
 
     .btn-primary {
       background: var(--accent);
       color: #fff;
-      box-shadow: none;
+      border-color: var(--accent);
     }
     .btn-primary:hover {
-      background: var(--accent-light);
-      box-shadow: 0 4px 16px rgba(241,77,76,0.2);
-      transform: translateY(-1px);
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+    }
+
+    /* Dark solid — second CTA like ScrapingBee's black button */
+    .btn-dark {
+      background: #0f0f0f;
+      color: #fff;
+      border-color: #0f0f0f;
+    }
+    .btn-dark:hover {
+      background: #333;
+      border-color: #333;
     }
 
     .btn-ghost {
       background: transparent;
       color: var(--text-primary);
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
     }
     .btn-ghost:hover {
-      border-color: var(--border-hover);
-      background: rgba(0,0,0,0.04);
-      transform: translateY(-1px);
+      border-color: var(--text-primary);
+      background: transparent;
     }
 
-    .btn-sm { padding: 10px 20px; font-size: 13px; }
-    .btn-lg { padding: 18px 40px; font-size: 16px; font-weight: 700; }
+    /* Outlined red — outlined accent */
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+    }
+    .btn-outline:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Outlined white — for use on dark/red backgrounds */
+    .btn-outline-white {
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.7);
+    }
+    .btn-outline-white:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: #fff;
+    }
+
+    .btn-sm { padding: 9px 18px; font-size: 13px; }
+    .btn-lg { padding: 16px 36px; font-size: 16px; font-weight: 700; }
 
     .btn-arrow .arrow-icon {
       display: inline-flex;
@@ -188,20 +216,22 @@
     .btn-arrow:hover .arrow-icon { transform: translateX(3px); }
 
     /* ============================================================
-       CARDS
+       CARDS — ScrapingBee white cards with solid border
     ============================================================ */
     .card {
       background: var(--bg-card);
-      border: none;
-      border-top: 1px solid var(--border);
-      border-radius: 0;
-      padding: 32px 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
       transition: var(--transition);
     }
-    .card:hover { transform: none; box-shadow: none; }
+    .card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-hover);
+    }
 
     /* ============================================================
-       NAV
+       NAV — ScrapingBee clean white bar
     ============================================================ */
     .nav {
       position: fixed;
@@ -209,16 +239,14 @@
       left: 0;
       right: 0;
       z-index: 1000;
-      padding: 16px 0;
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(0,0,0,0.06);
-      transition: padding 0.25s, box-shadow 0.25s;
+      padding: 14px 0;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      transition: padding 0.2s, box-shadow 0.2s;
     }
     .nav.scrolled {
-      padding: 12px 0;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+      padding: 10px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     }
     .nav__inner {
       display: flex;
@@ -261,17 +289,17 @@
     }
     .nav__links a {
       display: block;
-      padding: 8px 16px;
+      padding: 8px 14px;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
       font-family: var(--font);
-      color: var(--text-secondary);
+      color: var(--text-primary);
       text-decoration: none;
-      border-radius: 8px;
-      transition: color 0.2s, background 0.2s;
-      letter-spacing: -0.01em;
+      border-radius: var(--radius-sm);
+      transition: color 0.15s, background 0.15s;
+      letter-spacing: 0em;
     }
-    .nav__links a:hover { color: var(--text-primary); background: rgba(0,0,0,0.05); }
+    .nav__links a:hover { color: var(--accent); background: rgba(241,77,76,0.05); }
     .nav__cta { display: flex; align-items: center; gap: 12px; }
 
     /* Hamburger */
@@ -281,7 +309,7 @@
       gap: 5px;
       cursor: pointer;
       padding: 8px;
-      border-radius: var(--radius-sm);
+      border-radius: 4px;
       transition: background 0.2s;
     }
     .nav__hamburger:hover { background: rgba(0,0,0,0.05); }
@@ -337,27 +365,27 @@
     .nav__mobile-link:hover { color: var(--accent) !important; }
 
     /* ============================================================
-       HERO
+       HERO — ScrapingBee solid accent-bg, white text, huge headline
     ============================================================ */
     .hero {
-      padding: 100px 0 48px;
+      padding: 96px 0 72px;
       position: relative;
       overflow: hidden;
       min-height: auto;
       display: block;
-      background: #ffffff !important;
-      border-bottom: 1px solid var(--border);
+      background: var(--accent);
+      border-bottom: none;
     }
 
-    /* Hero — no decorative elements */
+    /* No decorative elements */
     .hero::before { display: none; }
     .hero__orb { display: none; }
 
-    /* Inline layout — full width, no centering constraint */
+    /* Inline layout — full width, left-aligned */
     .hero__inner {
       display: flex;
       flex-direction: column;
-      align-items: stretch;
+      align-items: flex-start;
       text-align: left;
       gap: 0;
       position: relative;
@@ -366,54 +394,88 @@
       padding-bottom: 0;
     }
 
-    /* Hero container — no extra flex centering, just block */
+    /* Hero container */
     .hero .container {
       display: block;
     }
 
-    /* Small subtitle label above headline */
+    /* Small eyebrow label above headline */
     .hero__tag {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      background: transparent;
-      border: none;
-      border-radius: 0;
-      padding: 0;
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--text-muted);
-      letter-spacing: 0.12em;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: var(--radius-sm);
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
-    .hero__tag::before {
-      content: '';
-      display: block;
-      width: 32px;
-      height: 1px;
-      background: var(--text-muted);
-      flex-shrink: 0;
-    }
+    .hero__tag::before { display: none; }
     .hero__tag-dot { display: none; }
+
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.5; transform: scale(0.8); }
     }
 
-    .hero__headline { margin-bottom: 0; white-space: nowrap; }
-    .hero__sub { max-width: 540px; margin: 0 auto 36px; }
-    .hero__actions { display: none; }
+    /* Headline — white on red, very large */
+    .hero__headline {
+      margin-bottom: 20px;
+      white-space: normal;
+      color: #ffffff;
+    }
+
+    /* Sub text — white/translucent */
+    .hero__sub {
+      max-width: 560px;
+      margin: 0 0 36px;
+      color: rgba(255,255,255,0.88);
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    /* CTA row — shown on hero */
+    .hero__actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
     .hero__visual { display: none; }
 
-    /* ---- HERO SEARCH BAR ---- */
+    /* Trust/social proof bar below CTAs */
+    .hero__proof {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 0;
+    }
+    .hero__proof-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      font-family: var(--font);
+    }
+    .hero__proof-icon { font-size: 15px; }
+
+    /* ---- HERO SEARCH BAR — white card on red bg ---- */
     .hero__search-wrap {
       width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background: #f5f5f5;
-      border-radius: 16px;
+      max-width: 680px;
+      margin: 0;
+      background: rgba(255,255,255,0.12);
+      border-radius: var(--radius-lg);
       padding: 10px 10px 12px;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     /* Tab row */
@@ -430,80 +492,77 @@
     .hero__tab {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 7px 15px;
-      border-radius: 8px;
-      font-size: 13px; font-weight: 500;
+      border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600;
       font-family: var(--font);
       cursor: pointer;
       border: none;
       background: transparent;
-      color: var(--text-muted);
-      transition: color 0.15s, background 0.15s, box-shadow 0.15s;
+      color: rgba(255,255,255,0.7);
+      transition: color 0.15s, background 0.15s;
       white-space: nowrap;
     }
-    .hero__tab:hover {
-      color: var(--text-primary);
-    }
+    .hero__tab:hover { color: #fff; background: rgba(255,255,255,0.1); }
     .hero__tab.active {
-      color: var(--text-primary);
+      color: var(--accent);
       background: #fff;
-      font-weight: 600;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.09);
+      font-weight: 700;
     }
 
-    /* Search input row */
+    /* Search input row — white on red */
     .hero__search-bar {
       display: flex;
       align-items: center;
       background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
+      border-radius: var(--radius-md);
       padding: 5px 5px 5px 16px;
       gap: 8px;
       border: none;
     }
     .hero__search-input {
       flex: 1; border: none; outline: none; background: transparent;
-      font-size: 14px; font-family: var(--font);
+      font-size: 15px; font-family: var(--font);
       color: var(--text-primary);
-      padding: 6px 0;
+      padding: 7px 0;
     }
-    .hero__search-input::placeholder { color: #c4c4c4; }
+    .hero__search-input::placeholder { color: #b0b0b0; }
     .hero__search-btn {
       display: inline-flex; align-items: center; gap: 8px;
       background: var(--accent); color: #fff;
-      border: none; border-radius: 8px;
-      padding: 11px 20px; font-size: 13px; font-weight: 600;
+      border: none; border-radius: var(--radius-sm);
+      padding: 12px 22px; font-size: 14px; font-weight: 700;
       font-family: var(--font);
       cursor: pointer; transition: background 0.15s; white-space: nowrap;
       flex-shrink: 0;
     }
-    .hero__search-btn:hover { background: var(--accent-light); }
+    .hero__search-btn:hover { background: var(--accent-dark); }
     .hero__search-btn svg { display: none; }
 
     /* Sources strip below search bar */
     .hero__sources {
-      display: flex; align-items: center; justify-content: center;
-      gap: 6px; margin-top: 20px; flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: flex-start;
+      gap: 6px; margin-top: 16px; flex-wrap: wrap;
     }
     .hero__sources-label {
-      font-size: 12px; color: var(--text-muted); font-weight: 500;
+      font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500;
       margin-right: 4px; white-space: nowrap;
     }
     .hero__source-pill {
       display: inline-flex; align-items: center;
-      padding: 4px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #fff;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.12);
       font-size: 12px; font-weight: 600;
-      color: var(--text-secondary);
+      color: rgba(255,255,255,0.85);
       font-family: var(--font);
       white-space: nowrap;
-      transition: border-color 0.15s, color 0.15s;
+      transition: background 0.15s, border-color 0.15s;
     }
     .hero__source-pill:hover {
-      border-color: var(--border-hover);
-      color: var(--text-primary);
+      background: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.6);
+      color: #fff;
     }
 
     /* Floating listing cards — hide in new layout */
@@ -609,13 +668,13 @@
     .hero__glow-circle::before { display: none; }
 
     /* ============================================================
-       TICKER / TRUST BAR
+       TICKER / TRUST BAR — ScrapingBee off-white band
     ============================================================ */
     .ticker {
-      padding: 16px 0;
+      padding: 14px 0;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      background: #ffffff;
+      background: var(--bg-alt);
       overflow: hidden;
       position: relative;
     }
@@ -628,8 +687,8 @@
       z-index: 2;
       pointer-events: none;
     }
-    .ticker::before { left: 0; background: linear-gradient(to right, #fff, transparent); }
-    .ticker::after { right: 0; background: linear-gradient(to left, #fff, transparent); }
+    .ticker::before { left: 0; background: linear-gradient(to right, var(--bg-alt), transparent); }
+    .ticker::after { right: 0; background: linear-gradient(to left, var(--bg-alt), transparent); }
 
     .ticker__track {
       display: flex;
@@ -680,9 +739,9 @@
     .step {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 80px;
+      gap: 72px;
       align-items: center;
-      padding: 72px 0;
+      padding: 64px 0;
       border-top: 1px solid var(--border);
       position: relative;
     }
@@ -737,13 +796,13 @@
       background-size: contain;
     }
 
-    /* Screenshot visual area */
+    /* Screenshot visual area — flat card style */
     .step__visual {
       position: relative;
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.10);
-      border: 1px solid rgba(0,0,0,0.07);
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border);
       background: #f8f8f8;
     }
     .step__visual img {
@@ -820,27 +879,19 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 32px 28px;
+      padding: 28px 24px;
       cursor: pointer;
       transition: var(--transition);
       position: relative;
       overflow: hidden;
       text-decoration: none;
     }
-    .category-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, var(--cat-color, var(--accent)) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
+    .category-card::after { display: none; }
     .category-card:hover {
-      border-color: var(--cat-color, var(--accent));
-      transform: translateY(-4px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      border-color: var(--border-hover);
+      transform: none;
+      box-shadow: var(--shadow-hover);
     }
-    .category-card:hover::after { opacity: 0.05; }
     .category-card:hover .category-card__arrow { transform: translate(3px, -3px); opacity: 1; }
 
     .category-card__coming-soon {
@@ -1562,21 +1613,23 @@
     }
 
     .pricing-card {
-      background: transparent;
-      border: none;
-      border-top: 1px solid var(--border);
-      border-radius: 0;
-      padding: 40px 0 40px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
       position: relative;
       transition: var(--transition);
     }
-    .pricing-card:hover { transform: none; box-shadow: none; }
+    .pricing-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-hover);
+    }
     .pricing-card--popular {
-      border-top: 2px solid var(--accent);
-      background: transparent;
+      border: 2px solid var(--accent);
+      background: #fff;
       box-shadow: none;
     }
-    .pricing-card--popular:hover { box-shadow: none; }
+    .pricing-card--popular:hover { box-shadow: var(--shadow-hover); }
 
     .pricing-badge {
       display: inline-block;
@@ -1662,15 +1715,17 @@
     }
 
     .testimonial-card {
-      background: transparent;
-      border: none;
-      border-top: 1px solid var(--border);
-      border-radius: 0;
-      padding: 36px 0 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
       position: relative;
       transition: var(--transition);
     }
-    .testimonial-card:hover { transform: none; box-shadow: none; }
+    .testimonial-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-hover);
+    }
 
     .testimonial-quote { display: none; }
 
@@ -1713,10 +1768,32 @@
     /* ============================================================
        CTA SECTION
     ============================================================ */
+    /* CTA / Benefits section — solid accent bg like ScrapingBee */
     .cta-section {
-      padding: 100px 0;
-      border-top: 1px solid var(--border);
+      padding: 96px 0;
+      background: var(--accent);
+      border-top: none;
     }
+    .cta-section .h2,
+    .cta-section .cta-headline { color: #fff; }
+    .cta-section .cta-sub { color: rgba(255,255,255,0.85); }
+    /* Benefit cards on red bg — white solid cards */
+    .cta-section .benefit {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      transition: background 0.18s;
+    }
+    .cta-section .benefit:hover {
+      background: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.4);
+      box-shadow: none;
+    }
+    .cta-section .benefit__title { color: #fff; font-size: 15px; font-weight: 700; }
+    .cta-section .benefit__desc { color: rgba(255,255,255,0.8); }
+    .cta-section .hiw-label { color: rgba(255,255,255,0.65); }
+    .cta-section .benefits-grid { margin-top: 48px; }
     .cta-inner { padding: 0; }
     .cta-headline { margin-bottom: 16px; }
     .cta-sub { max-width: 480px; margin: 0 auto 40px; }
@@ -1737,8 +1814,15 @@
       margin-top: 56px;
     }
     .benefit {
-      border-top: 1px solid var(--border);
-      padding-top: 28px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      transition: var(--transition);
+    }
+    .benefit:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-hover);
     }
     .benefit__icon-row {
       display: flex;
@@ -1771,8 +1855,9 @@
     /* ============================================================
        FOOTER
     ============================================================ */
+    /* Footer — ScrapingBee dark footer */
     .footer {
-      padding: 60px 0 40px;
+      padding: 56px 0 36px;
       background: #0f0f0f;
       border-top: none;
     }
@@ -1809,13 +1894,13 @@
     }
     .footer__links a {
       font-size: 13px;
-      color: rgba(255,255,255,0.45);
+      color: rgba(255,255,255,0.5);
       text-decoration: none;
-      padding: 6px 12px;
-      border-radius: 8px;
-      transition: color 0.2s, background 0.2s;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      transition: color 0.15s;
     }
-    .footer__links a:hover { color: #ffffff; background: rgba(255,255,255,0.08); }
+    .footer__links a:hover { color: #ffffff; background: transparent; }
     .footer__copy { font-size: 13px; color: rgba(255,255,255,0.35); }
     .footer__bottom {
       margin-top: 40px;
@@ -1829,13 +1914,13 @@
     }
 
     /* ============================================================
-       SECTION HEADER
+       SECTION HEADER — ScrapingBee left-aligned with centered option
     ============================================================ */
-    .section-header { max-width: 640px; }
+    .section-header { max-width: 680px; }
     .section-header--center {
       max-width: 640px;
       margin: 0 auto;
-      text-align: left;
+      text-align: center;
     }
     .section-header__sub {
       margin-top: 12px;
@@ -1978,7 +2063,7 @@
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
-      padding: 12px 18px;
+      padding: 10px 16px;
       border-radius: var(--radius-lg);
       border: 1.5px solid var(--border);
       background: #fff;
@@ -1987,13 +2072,13 @@
       color: var(--text-primary);
       transition: var(--transition);
       position: relative;
-      min-width: 80px;
+      min-width: 76px;
     }
     .cat-strip__item:hover {
       border-color: var(--accent);
       background: rgba(241,77,76,0.04);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      transform: none;
+      box-shadow: none;
     }
     .cat-strip__item.active {
       border-color: var(--accent);
@@ -2027,8 +2112,8 @@
       position: relative;
     }
     .result-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      transform: none;
+      box-shadow: var(--shadow-hover);
       border-color: var(--border-hover);
     }
     .result-card__img {
@@ -2138,6 +2223,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 20px;
+      box-shadow: none;
     }
     .sidebar__title {
       font-size: 13px; font-weight: 700; color: var(--text-primary);
@@ -2178,14 +2264,14 @@
     }
     .filter-chip {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(241,77,76,0.08);
+      background: rgba(241,77,76,0.06);
       border: 1px solid rgba(241,77,76,0.2);
       color: var(--accent);
       font-size: 12px; font-weight: 600;
-      padding: 4px 10px; border-radius: 8px;
+      padding: 4px 10px; border-radius: var(--radius-sm);
       cursor: pointer; transition: var(--transition);
     }
-    .filter-chip:hover { background: rgba(241,77,76,0.14); }
+    .filter-chip:hover { background: rgba(241,77,76,0.12); }
     .filter-chip__x { font-size: 14px; line-height: 1; }
 
     /* Results header: count + sort */
@@ -2208,20 +2294,20 @@
     .results-sort select:focus { border-color: var(--accent); }
 
     /* ============================================================
-       TRUST SIGNALS — footer badges
+       TRUST SIGNALS — footer badges (dark bg variant)
     ============================================================ */
     .trust-bar {
       display: flex; align-items: center; justify-content: center;
       gap: 20px; flex-wrap: wrap;
-      padding: 16px 0; border-top: 1px solid var(--border);
-      margin-top: 24px;
+      padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.1);
+      margin-top: 28px;
     }
     .trust-badge {
       display: flex; align-items: center; gap: 6px;
-      font-size: 12px; color: var(--text-muted); font-weight: 500;
+      font-size: 12px; color: rgba(255,255,255,0.45); font-weight: 500;
     }
     .trust-badge-icon { font-size: 15px; }
-    .trust-sep { width: 1px; height: 20px; background: var(--border); }
+    .trust-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.1); }
 
     /* Verified badge on cards */
     .verified-badge {
@@ -2293,6 +2379,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       overflow: hidden;
+      box-shadow: none;
     }
     .skeleton-img { height: 180px; width: 100%; border-radius: 0; }
     .skeleton-body { padding: 14px 16px; }
@@ -2337,12 +2424,12 @@
       align-items: center;
       background: #f5f5f5;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       padding: 4px 4px 4px 14px;
       gap: 6px;
       opacity: 0;
-      transform: scale(0.95);
-      transition: opacity 0.3s, transform 0.3s;
+      transform: scale(0.98);
+      transition: opacity 0.25s, transform 0.25s;
     }
     .nav.scrolled .nav__search-compact {
       display: flex;
@@ -2358,7 +2445,7 @@
     .nav__search-compact-btn {
       width: 28px; height: 28px;
       background: var(--accent); color: #fff;
-      border: none; border-radius: 50%; cursor: pointer;
+      border: none; border-radius: var(--radius-sm); cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: var(--transition); flex-shrink: 0;
     }
@@ -2368,10 +2455,10 @@
     }
 
     /* ============================================================
-       INLINE HERO SEARCH (ib-*)
+       INLINE HERO SEARCH (ib-*) — ScrapingBee flat/square style
     ============================================================ */
 
-    /* Top row: headline left, tabs right — tabs sit on same baseline as second line */
+    /* Top row: headline left, tabs right */
     .ib-top {
       width: 100%;
       display: flex;
@@ -2399,7 +2486,7 @@
       color: var(--accent);
     }
 
-    /* Tab group — individual buttons, NO pill-wrapper background */
+    /* Tab group — square flat buttons */
     .ib-tabs {
       display: flex;
       gap: 6px;
@@ -2407,51 +2494,48 @@
       align-items: center;
     }
     .ib-tab {
-      padding: 10px 20px;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 14px;
+      padding: 10px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
       font-weight: 600;
       font-family: var(--font);
       cursor: pointer;
       background: #fff;
-      color: #555;
-      transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+      color: var(--text-secondary);
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
       white-space: nowrap;
       line-height: 1;
-      letter-spacing: -0.01em;
+      letter-spacing: 0em;
     }
     .ib-tab:hover {
       border-color: var(--accent);
       color: var(--accent);
-      box-shadow: 0 2px 8px rgba(241,77,76,0.1);
     }
     .ib-tab.active {
       background: var(--accent);
       color: #fff;
       border-color: var(--accent);
       font-weight: 700;
-      box-shadow: 0 2px 12px rgba(241,77,76,0.25);
     }
 
-    /* Search bar row */
+    /* Search bar row — flat white with border */
     .ib-search {
       width: 100%;
       max-width: 100%;
-      margin: 22px auto 0;
+      margin: 20px auto 0;
       display: flex;
       align-items: center;
-      background: #f4f4f4;
-      border-radius: 16px;
-      padding: 8px 8px 8px 22px;
+      background: #fff;
+      border-radius: var(--radius-md);
+      padding: 6px 6px 6px 20px;
       gap: 10px;
-      border: 1.5px solid transparent;
-      transition: box-shadow 0.2s, border-color 0.2s;
+      border: 1.5px solid var(--border);
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     .ib-search:focus-within {
-      border-color: rgba(241,77,76,0.3);
-      box-shadow: 0 0 0 3px rgba(241,77,76,0.10), 0 4px 20px rgba(0,0,0,0.07);
-      background: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(241,77,76,0.08);
     }
     .ib-input-wrap {
       flex: 1;
@@ -2464,11 +2548,11 @@
       border: none;
       outline: none;
       background: transparent;
-      font-size: 17px;
+      font-size: 16px;
       font-family: var(--font);
       color: var(--text-primary);
       padding: 10px 0;
-      letter-spacing: -0.01em;
+      letter-spacing: 0em;
     }
     .ib-input::placeholder { color: #bbb; }
     .ib-btn {
@@ -2478,19 +2562,19 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      border-radius: 12px;
-      padding: 15px 32px;
-      font-size: 15px;
+      border-radius: var(--radius-sm);
+      padding: 14px 28px;
+      font-size: 14px;
       font-weight: 700;
       font-family: var(--font);
       cursor: pointer;
-      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      transition: background 0.15s;
       white-space: nowrap;
       flex-shrink: 0;
-      letter-spacing: -0.01em;
+      letter-spacing: 0.01em;
     }
-    .ib-btn:hover { background: var(--accent-light); box-shadow: 0 4px 16px rgba(241,77,76,0.3); }
-    .ib-btn:active { transform: scale(0.97); }
+    .ib-btn:hover { background: var(--accent-dark); }
+    .ib-btn:active { transform: scale(0.98); }
 
     /* ── HERO SOURCE PILLS (below search bar) ── */
     .ib-hero-sources {
@@ -2587,10 +2671,10 @@
       top: 80px;
       background: #fff;
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: var(--radius-lg);
       overflow: hidden;
-      display: none; /* hidden until search is clicked */
-      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      display: none;
+      box-shadow: none;
     }
     .ib-sidebar.visible { display: block; }
 
@@ -2659,15 +2743,15 @@
     }
     .ib-action-btn {
       display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 16px; border-radius: 8px;
-      border: 1.5px solid #e0e0e0; background: #fff;
-      font-size: 13px; font-weight: 600; color: #444;
+      padding: 8px 14px; border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border); background: #fff;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
       cursor: pointer; font-family: var(--font);
-      transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+      transition: border-color 0.15s, color 0.15s;
       white-space: nowrap; line-height: 1;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      box-shadow: none;
     }
-    .ib-action-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 2px 8px rgba(241,77,76,0.12); }
+    .ib-action-btn:hover { border-color: var(--accent); color: var(--accent); }
     .ib-action-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(241,77,76,0.05); }
     .ib-action-btn__badge {
       background: var(--accent); color: #fff;
@@ -2764,25 +2848,24 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 7px 14px;
-      border-radius: 8px;
-      border: 1.5px solid #e0e0e0;
+      padding: 6px 13px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
       background: #fff;
       font-size: 13px;
       font-weight: 500;
-      color: #666;
+      color: var(--text-secondary);
       cursor: pointer;
-      transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+      transition: border-color 0.15s, color 0.15s;
       white-space: nowrap;
       font-family: var(--font);
       line-height: 1;
     }
     .ib-source-pill:hover {
-      border-color: #aaa;
+      border-color: var(--border-hover);
       color: var(--text-primary);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
-    /* Active: red border, red text, white bg (no fill) */
+    /* Active: red border, red text */
     .ib-source-pill.active {
       border-color: var(--accent);
       color: var(--accent);
@@ -2861,6 +2944,264 @@
       .hero .container { align-items: stretch; }
     }
 
+    /* ============================================================
+       IP / LOCATION PERMISSION BANNER
+    ============================================================ */
+    .ip-banner {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .ip-banner.open { display: flex; }
+
+    .ip-banner__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .ip-banner__card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 440px;
+      overflow: hidden;
+      animation: ip-slide-up 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    @keyframes ip-slide-up {
+      from { opacity: 0; transform: translateY(32px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);    }
+    }
+
+    .ip-banner__header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 20px 0;
+    }
+
+    .ip-banner__icon {
+      font-size: 28px;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: var(--accent-glow);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ip-banner__titles { flex: 1; min-width: 0; }
+    .ip-banner__title  { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+    .ip-banner__sub    { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    .ip-banner__close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .ip-banner__close:hover { background: rgba(0,0,0,0.06); color: var(--text-primary); }
+
+    .ip-banner__body { padding: 16px 20px; }
+
+    .ip-banner__desc {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .ip-banner__chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .ip-banner__chip {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-family: var(--font);
+    }
+
+    /* IP info box */
+    .ip-info-box {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .ip-info-box__row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 14px;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ip-info-box__row:last-child { border-bottom: none; }
+    .ip-info-box__label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .ip-info-box__value {
+      font-size: 13px;
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-weight: 600;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Precise GPS prompt */
+    .ip-precise-prompt {
+      background: rgba(241,77,76,0.06);
+      border: 1px solid rgba(241,77,76,0.2);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .ip-precise-prompt__text {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    .ip-precise-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 13px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+      font-family: var(--font);
+    }
+    .ip-precise-btn:hover { background: var(--accent-light); }
+
+    .ip-banner__status {
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .ip-banner__footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 0 20px 20px;
+    }
+
+    .ip-banner__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: var(--font);
+    }
+    .ip-banner__btn--ghost {
+      background: transparent;
+      color: var(--text-muted);
+    }
+    .ip-banner__btn--ghost:hover { background: rgba(0,0,0,0.05); color: var(--text-primary); }
+    .ip-banner__btn--primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .ip-banner__btn--primary:hover { background: var(--accent-light); }
+    .ip-banner__btn--primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Nav chip showing detected location */
+    .ip-nav-chip {
+      position: fixed;
+      bottom: 80px;
+      right: 16px;
+      z-index: 900;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 12px 6px 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+      cursor: pointer;
+      transition: var(--transition);
+      animation: ip-chip-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes ip-chip-pop {
+      from { opacity: 0; transform: scale(0.7) translateY(8px); }
+      to   { opacity: 1; transform: scale(1)   translateY(0);   }
+    }
+    .ip-nav-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 4px 16px rgba(241,77,76,0.15);
+    }
+    .ip-nav-chip__icon { font-size: 14px; }
+    .ip-nav-chip__text { font-weight: 600; font-family: var(--font); }
+
+    @media (min-width: 768px) {
+      .ip-nav-chip {
+        bottom: auto;
+        top: 14px;
+        right: 16px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2884,6 +3225,7 @@
         </ul>
         <div class="nav__cta">
           <a href="#pricing" class="btn btn-ghost btn-sm" id="navBrowse">Sign in</a>
+          <a href="#hero" class="btn btn-primary btn-sm">Try for free →</a>
         </div>
 
         <div class="nav__hamburger" id="hamburger" role="button" aria-label="Toggle menu">
@@ -2909,17 +3251,16 @@
        HERO
   ============================================================ -->
   <section class="hero" id="hero">
-    <div class="hero__orb hero__orb--1"></div>
-    <div class="hero__orb hero__orb--2"></div>
-    <div class="hero__orb hero__orb--3"></div>
-
     <div class="container">
       <div class="hero__inner">
 
+        <!-- Eyebrow label -->
+        <div class="hero__tag hero-animate hero-animate--1">🦀 Crabify — UK Listings Aggregator</div>
+
         <!-- Row 1: Headline left, category tabs right -->
         <div class="ib-top hero-animate hero-animate--1">
-          <h1 class="ib-headline">
-            Multiple Websites.<br>All in <em>ONE Search.</em>
+          <h1 class="ib-headline" style="color:#fff;">
+            Multiple Websites.<br>All in <em style="color:rgba(255,255,255,0.75);">ONE Search.</em>
           </h1>
           <div class="ib-tabs" id="ibTabs">
             <button class="ib-tab active" data-cat="property">🏠 Property</button>
@@ -2937,14 +3278,22 @@
           <button class="ib-btn" id="ibSearchBtn">Search</button>
         </div>
 
-        <!-- Row 3: Website source pills — shown below search bar per active category -->
+        <!-- Row 3: Website source pills -->
         <div class="ib-hero-sources" id="ibHeroSources">
           <span class="ib-hero-sources__label">Searching:</span>
           <div class="ib-hero-source-pills" id="ibHeroSourcePills"></div>
         </div>
 
         <!-- Geo status -->
-        <div class="ib-geo-status" id="ibGeoStatus"></div>
+        <div class="ib-geo-status" id="ibGeoStatus" style="color:rgba(255,255,255,0.7);"></div>
+
+        <!-- Trust proof bar -->
+        <div class="hero__proof hero-animate hero-animate--3">
+          <div class="hero__proof-item"><span class="hero__proof-icon">✓</span> Free to use</div>
+          <div class="hero__proof-item"><span class="hero__proof-icon">🔍</span> 10+ UK sites</div>
+          <div class="hero__proof-item"><span class="hero__proof-icon">⚡</span> Real-time results</div>
+          <div class="hero__proof-item"><span class="hero__proof-icon">🏠</span> Property · Cars · Jobs</div>
+        </div>
 
       </div>
     </div>
@@ -3234,7 +3583,7 @@
   <!-- ============================================================
        HOW IT WORKS
   ============================================================ -->
-  <section class="section" id="how-it-works">
+  <section class="section section--alt" id="how-it-works">
     <div class="container">
       <div data-animate="fade-up">
         <div class="hiw-label">How it works</div>
@@ -3425,7 +3774,7 @@
   <!-- ============================================================
        TESTIMONIALS
   ============================================================ -->
-  <section class="section" id="testimonials" style="padding-top:0;">
+  <section class="section section--alt" id="testimonials">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
         <span class="label">Reviews</span>
@@ -3501,8 +3850,8 @@
   <section class="cta-section" id="benefits">
     <div class="container">
       <div data-animate="fade-up">
-        <div class="hiw-label">Why Crabify</div>
-        <h2 class="h2">Built for buyers who<br /><em style="color:var(--accent);font-style:normal;">value their time</em></h2>
+        <div class="hiw-label" style="color:rgba(255,255,255,0.65);">Why Crabify</div>
+        <h2 class="h2" style="color:#fff;">Built for buyers who<br /><em style="color:rgba(255,255,255,0.7);font-style:normal;">value their time</em></h2>
       </div>
 
       <div class="benefits-grid" data-stagger>
@@ -4102,7 +4451,7 @@
             <span style="font-size:20px;">🏠</span>
             <div>
               <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Get full Zoopla results — free, no API key</div>
-              <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Zoopla is capped at ~28 results from the server (datacenter IP). Enable browser relay to fetch up to 50,000 results using <strong>your own browser IP</strong> — no extension needed.</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Zoopla uses your browser's real residential IP to bypass Cloudflare — up to 25 results per page, fully pageable. No extension needed.</div>
             </div>
           </div>
           <div style="display:flex;gap:8px;flex-shrink:0;margin-top:6px;">
@@ -4279,6 +4628,80 @@
 
   <!-- Toast -->
   <div class="toast" id="toast"></div>
+
+  <!-- ============================================================
+       IP / LOCATION PERMISSION BANNER
+  ============================================================ -->
+  <div class="ip-banner" id="ipBanner" role="dialog" aria-modal="true" aria-label="Location permission">
+    <div class="ip-banner__backdrop" id="ipBannerBackdrop"></div>
+    <div class="ip-banner__card">
+      <!-- Header -->
+      <div class="ip-banner__header">
+        <div class="ip-banner__icon">📍</div>
+        <div class="ip-banner__titles">
+          <div class="ip-banner__title">Enable Location</div>
+          <div class="ip-banner__sub">Personalise your Crabify experience</div>
+        </div>
+        <button class="ip-banner__close" id="ipBannerClose" aria-label="Dismiss">✕</button>
+      </div>
+
+      <!-- Body -->
+      <div class="ip-banner__body">
+        <p class="ip-banner__desc">
+          Crabify can detect your approximate location to automatically pre-fill your search area and show results near you — no account needed.
+        </p>
+
+        <!-- Info chips showing what will be shared -->
+        <div class="ip-banner__chips">
+          <span class="ip-banner__chip">🌐 IP address</span>
+          <span class="ip-banner__chip">📌 Approximate city</span>
+          <span class="ip-banner__chip">🗺️ Country</span>
+        </div>
+
+        <!-- IP info display (shown after detection) -->
+        <div class="ip-info-box" id="ipInfoBox" style="display:none;">
+          <div class="ip-info-box__row">
+            <span class="ip-info-box__label">Your IP</span>
+            <span class="ip-info-box__value" id="ipInfoAddress">—</span>
+          </div>
+          <div class="ip-info-box__row">
+            <span class="ip-info-box__label">Location</span>
+            <span class="ip-info-box__value" id="ipInfoLocation">—</span>
+          </div>
+          <div class="ip-info-box__row">
+            <span class="ip-info-box__label">ISP</span>
+            <span class="ip-info-box__value" id="ipInfoIsp">—</span>
+          </div>
+        </div>
+
+        <!-- GPS upgrade prompt (shown after IP detected) -->
+        <div class="ip-precise-prompt" id="ipPrecisePrompt" style="display:none;">
+          <div class="ip-precise-prompt__text">
+            🎯 Want <strong>exact</strong> results? Allow GPS for your precise location.
+          </div>
+          <button class="ip-precise-btn" id="ipAllowGps">Allow GPS access</button>
+        </div>
+
+        <!-- Status message -->
+        <div class="ip-banner__status" id="ipBannerStatus" style="display:none;"></div>
+      </div>
+
+      <!-- Footer -->
+      <div class="ip-banner__footer">
+        <button class="ip-banner__btn ip-banner__btn--ghost" id="ipBannerDeny">Not now</button>
+        <button class="ip-banner__btn ip-banner__btn--primary" id="ipBannerAllow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+          Detect my location
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location chip shown in nav after detection -->
+  <div class="ip-nav-chip" id="ipNavChip" style="display:none;" title="Your detected location">
+    <span class="ip-nav-chip__icon">📍</span>
+    <span class="ip-nav-chip__text" id="ipNavChipText">Detecting…</span>
+  </div>
 
   <!-- ============================================================
        MOBILE BOTTOM NAVIGATION BAR
@@ -4561,7 +4984,7 @@
             } else {
               zpLoader.style.opacity = '0.5';
               zpLoader.title = zpRelayEnabled
-                ? 'Browser relay returned no data — using server fallback'
+                ? 'Zoopla relay returned no data — try enabling in Zoopla settings'
                 : 'Enable browser relay for full results (click Zoopla pill)';
             }
           }
@@ -5081,8 +5504,8 @@
        4. The server parses it and returns structured listings.
        5. Results are merged into the main results grid.
 
-       The server still runs headless Firefox as a fallback for users
-       who don't enable the relay (gives ~28 results from datacenter).
+       The server also attempts a lightweight urllib fetch (no Firefox).
+       If Cloudflare blocks the server fetch, the relay provides the results.
     ═══════════════════════════════════════════════════════════ */
 
     // ── Persisted consent flag (localStorage) ─────────────────
@@ -5122,7 +5545,7 @@
       } else {
         zpEnableBtn.style.display  = 'flex';
         zpDisableBtn.style.display = 'none';
-        zpCurrentStatus.textContent = 'Not enabled — Zoopla is limited to ~28 results via server.';
+        zpCurrentStatus.textContent = 'Not enabled — Zoopla results will only appear if urllib fetch succeeds.';
         zpCurrentStatus.style.color = 'var(--text-muted)';
       }
     }
@@ -5184,7 +5607,7 @@
        Returns an array of parsed listings, or [] on failure.
     ═══════════════════════════════════════════════════════════ */
     async function fetchZooplaViaRelay(searchParams) {
-      if (!zpRelayEnabled) return null; // null = "not enabled, use server fallback"
+      if (!zpRelayEnabled) return null; // null = "relay not enabled, server will try urllib"
 
       const transType = searchParams.type || 'buy';
       const channel   = transType === 'buy' ? 'for-sale' : 'to-rent';
@@ -5285,8 +5708,8 @@
        Instead we use a blank iframe + srcdoc injection approach.
 
        Fallback: if the iframe approach fails (blocked by X-Frame-Options
-       or CSP), we gracefully return null so the server's headless
-       Firefox fallback takes over.
+       or CSP), we gracefully return null. The server will have already
+       attempted a urllib fetch in parallel — relay augments those results.
     ═══════════════════════════════════════════════════════════ */
     function _fetchZooplaHtmlViaIframe(url) {
       return new Promise((resolve) => {
@@ -5331,7 +5754,7 @@
             }
           } catch (crossOriginErr) {
             // X-Frame-Options or CSP blocked the frame
-            console.warn('[Crabify] Zoopla iframe cross-origin blocked — using server fallback');
+            console.warn('[Crabify] Zoopla iframe cross-origin blocked (X-Frame-Options) — relay unavailable');
             done(null);
           }
         };
@@ -7228,6 +7651,271 @@
       toastEl.textContent = msg; toastEl.classList.add('show');
       clearTimeout(toastTimer); toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 2800);
     }
+  })();
+  </script>
+
+  <!-- ============================================================
+       IP / LOCATION PERMISSION SYSTEM
+  ============================================================ -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── Storage keys ─────────────────────────────────────────── */
+    const IP_CONSENT_KEY  = 'crabify_ip_consent';   // 'granted' | 'denied'
+    const IP_DATA_KEY     = 'crabify_ip_data';       // cached JSON string
+    const GPS_CONSENT_KEY = 'crabify_gps_consent';  // 'granted' | 'denied'
+
+    /* ── DOM refs ─────────────────────────────────────────────── */
+    const banner      = document.getElementById('ipBanner');
+    const backdrop    = document.getElementById('ipBannerBackdrop');
+    const closeBtn    = document.getElementById('ipBannerClose');
+    const denyBtn     = document.getElementById('ipBannerDeny');
+    const allowBtn    = document.getElementById('ipBannerAllow');
+    const statusEl    = document.getElementById('ipBannerStatus');
+    const infoBox     = document.getElementById('ipInfoBox');
+    const ipAddrEl    = document.getElementById('ipInfoAddress');
+    const ipLocEl     = document.getElementById('ipInfoLocation');
+    const ipIspEl     = document.getElementById('ipInfoIsp');
+    const precPrompt  = document.getElementById('ipPrecisePrompt');
+    const gpsBtn      = document.getElementById('ipAllowGps');
+    const navChip     = document.getElementById('ipNavChip');
+    const navChipText = document.getElementById('ipNavChipText');
+
+    if (!banner) return; // safety guard
+
+    /* ── Open / close helpers ────────────────────────────────── */
+    function openBanner()  { banner.classList.add('open');  }
+    function closeBanner() { banner.classList.remove('open'); }
+
+    backdrop.addEventListener('click', () => dismiss('denied'));
+    closeBtn.addEventListener('click', () => dismiss('denied'));
+    denyBtn.addEventListener('click',  () => dismiss('denied'));
+
+    function dismiss(consent) {
+      localStorage.setItem(IP_CONSENT_KEY, consent);
+      closeBanner();
+    }
+
+    /* ── Status helper ───────────────────────────────────────── */
+    function showStatus(msg, type /* success | error | info */) {
+      if (!statusEl) return;
+      statusEl.style.display = 'block';
+      statusEl.textContent   = msg;
+      const colours = {
+        success: { bg: 'rgba(22,163,74,0.10)',  color: '#16a34a', border: 'rgba(22,163,74,0.25)'  },
+        error:   { bg: 'rgba(220,38,38,0.10)',  color: '#dc2626', border: 'rgba(220,38,38,0.25)'  },
+        info:    { bg: 'rgba(37,99,235,0.09)',  color: '#2563eb', border: 'rgba(37,99,235,0.20)'  },
+      };
+      const c = colours[type] || colours.info;
+      statusEl.style.background = c.bg;
+      statusEl.style.color      = c.color;
+      statusEl.style.border     = `1px solid ${c.border}`;
+      statusEl.style.borderRadius = '8px';
+      statusEl.style.padding    = '10px 14px';
+    }
+
+    /* ── Render IP data into the info-box ─────────────────────── */
+    function renderIpData(data) {
+      if (!data || !infoBox) return;
+
+      const city    = data.city    || '';
+      const region  = data.region  || '';
+      const country = data.country || '';
+      const parts   = [city, region, country].filter(Boolean);
+      const locStr  = parts.join(', ') || 'Unknown';
+
+      if (ipAddrEl)  ipAddrEl.textContent  = data.ip  || '—';
+      if (ipLocEl)   ipLocEl.textContent   = locStr;
+      if (ipIspEl)   ipIspEl.textContent   = data.isp || data.org || '—';
+
+      infoBox.style.display   = 'block';
+      if (precPrompt) precPrompt.style.display = 'flex';
+
+      /* Update nav chip */
+      const chipLabel = city || country || data.ip || '?';
+      if (navChipText) navChipText.textContent = `📍 ${chipLabel}`;
+      if (navChip)     navChip.style.display   = 'inline-flex';
+    }
+
+    /* ── Fetch IP data from our server endpoint ──────────────── */
+    async function fetchIpInfo() {
+      allowBtn.disabled    = true;
+      allowBtn.textContent = '⏳ Detecting…';
+      showStatus('Looking up your IP address…', 'info');
+
+      try {
+        const resp = await fetch('/api/ip-info', { cache: 'no-store' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (data.error) throw new Error(data.error);
+
+        /* Cache for later re-use */
+        localStorage.setItem(IP_DATA_KEY, JSON.stringify(data));
+        localStorage.setItem(IP_CONSENT_KEY, 'granted');
+
+        renderIpData(data);
+        showStatus('✅ Location detected! Your search area has been set.', 'success');
+
+        /* Pre-fill search boxes with detected city */
+        const city = data.city || data.region || '';
+        if (city) prefillSearchLocation(city);
+
+        /* Auto-dismiss banner after a short pause */
+        allowBtn.disabled    = false;
+        allowBtn.textContent = '✓ Done — close';
+        allowBtn.onclick     = () => closeBanner();
+
+        return data;
+      } catch (err) {
+        showStatus(`Could not detect IP: ${err.message}`, 'error');
+        allowBtn.disabled    = false;
+        allowBtn.textContent = 'Retry';
+        allowBtn.onclick     = fetchIpInfo;
+        return null;
+      }
+    }
+
+    /* Allow button — primary action */
+    allowBtn.addEventListener('click', fetchIpInfo);
+
+    /* ── GPS precise location ────────────────────────────────── */
+    if (gpsBtn) {
+      gpsBtn.addEventListener('click', () => {
+        if (!navigator.geolocation) {
+          showStatus('Geolocation not available in this browser.', 'error');
+          return;
+        }
+        gpsBtn.disabled    = true;
+        gpsBtn.textContent = '⏳ Requesting…';
+
+        navigator.geolocation.getCurrentPosition(
+          async pos => {
+            try {
+              const { latitude: lat, longitude: lon } = pos.coords;
+              const resp = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`,
+                { headers: { 'Accept-Language': 'en' } }
+              );
+              const geo  = await resp.json();
+              const addr = geo.address || {};
+              const city = addr.city || addr.town || addr.village || addr.county || '';
+
+              localStorage.setItem(GPS_CONSENT_KEY, 'granted');
+
+              if (city) {
+                prefillSearchLocation(city);
+                showStatus(`🎯 GPS: ${city} — search location updated!`, 'success');
+                if (navChipText) navChipText.textContent = `🎯 ${city}`;
+                if (navChip)     navChip.style.display   = 'inline-flex';
+              } else {
+                showStatus('GPS acquired but could not resolve a city name.', 'info');
+              }
+              if (precPrompt) precPrompt.style.display = 'none';
+              gpsBtn.disabled    = false;
+              gpsBtn.textContent = '✓ GPS set';
+            } catch (e) {
+              showStatus('GPS lookup failed. IP location is still active.', 'error');
+              gpsBtn.disabled    = false;
+              gpsBtn.textContent = 'Retry GPS';
+            }
+          },
+          err => {
+            localStorage.setItem(GPS_CONSENT_KEY, 'denied');
+            const msgs = {
+              1: 'Permission denied — using IP location instead.',
+              2: 'Position unavailable — using IP location instead.',
+              3: 'Timed out — using IP location instead.',
+            };
+            showStatus(msgs[err.code] || 'GPS failed — using IP location.', 'info');
+            gpsBtn.disabled    = false;
+            gpsBtn.textContent = 'Allow GPS access';
+          },
+          { timeout: 10000, enableHighAccuracy: false }
+        );
+      });
+    }
+
+    /* ── Prefill search location in ALL search inputs ─────────── */
+    function prefillSearchLocation(city) {
+      /* Inline browse search box */
+      const ibLocation = document.getElementById('ibLocation');
+      if (ibLocation && !ibLocation.value.trim()) {
+        ibLocation.value = city;
+        /* Dispatch an input event so any listeners know the value changed */
+        ibLocation.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+
+      /* Property search location field */
+      const psLocation = document.getElementById('psLocation');
+      if (psLocation && !psLocation.value.trim()) {
+        psLocation.value = city;
+      }
+
+      /* Cars location field */
+      const carLocation = document.getElementById('carLocation');
+      if (carLocation && !carLocation.value.trim()) {
+        carLocation.value = city;
+      }
+
+      /* Jobs location field */
+      const jobLocation = document.getElementById('jobLocation');
+      if (jobLocation && !jobLocation.value.trim()) {
+        jobLocation.value = city;
+      }
+    }
+
+    /* ── Nav chip click — re-open banner with cached data ──────── */
+    if (navChip) {
+      navChip.addEventListener('click', () => {
+        /* Show cached data if available */
+        const cached = localStorage.getItem(IP_DATA_KEY);
+        if (cached) {
+          try { renderIpData(JSON.parse(cached)); } catch(_) {}
+        }
+        openBanner();
+      });
+    }
+
+    /* ── Decide on page load ─────────────────────────────────── */
+    function init() {
+      const consent = localStorage.getItem(IP_CONSENT_KEY);
+
+      if (!consent) {
+        /* First visit — show banner after a short delay so the page settles */
+        setTimeout(openBanner, 900);
+        return;
+      }
+
+      if (consent === 'granted') {
+        /* Returning user — restore cached IP data quietly */
+        const cached = localStorage.getItem(IP_DATA_KEY);
+        if (cached) {
+          try {
+            const data = JSON.parse(cached);
+            renderIpData(data);
+            /* Refresh data in the background (don't show banner) */
+            fetch('/api/ip-info', { cache: 'no-store' })
+              .then(r => r.ok ? r.json() : null)
+              .then(fresh => {
+                if (fresh && !fresh.error) {
+                  localStorage.setItem(IP_DATA_KEY, JSON.stringify(fresh));
+                  renderIpData(fresh);
+                }
+              })
+              .catch(() => {});
+          } catch(_) {}
+        }
+      }
+      /* consent === 'denied' — do nothing, respect user choice */
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
   })();
   </script>
 </body>
