@@ -6978,7 +6978,7 @@
       let params = {};
 
       if (cat === 'property') {
-        endpoint = '/api/search';
+        endpoint = 'https://crabify-api.onrender.com/api/search';
         params = {
           location: loc || 'London',
           type: getTabType(),
@@ -6994,7 +6994,7 @@
           index: (page - 1) * ibState.perPage,
         };
       } else if (cat === 'cars') {
-        endpoint = '/api/cars';
+        endpoint = 'https://crabify-api.onrender.com/api/cars';
         params = {
           location: loc || 'London',
           make:    getVal('ibCarsMake') || '',
@@ -7024,7 +7024,7 @@
           showFilters();
           return;
         }
-        endpoint = '/api/jobs';
+        endpoint = 'https://crabify-api.onrender.com/api/jobs';
         params = {
           query:    jobsQuery,
           location: loc || '',
