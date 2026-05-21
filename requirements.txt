@@ -1,7 +1,7 @@
 # No third-party dependencies — server.py uses Python stdlib only
 # Render still needs this file to detect it's a Python app
-flask
-playwright
 requests
 beautifulsoup4
-playwright==1.45.0
+Flask
+scrapfly-sdk
+playwright==1.40.0
