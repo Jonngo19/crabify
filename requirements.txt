@@ -4,4 +4,3 @@ requests
 beautifulsoup4
 Flask
 scrapfly-sdk
-playwright==1.40.0
