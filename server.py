@@ -786,11 +786,11 @@ def _zoopla_urllib_fetch(url: str, transaction_type: str) -> tuple:
         "DNT": "1",
     }
     try:
-    r = requests.get(url, headers=zoopla_headers, impersonate="chrome124", timeout=20)
-    html = r.text
-    if "just a moment" in html.lower() and len(html) < 50000:
-        print(f"  [Zoopla-urllib] CF challenge at {url}")
-        return [], 0
+        r = requests.get(url, headers=zoopla_headers, impersonate="chrome124", timeout=20)
+        html = r.text
+        if "just a moment" in html.lower() and len(html) < 50000:
+            print(f"  [Zoopla-urllib] CF challenge at {url}")
+            return [], 0
         listings, total, _ = _zoopla_parse_html(html, transaction_type)
         print(f"  [Zoopla-urllib] {len(listings)} listings (total={total}) from {url}")
         return listings, total
