@@ -787,6 +787,7 @@ def _zoopla_urllib_fetch(url: str, transaction_type: str) -> tuple:
     }
     try:
         r = requests.get(url, headers=zoopla_headers, impersonate="chrome124", timeout=20)
+        print(f"  [Zoopla-urllib] Status: {r.status_code}, HTML len: {len(r.text)}, URL: {url}")
         html = r.text
         if "just a moment" in html.lower() and len(html) < 50000:
             print(f"  [Zoopla-urllib] CF challenge at {url}")
