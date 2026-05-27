@@ -14,6 +14,7 @@ import threading
 import urllib.request
 import urllib.parse
 import urllib.error
+from curl_cffi import requests
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 # Playwright (optional — Zoopla bypass)
@@ -785,13 +786,11 @@ def _zoopla_urllib_fetch(url: str, transaction_type: str) -> tuple:
         "DNT": "1",
     }
     try:
-        req = urllib.request.Request(url, headers=zoopla_headers)
-        with urllib.request.urlopen(req, timeout=20) as r:
-            html = r.read().decode("utf-8", errors="replace")
-        # Check for Cloudflare challenge
-        if "just a moment" in html.lower() and len(html) < 50000:
-            print(f"  [Zoopla-urllib] CF challenge at {url}")
-            return [], 0
+    r = requests.get(url, headers=zoopla_headers, impersonate="chrome124", timeout=20)
+    html = r.text
+    if "just a moment" in html.lower() and len(html) < 50000:
+        print(f"  [Zoopla-urllib] CF challenge at {url}")
+        return [], 0
         listings, total, _ = _zoopla_parse_html(html, transaction_type)
         print(f"  [Zoopla-urllib] {len(listings)} listings (total={total}) from {url}")
         return listings, total
