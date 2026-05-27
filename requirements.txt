@@ -4,3 +4,4 @@ requests
 beautifulsoup4
 Flask
 scrapfly-sdk
+curl_cffi
